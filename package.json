@@ -21,7 +21,6 @@
     "lint:fix": "eslint --fix src/commands/**/*.ts src/*.ts src/components/*.ts",
     "start": "ts-node src/app.ts bow",
     "start:ribbon": "ts-node src/app.ts",
-    "start:debug": "ts-node --inspect src/app.ts bow",
     "test": "yarn lint && mocha"
   },
   "keywords": [
@@ -53,7 +52,6 @@
     "@types/underscore": "^1.8.9",
     "better-sqlite3": "^5.0.1",
     "booru": "1.3.3",
-    "bufferutil": "^4.0.0",
     "cheerio": "^1.0.0-rc.2",
     "common-tags": "^1.8.0",
     "currency-symbol-map": "4.0.4",
@@ -64,7 +62,6 @@
     "dotenv": "^6.1.0",
     "eightball": "^1.0.1",
     "emoji-regex": "^7.0.1",
-    "erlpack": "discordapp/erlpack",
     "esm": "^3.0.84",
     "fast-levenshtein": "^2.0.6",
     "flesch-kincaid": "^1.0.3",
@@ -76,7 +73,7 @@
     "moment": "favna/moment#fix/typing_declaration",
     "moment-duration-format": "^2.2.2",
     "money": "^0.2.0",
-    "nintendo-switch-eshop": "lmmfranco/nintendo-switch-eshop",
+    "nintendo-switch-eshop": "^1.1.4",
     "node-fetch": "^2.2.1",
     "node-opus": "^0.3.1",
     "qrcode": "^1.3.2",
@@ -89,7 +86,8 @@
     "to-zalgo": "^1.0.1",
     "translate": "Marak/translate.js#modern",
     "underscore": "^1.9.1",
-    "unescape-es6": "^1.1.0",
+    "unescape-es6": "^1.1.1",
+    "uws": "discordjs/uws",
     "xdicey": "2.0.3",
     "ytdl-core": "^0.28.0",
     "zlib-sync": "^0.1.4"

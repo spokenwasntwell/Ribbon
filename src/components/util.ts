@@ -5,9 +5,9 @@
  */
 
 /* eslint-disable one-var */
-import { GuildMember, Message, Util } from 'discord.js';
-import { CommandoClient } from 'discord.js-commando';
-import { oneLineTrim } from 'common-tags';
+import { GuildMember, Util, TextChannel, MessageEmbed } from 'discord.js';
+import { CommandoClient, CommandMessage, CommandoGuild } from 'discord.js-commando';
+import { oneLineTrim, stripIndents, oneLine } from 'common-tags';
 import { Video } from 'simple-youtube-api';
 import emojis from 'emoji-regex';
 
@@ -40,7 +40,18 @@ export const countMentions = (str : string) => {
   return counter;
 };
 
-export const deleteCommandMessages = (msg : Message, client : CommandoClient) => msg.deletable && client.provider.get(msg.guild, 'deletecommandmessages', false) ? msg.delete() : null;
+export const deleteCommandMessages = (msg : CommandMessage, client : CommandoClient) => msg.deletable && client.provider.get(msg.guild, 'deletecommandmessages', false) ? msg.delete() : null;
+
+export const modLogMessage = (msg : CommandMessage, guild : CommandoGuild, outChannelID : string, outChannel : TextChannel, embed : MessageEmbed) => {
+  if (!guild.settings.get('hasSentModLogMessage', false)) {
+    msg.reply(oneLine`📃 I can keep a log of moderator actions if you create a channel named \'mod-logs\'
+    (or some other name configured by the ${guild.commandPrefix}setmodlogs command) and give me access to it.
+    This message will only show up this one time and never again after this so if you desire to set up mod logs make sure to do so now.`);
+    guild.settings.set('hasSentModLogMessage', true);
+  }
+
+  return outChannelID && guild.settings.get('modlogs', false) ? outChannel.send('', { embed }) : null;
+};
 
 export const numberBetween = (num : number, lower : number, upper : number, inclusive : Boolean) => {
   const max = Math.max(lower, upper),
@@ -94,12 +105,21 @@ export const roundNumber = (num : number, scale = 0) => {
   return Number(`${Math.round(Number(`${Number(arr[0])}e${sig}${Number(arr[1]) + scale}`))}e-${scale}`);
 };
 
-export const stopTyping = (msg : Message) => {
+export const stopTyping = (msg : CommandMessage) => {
   msg.channel.stopTyping(true);
 };
 
-export const startTyping = (msg : Message) => {
+export const startTyping = (msg : CommandMessage) => {
   msg.channel.startTyping(1);
+};
+
+export const validateBool = (bool : boolean) => {
+  const validBools = [ 'true', 't', 'yes', 'y', 'on', 'enable', 'enabled', '1', '+', 'false', 'f', 'no', 'n', 'off', 'disable', 'disabled', '0', '-' ];
+
+  if (validBools.includes(bool.toString())) return true;
+
+  return stripIndents`Has to be one of ${validBools.map(val => `\`${val}\``).join(', ')}
+   Respond with your new selection or`;
 };
 
 export class Song {

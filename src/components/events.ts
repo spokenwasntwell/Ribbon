@@ -12,12 +12,12 @@ import { Command, CommandMessage, CommandoClient, CommandoGuild } from 'discord.
 import { oneLine, stripIndents } from 'common-tags';
 import { ordinal } from './util';
 import * as Database from 'better-sqlite3';
-import * as fs from 'fs';
+// import * as fs from 'fs';
 import * as moment from 'moment';
 import * as path from 'path';
 import Jimp from 'jimp';
-import decache from 'decache';
-import eshop from 'nintendo-switch-eshop';
+// import { decache } from 'decache';
+// import eshop from 'nintendo-switch-eshop';
 import fetch from 'node-fetch';
 import querystring from 'querystring';
 import ms from './ms';
@@ -301,15 +301,15 @@ const renderTimerMessage = (client : CommandoClient) => {
   }
 };
 
-const forceEshopUpdate = async (client : CommandoClient) => {
-  try {
-    fs.writeFileSync(path.join(__dirname, '../data/databases/eshop.json'), JSON.stringify(await eshop.getGamesAmerica({ shop: 'all' })), 'utf8');
-    decache(path.join(__dirname, '../data/databases/eshop.json'));
-    client.registry.resolveCommand('searches:eshop').reload();
-  } catch (err) {
-    null;
-  }
-};
+// const forceEshopUpdate = async (client : CommandoClient) => {
+//   try {
+//     fs.writeFileSync(path.join(__dirname, '../data/databases/eshop.json'), JSON.stringify(await eshop.getGamesAmerica({ shop: 'all' })), 'utf8');
+//     decache(path.join(__dirname, '../data/databases/eshop.json'));
+//     client.registry.resolveCommand('searches:eshop').reload();
+//   } catch (err) {
+//     null;
+//   }
+// };
 
 const forceStopTyping = (client : CommandoClient) => {
   const allChannels = client.channels;
@@ -668,7 +668,7 @@ export const handlePresenceUpdate = async (client : CommandoClient, oldMember : 
 };
 
 export const handleRateLimit = (client : CommandoClient, info : RateLimitData) => {
-  const channel = client.channels.get(process.env.ISSUE_LOG_CHANNEL_ID) as TextChannel;
+  const channel = client.channels.get(process.env.RATELIMIT_LOG_CHANNEL_ID) as TextChannel;
 
   channel.send(stripIndents`
       Ran into a **rate limit**!
@@ -699,15 +699,15 @@ export const handleReady = (client : CommandoClient) => {
 
   setInterval(() => {
     renderLottoMessage(bot);
-    forceEshopUpdate(bot);
+    // forceEshopUpdate(bot);
   }, ms('24h'));
 
-  fs.watch(path.join(__dirname, '../data/dex/formats.json'), (eventType, filename) => {
-    if (filename) {
-      decache(path.join(__dirname, '../data/dex/formats.json'));
-      client.registry.resolveCommand('pokemon:dex').reload();
-    }
-  });
+  // fs.watch(path.join(__dirname, '../data/dex/formats.json'), (eventType, filename) => {
+  //   if (filename) {
+  //     decache(path.join(__dirname, '../data/dex/formats.json'));
+  //     client.registry.resolveCommand('pokemon:dex').reload();
+  //   }
+  // });
 };
 
 export const handleRejection = (client: CommandoClient, reason: Error | any, p: Promise<any>) => {

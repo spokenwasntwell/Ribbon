@@ -1,10 +1,10 @@
-import { handleCmdErr, handleDebug, handleErr, handleGuildJoin, handleGuildLeave,
-  handleMemberJoin, handleMemberLeave, handleMsg, handlePresenceUpdate,
-  handleRateLimit, handleReady, handleUnknownCmd, handleWarn, handleRejection } from './components/events';
-import { Client, CommandoClient, CommandoGuild, CommandMessage, SyncSQLiteProvider } from 'discord.js-commando';
-import { GuildMember, Message, RateLimitData } from 'discord.js';
-import * as path from 'path';
 import * as Database from 'better-sqlite3';
+import * as path from 'path';
+import { GuildMember, Message, RateLimitData } from 'discord.js';
+import { Client, CommandMessage, CommandoClient, CommandoGuild, SyncSQLiteProvider } from 'discord.js-commando';
+import { handleCmdErr, handleDebug, handleErr, handleGuildJoin, handleGuildLeave, 
+  handleMemberJoin, handleMemberLeave, handleMsg, handlePresenceUpdate, handleRateLimit,
+  handleReady, handleRejection, handleUnknownCmd, handleWarn } from './components/events';
 
 export default class Ribbon {
   token: string;

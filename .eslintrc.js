@@ -130,9 +130,7 @@ module.exports = {
                 "before": true
             }
         ],
-        "line-comment-position": ["error", {
-            "position": "beside"
-        }],
+        "line-comment-position": "off",
         "linebreak-style": [
             "error",
             "unix"
@@ -151,7 +149,7 @@ module.exports = {
         "max-statements-per-line": "error",
         "multiline-comment-style": [
             "error",
-            "starred-block"
+            "separate-lines"
         ],
         "new-cap": "error",
         "new-parens": "error",
