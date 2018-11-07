@@ -5,11 +5,11 @@
  */
 
 /* eslint-disable no-mixed-requires, one-var */
-import dotenv from 'dotenv';
-import path from 'path';
 import Ribbon from './Ribbon';
+import * as dotenv from 'dotenv';
+import * as path from 'path';
 
-dotenv.config({path: path.join(__dirname, '.env')});
+dotenv.config({ path: path.join(__dirname, '.env') });
 
 const start = () => new Ribbon((/(?:bow)/i).test(process.argv[2]) ? process.env.stripetoken : process.env.ribbontoken).init();
 

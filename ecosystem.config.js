@@ -4,8 +4,8 @@ module.exports = {
   apps: [
     {
       name: 'Ribbon',
-      script: './src/app.js',
-      node_args: '-r esm --experimental-modules'
+      script: './node_modules/.bin/ts-node',
+      args: './src/app.ts',
     }
-  ]
+  ],
 };

@@ -6,23 +6,25 @@
 
 /* eslint-disable one-var */
 
-import {badwords, caps, duptext, emojis, invites, links, mentions, slowmode} from './automod';
-import {MessageAttachment, MessageEmbed} from 'discord.js';
-import {oneLine, stripIndents} from 'common-tags';
-import {ordinal} from './util';
-import Database from 'better-sqlite3';
-import Jimp from 'jimp/es';
+import { GuildMember, Message, MessageAttachment, MessageEmbed, RateLimitData, TextChannel } from 'discord.js';
+import { badwords, caps, duptext, emojis, invites, links, mentions, slowmode } from './automod';
+import { Command, CommandMessage, CommandoClient, CommandoGuild } from 'discord.js-commando';
+import { oneLine, stripIndents } from 'common-tags';
+import { ordinal } from './util';
+import * as Database from 'better-sqlite3';
+import * as fs from 'fs';
+import * as moment from 'moment';
+import * as path from 'path';
+import Jimp from 'jimp';
 import decache from 'decache';
-import duration from 'moment-duration-format'; // eslint-disable-line no-unused-vars
 import eshop from 'nintendo-switch-eshop';
 import fetch from 'node-fetch';
-import fs from 'fs';
-import moment from 'moment';
-import ms from 'ms';
-import path from 'path';
 import querystring from 'querystring';
+import ms from './ms';
+import 'moment-duration-format';
 
-const renderReminderMessage = async (client) => {
+const renderReminderMessage = async (client : CommandoClient) => {
+  
   const conn = new Database(path.join(__dirname, '../data/databases/reminders.sqlite3'));
 
   try {
@@ -30,7 +32,7 @@ const renderReminderMessage = async (client) => {
 
     for (const row in query) {
       const remindTime = moment(query[row].remindTime),
-        dura = moment.duration(remindTime.diff());
+        dura = moment.duration(remindTime.diff(moment()));
 
       if (dura.asMinutes() <= 0) {
         const user = await client.users.get(query[row].userID);
@@ -41,19 +43,21 @@ const renderReminderMessage = async (client) => {
             description: query[row].remindText,
             author: {
               name: 'Ribbon Reminders',
-              iconURL: client.user.displayAvatarURL({format: 'png'})
+              iconURL: client.user.displayAvatarURL({ format: 'png' }),
             },
-            thumbnail: {url: 'https://favna.xyz/images/ribbonhost/reminders.png'}
-          }
+            thumbnail: { url: 'https://favna.xyz/images/ribbonhost/reminders.png' },
+          },
         });
         conn.prepare('DELETE FROM "reminders" WHERE userID = $userid AND remindTime = $remindTime').run({
           userid: query[row].userID,
-          remindTime: query[row].remindTime
+          remindTime: query[row].remindTime,
         });
       }
     }
   } catch (err) {
-    client.channels.get(process.env.ribbonlogchannel).send(stripIndents`
+    const channel = client.channels.get(process.env.ribbonlogchannel) as TextChannel;
+
+    channel.send(stripIndents`
       <@${client.owners[0].id}> Error occurred sending someone their reminder!
       **Time:** ${moment().format('MMMM Do YYYY [at] HH:mm:ss [UTC]Z')}
       **Error Message:** ${err}
@@ -61,7 +65,7 @@ const renderReminderMessage = async (client) => {
   }
 };
 
-const renderCountdownMessage = (client) => {
+const renderCountdownMessage = (client : CommandoClient) => {
   const conn = new Database(path.join(__dirname, '../data/databases/countdowns.sqlite3'));
 
   try {
@@ -72,16 +76,16 @@ const renderCountdownMessage = (client) => {
 
       for (const row in rows) {
         const cdmoment = moment(rows[row].lastsend).add(24, 'hours'),
-          dura = moment.duration(cdmoment.diff());
+          dura = moment.duration(cdmoment.diff(moment()));
 
         if (dura.asMinutes() <= 0) {
           const guild = client.guilds.get(tables[table].name),
-            channel = guild.channels.get(rows[row].channel),
+            channel = guild.channels.get(rows[row].channel) as TextChannel,
             timerEmbed = new MessageEmbed(),
-            {me} = client.guilds.get(tables[table].name);
+            { me } = client.guilds.get(tables[table].name);
 
           timerEmbed
-            .setAuthor('Countdown Reminder', me.user.displayAvatarURL({format: 'png'}))
+            .setAuthor('Countdown Reminder', me.user.displayAvatarURL({ format: 'png' }))
             .setColor(me.displayHexColor)
             .setTimestamp()
             .setDescription(stripIndents`
@@ -94,22 +98,22 @@ const renderCountdownMessage = (client) => {
           if (moment(rows[row].datetime).diff(new Date(), 'hours') >= 24) {
             conn.prepare(`UPDATE "${tables[table].name}" SET lastsend=$lastsend WHERE id=$id;`).run({
               id: rows[row].id,
-              lastsend: moment().format('YYYY-MM-DD HH:mm')
+              lastsend: moment().format('YYYY-MM-DD HH:mm'),
             });
 
-            channel.send('', {embed: timerEmbed});
+            channel.send('', { embed: timerEmbed });
           } else {
-            conn.prepare(`DELETE FROM "${tables[table].name}" WHERE id=$id;`).run({id: rows[row].id});
+            conn.prepare(`DELETE FROM "${tables[table].name}" WHERE id=$id;`).run({ id: rows[row].id });
 
             switch (rows[row].tag) {
             case 'everyone':
-              channel.send('@everyone GET HYPE IT IS TIME!', {embed: timerEmbed});
+              channel.send('@everyone GET HYPE IT IS TIME!', { embed: timerEmbed });
               break;
             case 'here':
-              channel.send('@here GET HYPE IT IS TIME!', {embed: timerEmbed});
+              channel.send('@here GET HYPE IT IS TIME!', { embed: timerEmbed });
               break;
             default:
-              channel.send('GET HYPE IT IS TIME!', {embed: timerEmbed});
+              channel.send('GET HYPE IT IS TIME!', { embed: timerEmbed });
               break;
             }
           }
@@ -117,7 +121,9 @@ const renderCountdownMessage = (client) => {
       }
     }
   } catch (err) {
-    client.channels.get(process.env.ribbonlogchannel).send(stripIndents`
+    const channel = client.channels.get(process.env.ribbonlogchannel) as TextChannel;
+
+    channel.send(stripIndents`
     <@${client.owners[0].id}> Error occurred sending a countdown!
     **Time:** ${moment().format('MMMM Do YYYY [at] HH:mm:ss [UTC]Z')}
     **Error Message:** ${err}
@@ -125,9 +131,9 @@ const renderCountdownMessage = (client) => {
   }
 };
 
-const renderJoinMessage = async (member) => {
+const renderJoinMessage = async (member : GuildMember) => {
   try {
-    const avatar = await Jimp.read(member.user.displayAvatarURL({format: 'png'})),
+    const avatar = await Jimp.read(member.user.displayAvatarURL({ format: 'png' })),
       border = await Jimp.read('https://www.favna.xyz/images/ribbonhost/jimp/border.png'),
       canvas = await Jimp.read(500, 150),
       newMemberEmbed = new MessageEmbed(),
@@ -149,21 +155,24 @@ const renderJoinMessage = async (member) => {
       embedAttachment = new MessageAttachment(buffer, 'joinimg.png');
 
     newMemberEmbed
-      .attachFiles([embedAttachment])
+      .attachFiles([ embedAttachment ])
       .setColor('#80F31F')
       .setTitle('NEW MEMBER!')
       .setDescription(`Please give a warm welcome to __**${member.displayName}**__  (\`${member.id}\`)`)
       .setImage('attachment://joinimg.png');
+ 
+    const guild = member.guild as CommandoGuild,
+      channel = member.guild.channels.get(guild.settings.get('joinmsgchannel')) as TextChannel;
 
-    return member.guild.channels.get(member.guild.settings.get('joinmsgchannel')).send(`Welcome <@${member.id}> 🎗️!`, {embed: newMemberEmbed});
+    return channel.send(`Welcome <@${member.id}> 🎗️!`, { embed: newMemberEmbed });
   } catch (err) {
     return null;
   }
 };
 
-const renderLeaveMessage = async (member) => {
+const renderLeaveMessage = async (member : GuildMember) => {
   try {
-    const avatar = await Jimp.read(member.user.displayAvatarURL({format: 'png'})),
+    const avatar = await Jimp.read(member.user.displayAvatarURL({ format: 'png' })),
       border = await Jimp.read('https://www.favna.xyz/images/ribbonhost/jimp/border.png'),
       canvas = await Jimp.read(500, 150),
       leaveMemberEmbed = new MessageEmbed(),
@@ -186,19 +195,22 @@ const renderLeaveMessage = async (member) => {
       embedAttachment = new MessageAttachment(buffer, 'leaveimg.png');
 
     leaveMemberEmbed
-      .attachFiles([embedAttachment])
+      .attachFiles([ embedAttachment ])
       .setColor('#F4BF42')
       .setTitle('Member Left 😢')
       .setDescription(`You will be missed __**${member.displayName}**__ (\`${member.id}\`)`)
       .setImage('attachment://leaveimg.png');
 
-    return member.guild.channels.get(member.guild.settings.get('leavemsgchannel')).send('', {embed: leaveMemberEmbed});
+    const guild = member.guild as CommandoGuild,
+      channel = member.guild.channels.get(guild.settings.get('leavemsgchannel')) as TextChannel;
+
+    return channel.send('', { embed: leaveMemberEmbed });
   } catch (err) {
     return null;
   }
 };
 
-const renderLottoMessage = (client) => {
+const renderLottoMessage = (client : CommandoClient) => {
   const conn = new Database(path.join(__dirname, '../data/databases/casino.sqlite3'));
 
   try {
@@ -211,31 +223,33 @@ const renderLottoMessage = (client) => {
 
       rows[winner].balance += 2000;
 
-      conn.prepare(`UPDATE "${tables[table].name}" SET balance=$balance WHERE userID="${rows[winner].userID}"`).run({balance: rows[winner].balance});
+      conn.prepare(`UPDATE "${tables[table].name}" SET balance=$balance WHERE userID="${rows[winner].userID}"`).run({ balance: rows[winner].balance });
 
       // eslint-disable-next-line one-var
       const defaultChannel = client.guilds.get(tables[table].name).systemChannel,
         winnerEmbed = new MessageEmbed(),
         winnerLastMessage = client.guilds.get(tables[table].name).members.get(rows[winner].userID).lastMessageChannelID,
-        winnerLastMessageChannel = winnerLastMessage ? client.guilds.get(tables[table].name).channels.get(winnerLastMessage) : null,
+        winnerLastMessageChannel = winnerLastMessage ? client.guilds.get(tables[table].name).channels.get(winnerLastMessage) as TextChannel : null,
         winnerLastMessageChannelPermitted = winnerLastMessageChannel ? winnerLastMessageChannel.permissionsFor(client.user).has('SEND_MESSAGES') : false;
 
       winnerEmbed
         .setColor('#7CFC00')
         .setDescription(`Congratulations <@${rows[winner].userID}>! You won today's random lotto and were granted 2000 chips 🎉!`)
         .setAuthor(client.guilds.get(tables[table].name).members.get(rows[winner].userID).displayName,
-          client.guilds.get(tables[table].name).members.get(rows[winner].userID).user.displayAvatarURL({format: 'png'}))
+          client.guilds.get(tables[table].name).members.get(rows[winner].userID).user.displayAvatarURL({ format: 'png' }))
         .setThumbnail('https://favna.xyz/images/ribbonhost/casinologo.png')
         .addField('Balance', `${prevBal} ➡ ${rows[winner].balance}`);
 
       if (winnerLastMessageChannelPermitted) {
-        winnerLastMessageChannel.send(`<@${rows[winner].userID}>`, {embed: winnerEmbed});
+        winnerLastMessageChannel.send(`<@${rows[winner].userID}>`, { embed: winnerEmbed });
       } else if (defaultChannel) {
-        defaultChannel.send(`<@${rows[winner].userID}>`, {embed: winnerEmbed});
+        defaultChannel.send(`<@${rows[winner].userID}>`, { embed: winnerEmbed });
       }
     }
   } catch (err) {
-    client.channels.get(process.env.ribbonlogchannel).send(stripIndents`
+    const channel = client.channels.get(process.env.ribbonlogchannel) as TextChannel;
+
+    channel.send(stripIndents`
     <@${client.owners[0].id}> Error occurred giving someone their lotto payout!
     **Time:** ${moment().format('MMMM Do YYYY [at] HH:mm:ss [UTC]Z')}
     **Error Message:** ${err}
@@ -243,7 +257,7 @@ const renderLottoMessage = (client) => {
   }
 };
 
-const renderTimerMessage = (client) => {
+const renderTimerMessage = (client : CommandoClient) => {
   const conn = new Database(path.join(__dirname, '../data/databases/timers.sqlite3'));
 
   try {
@@ -254,30 +268,32 @@ const renderTimerMessage = (client) => {
 
       for (const row in rows) {
         const timermoment = moment(rows[row].lastsend).add(rows[row].interval, 'ms'),
-          dura = moment.duration(timermoment.diff());
+          dura = moment.duration(timermoment.diff(moment()));
 
         if (dura.asMinutes() <= 0) {
           conn.prepare(`UPDATE "${tables[table].name}" SET lastsend=$lastsend WHERE id=$id;`).run({
             id: rows[row].id,
-            lastsend: moment().format('YYYY-MM-DD HH:mm')
+            lastsend: moment().format('YYYY-MM-DD HH:mm'),
           });
           const guild = client.guilds.get(tables[table].name),
-            channel = guild.channels.get(rows[row].channel),
+            channel = guild.channels.get(rows[row].channel) as TextChannel,
             timerEmbed = new MessageEmbed(),
-            {me} = client.guilds.get(tables[table].name);
+            { me } = client.guilds.get(tables[table].name);
 
           timerEmbed
-            .setAuthor('Ribbon Timed Message', me.user.displayAvatarURL({format: 'png'}))
+            .setAuthor('Ribbon Timed Message', me.user.displayAvatarURL({ format: 'png' }))
             .setColor(me.displayHexColor)
             .setDescription(rows[row].content)
             .setTimestamp();
 
-          channel.send('', {embed: timerEmbed});
+          channel.send('', { embed: timerEmbed });
         }
       }
     }
   } catch (err) {
-    client.channels.get(process.env.ribbonlogchannel).send(stripIndents`
+    const channel = client.channels.get(process.env.ribbonlogchannel) as TextChannel;
+
+    channel.send(stripIndents`
     <@${client.owners[0].id}> Error occurred sending a timed message!
     **Time:** ${moment().format('MMMM Do YYYY [at] HH:mm:ss [UTC]Z')}
     **Error Message:** ${err}
@@ -285,9 +301,9 @@ const renderTimerMessage = (client) => {
   }
 };
 
-const forceEshopUpdate = async (client) => {
+const forceEshopUpdate = async (client : CommandoClient) => {
   try {
-    fs.writeFileSync(path.join(__dirname, '../data/databases/eshop.json'), JSON.stringify(await eshop.getGamesAmerica({shop: 'all'})), 'utf8');
+    fs.writeFileSync(path.join(__dirname, '../data/databases/eshop.json'), JSON.stringify(await eshop.getGamesAmerica({ shop: 'all' })), 'utf8');
     decache(path.join(__dirname, '../data/databases/eshop.json'));
     client.registry.resolveCommand('searches:eshop').reload();
   } catch (err) {
@@ -295,20 +311,24 @@ const forceEshopUpdate = async (client) => {
   }
 };
 
-const forceStopTyping = (client) => {
+const forceStopTyping = (client : CommandoClient) => {
   const allChannels = client.channels;
 
   for (const channel of allChannels.values()) {
     if (channel.type === 'text' || channel.type === 'dm' || channel.type === 'group') {
       if (client.user.typingDurationIn(channel) > 10000) {
-        channel.stopTyping(true);
+        const typingChannel = channel as TextChannel;
+
+        typingChannel.stopTyping(true);
       }
     }
   }
 };
 
-export const handleCmdErr = (client, cmd, err, msg) => {
-  client.channels.resolve(process.env.ribbonlogchannel).send(stripIndents`
+export const handleCmdErr = (client : CommandoClient, cmd : Command, err : Error, msg : CommandMessage) => {
+  const channel = client.channels.get(process.env.ribbonlogchannel) as TextChannel;
+
+  channel.send(stripIndents`
   Caught **Command Error**!
   **Command:** ${cmd.name}
   **Server:** ${msg.guild.name} (${msg.guild.id})
@@ -318,21 +338,23 @@ export const handleCmdErr = (client, cmd, err, msg) => {
   `);
 };
 
-export const handleDebug = (info) => {
+export const handleDebug = (info : string) => {
   console.log(info); // eslint-disable-line no-console
 };
 
-export const handleErr = (client, err) => {
-  client.channels.resolve(process.env.ribbonlogchannel).send(stripIndents`
+export const handleErr = (client : CommandoClient, err : string) => {
+  const channel = client.channels.get(process.env.ribbonlogchannel) as TextChannel;
+
+  channel.send(stripIndents`
   Caught **WebSocket Error**!
   **Time:** ${moment().format('MMMM Do YYYY [at] HH:mm:ss [UTC]Z')}
   **Error Message:** ${err}
   `);
 };
 
-export const handleGuildJoin = async (client, guild) => {
+export const handleGuildJoin = async (client : CommandoClient, guild: CommandoGuild) => {
   try {
-    const avatar = await Jimp.read(client.user.displayAvatarURL({format: 'png'})),
+    const avatar = await Jimp.read(client.user.displayAvatarURL({ format: 'png' })),
       border = await Jimp.read('https://www.favna.xyz/images/ribbonhost/jimp/border.png'),
       canvas = await Jimp.read(500, 150),
       mask = await Jimp.read('https://www.favna.xyz/images/ribbonhost/jimp/mask.png'),
@@ -353,7 +375,7 @@ export const handleGuildJoin = async (client, guild) => {
       embedAttachment = new MessageAttachment(buffer, 'added.png');
 
     newGuildEmbed
-      .attachFiles([embedAttachment])
+      .attachFiles([ embedAttachment ])
       .setColor('#80F31F')
       .setTitle('Ribbon is here!')
       .setDescription(stripIndents`
@@ -365,13 +387,13 @@ export const handleGuildJoin = async (client, guild) => {
       `)
       .setImage('attachment://added.png');
 
-    return channel ? channel.send('', {embed: newGuildEmbed}) : null;
+    return channel ? channel.send('', { embed: newGuildEmbed }) : null;
   } catch (err) {
     return null;
   }
 };
 
-export const handleGuildLeave = (client, guild) => {
+export const handleGuildLeave = (client : CommandoClient, guild: CommandoGuild) => {
   guild.settings.clear();
   const casinoConn = new Database(path.join(__dirname, '../data/databases/casino.sqlite3')),
     pastasConn = new Database(path.join(__dirname, '../data/databases/pastas.sqlite3')),
@@ -381,7 +403,9 @@ export const handleGuildLeave = (client, guild) => {
   try {
     casinoConn.exec(`DROP TABLE IF EXISTS "${guild.id}"`);
   } catch (err) {
-    client.channels.get(process.env.ribbonlogchannel).send(stripIndents`
+    const channel = client.channels.get(process.env.ribbonlogchannel) as TextChannel;
+
+    channel.send(stripIndents`
       <@${client.owners[0].id}> Failed to purge ${guild.name} (${guild.id}) from the casino database!
       **Time:** ${moment().format('MMMM Do YYYY [at] HH:mm:ss [UTC]Z')}
       **Error Message:** ${err}
@@ -391,7 +415,9 @@ export const handleGuildLeave = (client, guild) => {
   try {
     pastasConn.exec(`DROP TABLE IF EXISTS "${guild.id}"`);
   } catch (err) {
-    client.channels.get(process.env.ribbonlogchannel).send(stripIndents`
+    const channel = client.channels.get(process.env.ribbonlogchannel) as TextChannel;
+
+    channel.send(stripIndents`
       <@${client.owners[0].id}> Failed to purge ${guild.name} (${guild.id}) from the pastas database!
       **Time:** ${moment().format('MMMM Do YYYY [at] HH:mm:ss [UTC]Z')}
       **Error Message:** ${err}
@@ -401,7 +427,9 @@ export const handleGuildLeave = (client, guild) => {
   try {
     timerConn.exec(`DROP TABLE IF EXISTS "${guild.id}"`);
   } catch (err) {
-    client.channels.get(process.env.ribbonlogchannel).send(stripIndents`
+    const channel = client.channels.get(process.env.ribbonlogchannel) as TextChannel;
+
+    channel.send(stripIndents`
       <@${client.owners[0].id}> Failed to purge ${guild.name} (${guild.id}) from the timers database!
       **Time:** ${moment().format('MMMM Do YYYY [at] HH:mm:ss [UTC]Z')}
       **Error Message:** ${err}
@@ -411,7 +439,9 @@ export const handleGuildLeave = (client, guild) => {
   try {
     warningsConn.exec(`DROP TABLE IF EXISTS "${guild.id}"`);
   } catch (err) {
-    client.channels.get(process.env.ribbonlogchannel).send(stripIndents`
+    const channel = client.channels.get(process.env.ribbonlogchannel) as TextChannel;
+
+    channel.send(stripIndents`
       <@${client.owners[0].id}> Failed to purge ${guild.name} (${guild.id}) from the warnings database!
       **Time:** ${moment().format('MMMM Do YYYY [at] HH:mm:ss [UTC]Z')}
       **Error Message:** ${err}
@@ -419,37 +449,42 @@ export const handleGuildLeave = (client, guild) => {
   }
 };
 
-export const handleMemberJoin = (client, joinMember) => {
-  const memberJoinLogEmbed = new MessageEmbed();
+export const handleMemberJoin = (client : CommandoClient, joinMember : GuildMember) => {
+  const memberJoinLogEmbed = new MessageEmbed(),
+    guild = joinMember.guild as CommandoGuild;
 
   try {
-    if (joinMember.guild.settings.get('defaultRole') && joinMember.guild.roles.get(joinMember.guild.settings.get('defaultRole'))) {
+    if (guild.settings.get('defaultRole') && joinMember.guild.roles.get(guild.settings.get('defaultRole'))) {
 
-      joinMember.roles.add(joinMember.guild.settings.get('defaultRole'));
-      memberJoinLogEmbed.setDescription(`Automatically assigned the role ${joinMember.guild.roles.get(joinMember.guild.settings.get('defaultRole')).name} to this member`);
+      joinMember.roles.add(guild.settings.get('defaultRole'));
+      memberJoinLogEmbed.setDescription(`Automatically assigned the role ${joinMember.guild.roles.get(guild.settings.get('defaultRole')).name} to this member`);
     }
   } catch (err) {
     null;
   }
 
   try {
-    if (joinMember.guild.settings.get('memberlogs', true)) {
-      const memberLogs = joinMember.guild.settings.get('memberlogchannel',
+    if (guild.settings.get('memberlogs', true)) {
+      const memberLogs = guild.settings.get('memberlogchannel',
         joinMember.guild.channels.find(c => c.name === 'member-logs') ? joinMember.guild.channels.find(c => c.name === 'member-logs').id : null);
 
       memberJoinLogEmbed
-        .setAuthor(`${joinMember.user.tag} (${joinMember.id})`, joinMember.user.displayAvatarURL({format: 'png'}))
+        .setAuthor(`${joinMember.user.tag} (${joinMember.id})`, joinMember.user.displayAvatarURL({ format: 'png' }))
         .setFooter('User joined')
         .setTimestamp()
         .setColor('#80F31F');
 
       if (memberLogs && joinMember.guild.channels.get(memberLogs) && joinMember.guild.channels.get(memberLogs).permissionsFor(client.user)
         .has('SEND_MESSAGES')) {
-        joinMember.guild.channels.get(memberLogs).send('', {embed: memberJoinLogEmbed});
+        const channel = guild.channels.get(memberLogs) as TextChannel;
+
+        channel.send('', { embed: memberJoinLogEmbed });
       }
     }
   } catch (err) {
-    client.channels.resolve(process.env.ribbonlogchannel).send(stripIndents`
+    const channel = client.channels.get(process.env.ribbonlogchannel) as TextChannel;
+
+    channel.send(stripIndents`
   <@${client.owners[0].id}> An error sending the member join memberlog message!
   **Server:** ${joinMember.guild.name} (${joinMember.guild.id})
   **Time:** ${moment().format('MMMM Do YYYY [at] HH:mm:ss [UTC]Z')}
@@ -458,11 +493,13 @@ export const handleMemberJoin = (client, joinMember) => {
   }
 
   try {
-    if (joinMember.guild.settings.get('joinmsgs', false) && joinMember.guild.settings.get('joinmsgchannel', null)) {
+    if (guild.settings.get('joinmsgs', false) && guild.settings.get('joinmsgchannel', null)) {
       renderJoinMessage(joinMember);
     }
   } catch (err) {
-    client.channels.resolve(process.env.ribbonlogchannel).send(stripIndents`
+    const channel = client.channels.get(process.env.ribbonlogchannel) as TextChannel;
+
+    channel.send(stripIndents`
   <@${client.owners[0].id}> An error occurred sending the member join image!
   **Server:** ${joinMember.guild.name} (${joinMember.guild.id})
   **Time:** ${moment().format('MMMM Do YYYY [at] HH:mm:ss [UTC]Z')}
@@ -471,26 +508,32 @@ export const handleMemberJoin = (client, joinMember) => {
   }
 };
 
-export const handleMemberLeave = (client, leaveMember) => {
+export const handleMemberLeave = (client : CommandoClient, leaveMember : GuildMember) => {
+  const guild = leaveMember.guild as CommandoGuild;
+
   try {
-    if (leaveMember.guild.settings.get('memberlogs', true)) {
+    if (guild.settings.get('memberlogs', true)) {
       const memberLeaveLogEmbed = new MessageEmbed(),
-        memberLogs = leaveMember.guild.settings.get('memberlogchannel',
+        memberLogs = guild.settings.get('memberlogchannel',
           leaveMember.guild.channels.find(c => c.name === 'member-logs') ? leaveMember.guild.channels.find(c => c.name === 'member-logs').id : null);
 
-      memberLeaveLogEmbed.setAuthor(`${leaveMember.user.tag} (${leaveMember.id})`, leaveMember.user.displayAvatarURL({format: 'png'}))
+      memberLeaveLogEmbed.setAuthor(`${leaveMember.user.tag} (${leaveMember.id})`, leaveMember.user.displayAvatarURL({ format: 'png' }))
         .setFooter('User left')
         .setTimestamp()
         .setColor('#F4BF42');
 
       if (memberLogs && leaveMember.guild.channels.get(memberLogs) && leaveMember.guild.channels.get(memberLogs).permissionsFor(client.user)
         .has('SEND_MESSAGES')) {
-        leaveMember.guild.channels.get(memberLogs).send('', {embed: memberLeaveLogEmbed});
+        const channel = guild.channels.get(memberLogs) as TextChannel;
+
+        channel.send('', { embed: memberLeaveLogEmbed });
       }
     }
 
   } catch (err) {
-    client.channels.resolve(process.env.ribbonlogchannel).send(stripIndents`
+    const channel = client.channels.get(process.env.ribbonlogchannel) as TextChannel;
+
+    channel.send(stripIndents`
     <@${client.owners[0].id}> An error occurred sending the member left memberlog message!
     **Server:** ${leaveMember.guild.name} (${leaveMember.guild.id})
     **Time:** ${moment().format('MMMM Do YYYY [at] HH:mm:ss [UTC]Z')}
@@ -510,11 +553,13 @@ export const handleMemberLeave = (client, leaveMember) => {
   }
 
   try {
-    if (leaveMember.guild.settings.get('leavemsgs', false) && leaveMember.guild.settings.get('leavemsgchannel', null)) {
+    if (guild.settings.get('leavemsgs', false) && guild.settings.get('leavemsgchannel', null)) {
       renderLeaveMessage(leaveMember);
     }
   } catch (err) {
-    client.channels.resolve(process.env.ribbonlogchannel).send(stripIndents`
+    const channel = client.channels.get(process.env.ribbonlogchannel) as TextChannel;
+
+    channel.send(stripIndents`
     <@${client.owners[0].id}> An error occurred sending the member leave image!
     **Server:** ${leaveMember.guild.name} (${leaveMember.guild.id})
     **Time:** ${moment().format('MMMM Do YYYY [at] HH:mm:ss [UTC]Z')}
@@ -524,54 +569,60 @@ export const handleMemberLeave = (client, leaveMember) => {
 };
 
 // eslint-disable-next-line complexity, consistent-return
-export const handleMsg = (client, msg) => {
-  if (msg.guild && msg.deletable && msg.guild.settings.get('automod', false).enabled) {
-    if (msg.member.roles.some(ro => msg.guild.settings.get('automod', []).filterroles.includes(ro.id))) return null;
-    if (msg.guild.settings.get('caps', false).enabled) {
-      const opts = msg.guild.settings.get('caps');
+export const handleMsg = (client : CommandoClient, msg : Message) : void => {
+  const guild = msg.guild as CommandoGuild;
+
+  if (msg.guild && msg.deletable && guild.settings.get('automod', false).enabled) {
+    if (msg.member.roles.some(ro => guild.settings.get('automod', []).filterroles.includes(ro.id))) return null;
+    if (guild.settings.get('caps', false).enabled) {
+      const opts = guild.settings.get('caps');
 
       if (caps(msg, opts.threshold, opts.minlength, client)) msg.delete();
     }
-    if (msg.guild.settings.get('duptext', false).enabled) {
-      const opts = msg.guild.settings.get('duptext');
+    if (guild.settings.get('duptext', false).enabled) {
+      const opts = guild.settings.get('duptext');
 
       if (duptext(msg, opts.within, opts.equals, opts.distance, client)) msg.delete();
     }
-    if (msg.guild.settings.get('emojis', false).enabled) {
-      const opts = msg.guild.settings.get('emojis');
+    if (guild.settings.get('emojis', false).enabled) {
+      const opts = guild.settings.get('emojis');
 
       if (emojis(msg, opts.threshold, opts.minlength, client)) msg.delete();
     }
-    if (msg.guild.settings.get('badwords', false).enabled && badwords(msg, msg.guild.settings.get('badwords').words, client)) msg.delete();
-    if (msg.guild.settings.get('invites', false) && invites(msg, client)) msg.delete();
-    if (msg.guild.settings.get('links', false) && links(msg, client)) msg.delete();
-    if (msg.guild.settings.get('mentions', false).enabled && mentions(msg, msg.guild.settings.get('mentions').threshold, client)) msg.delete();
-    if (msg.guild.settings.get('slowmode', false).enabled && slowmode(msg, msg.guild.settings.get('slowmode').within, client)) msg.delete();
+    if (guild.settings.get('badwords', false).enabled && badwords(msg, guild.settings.get('badwords').words, client)) msg.delete();
+    if (guild.settings.get('invites', false) && invites(msg, client)) msg.delete();
+    if (guild.settings.get('links', false) && links(msg, client)) msg.delete();
+    if (guild.settings.get('mentions', false).enabled && mentions(msg, guild.settings.get('mentions').threshold, client)) msg.delete();
+    if (guild.settings.get('slowmode', false).enabled && slowmode(msg, guild.settings.get('slowmode').within, client)) msg.delete();
   }
 };
 
-export const handlePresenceUpdate = async (client, oldMember, newMember) => {
-  if (newMember.guild.settings.get('twitchnotifiers', false)) {
-    if (newMember.guild.settings.get('twitchmonitors', []).includes(newMember.id)) {
+export const handlePresenceUpdate = async (client : CommandoClient, oldMember : GuildMember, newMember : GuildMember) => {
+  const guild = newMember.guild as CommandoGuild;
+
+  if (guild.settings.get('twitchnotifiers', false)) {
+    if (guild.settings.get('twitchmonitors', []).includes(newMember.id)) {
       const curDisplayName = newMember.displayName,
-        curGuild = newMember.guild,
+        curGuild = newMember.guild as CommandoGuild,
         curUser = newMember.user;
-      let newActivity = newMember.presence.activity,
+      const newActivity = newMember.presence.activity,
         oldActivity = oldMember.presence.activity;
 
       try {
         if (!oldActivity) {
-          oldActivity = {url: 'placeholder'};
+          oldActivity.url = 'placeholder';
         }
         if (!newActivity) {
-          newActivity = {url: 'placeholder'};
+          newActivity.url = 'placeholder';
         }
         if (!(/(twitch)/i).test(oldActivity.url) && (/(twitch)/i).test(newActivity.url)) {
-          const userFetch = await fetch(`https://api.twitch.tv/helix/users?${querystring.stringify({login: newActivity.url.split('/')[3]})}`, {headers: {'Client-ID': process.env.twitchclientid}}),
+          const userFetch = await fetch(`https://api.twitch.tv/helix/users?${querystring.stringify({ login: newActivity.url.split('/')[3] })}`,
+              { headers: { 'Client-ID': process.env.twitchclientid } }),
             userData = await userFetch.json(),
-            streamFetch = await fetch(`https://api.twitch.tv/helix/streams?${querystring.stringify({channel: userData.data[0].id})}`, {headers: {'Client-ID': process.env.twitchclientid}}),
+            streamFetch = await fetch(`https://api.twitch.tv/helix/streams?${querystring.stringify({ channel: userData.data[0].id })}`, { headers: { 'Client-ID': process.env.twitchclientid } }),
             streamData = await streamFetch.json(),
-            twitchChannel = curGuild.settings.get('twitchchannel', null),
+            twitchChannelID = curGuild.settings.get('twitchchannelID', null),
+            twitchChannel = twitchChannelID ? curGuild.channels.get(twitchChannelID) as TextChannel : null,
             twitchEmbed = new MessageEmbed();
 
           twitchEmbed
@@ -590,17 +641,19 @@ export const handlePresenceUpdate = async (client, oldMember, newMember) => {
           }
 
           if (streamFetch.ok && streamData.data.length > 0 && streamData.data[0]) {
-            const streamTime = moment(streamData.data[0].started_at).isValid() ? moment(streamData.data[0].started_at)._d : null;
+            const streamTime = moment(streamData.data[0].started_at).isValid() ? moment(streamData.data[0].started_at).toDate() : null;
 
             twitchEmbed.setFooter('Stream started');
             streamTime ? twitchEmbed.setTimestamp(streamTime) : null;
           }
           if (twitchChannel) {
-            curGuild.channels.get(twitchChannel).send('', {embed: twitchEmbed});
+            twitchChannel.send('', { embed: twitchEmbed });
           }
         }
       } catch (err) {
-        client.channels.resolve('395658199266623528').send(stripIndents`
+        const channel = client.channels.get(process.env.ribbonlogchannel) as TextChannel;
+
+        channel.send(stripIndents`
               <@${client.owners[0].id}> Error occurred in sending a twitch live notifier!
               **Server:** ${curGuild.name} (${curGuild.id})
               **Member:** ${curUser.tag} (${curUser.id})
@@ -614,8 +667,10 @@ export const handlePresenceUpdate = async (client, oldMember, newMember) => {
   }
 };
 
-export const handleRateLimit = (client, info) => {
-  client.channels.resolve(process.env.ribbonlogchannel).send(stripIndents`
+export const handleRateLimit = (client : CommandoClient, info : RateLimitData) => {
+  const channel = client.channels.get(process.env.ribbonlogchannel) as TextChannel;
+
+  channel.send(stripIndents`
       Ran into a **rate limit**!
       **Time:** ${moment().format('MMMM Do YYYY [at] HH:mm:ss [UTC]Z')}
       **Timeout**: ${info.timeout}
@@ -626,7 +681,7 @@ export const handleRateLimit = (client, info) => {
       `);
 };
 
-export const handleReady = (client) => {
+export const handleReady = (client : CommandoClient) => {
   // eslint-disable-next-line no-console
   console.log(oneLine`Client ready at ${moment().format('HH:mm:ss')};
         logged in as ${client.user.username}#${client.user.discriminator} (${client.user.id})`);
@@ -655,8 +710,19 @@ export const handleReady = (client) => {
   });
 };
 
-export const handleUnknownCmd = (client, msg) => {
-  const {guild} = msg;
+export const handleRejection = (client: CommandoClient, reason: Error | any, p: Promise<any>) => {
+  const channel = client.channels.get(process.env.ribbonlogchannel) as TextChannel;
+
+  channel.send(stripIndents`
+      Caught **Unhandled Rejection **!
+      **At:** ${p}
+      **Reason:** ${reason}
+      **Time:** ${moment().format('MMMM Do YYYY [at] HH:mm:ss [UTC]Z')}
+      `);
+};
+
+export const handleUnknownCmd = (client : CommandoClient, msg : CommandMessage) => {
+  const guild = msg.guild as CommandoGuild;
 
   if (guild && guild.settings.get('unknownmessages', true)) {
     msg.reply(stripIndents`${oneLine`That is not a registered command.
@@ -667,8 +733,10 @@ export const handleUnknownCmd = (client, msg) => {
   }
 };
 
-export const handleWarn = (client, warn) => {
-  client.channels.resolve(process.env.ribbonlogchannel).send(stripIndents`
+export const handleWarn = (client : CommandoClient, warn : string) => {
+  const channel = client.channels.get(process.env.ribbonlogchannel) as TextChannel;
+
+  channel.send(stripIndents`
       Caught **General Warning**!
       **Time:** ${moment().format('MMMM Do YYYY [at] HH:mm:ss [UTC]Z')}
       **Warning Message:** ${warn}

@@ -1,0 +1,23 @@
+{
+  "compilerOptions": {
+    "outDir": "out/",
+    "allowSyntheticDefaultImports": true,
+    "allowJs": true,
+    "forceConsistentCasingInFileNames": true,
+    "lib": ["es2016", "es2017", "es2018"],
+    "target": "es2017",
+    "module": "commonjs",
+    "moduleResolution": "Node",
+    "noFallthroughCasesInSwitch": true,
+    "noImplicitAny": false,
+    "noImplicitReturns": true,
+    "noImplicitThis": true,
+    "noUnusedLocals": true,
+    "pretty": true,
+    "removeComments": true,
+    "skipLibCheck": true,
+    "typeRoots": ["node_modules/@types"],
+    "types": ["node"],
+  },
+  "exclude": ["node_modules", "dist", "build"],
+}

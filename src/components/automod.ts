@@ -5,33 +5,31 @@
  */
 
 /* eslint-disable one-var */
+import { countCaps, countEmojis, countMentions, numberBetween } from './util';
+import { Message } from 'discord.js';
+import { CommandoClient } from 'discord.js-commando';
 import levenshtein from 'fast-levenshtein';
-import moment from 'moment';
-import {countCaps, countEmojis, countMentions, numberBetween} from './util';
+import * as moment from 'moment';
 
-export const badwords = (msg, words, client) => {
+export const badwords = (msg : Message, words : Array<String>, client : CommandoClient) => {
   if (msg.author.bot || client.isOwner(msg.author) || msg.member.hasPermission('MANAGE_MESSAGES')) {
     return false;
   }
-  if (words.some(v => msg.content.indexOf(v) >= 0)) {
+  if (words.some((v : string) => msg.content.indexOf(v) >= 0)) {
     return true;
   }
 
   return false;
 };
 
-export const duptext = (msg, within, equals, distance, client) => {
+export const duptext = (msg : Message, within : number, equals : number, distance : number, client : CommandoClient) => {
   if (msg.author.bot || client.isOwner(msg.author) || msg.member.hasPermission('MANAGE_MESSAGES')) {
     return false;
   }
   const authorMessages = msg.channel.messages.filter((m) => {
-    const diff = moment.duration(moment(m.createdTimestamp).diff());
+    const diff = moment.duration(moment(m.createdTimestamp).diff(moment()));
 
-    if (numberBetween(diff.asMinutes(), within * -1, 0, true) && m.author.id === msg.author.id) {
-      return m;
-    }
-
-    return false;
+    return numberBetween(diff.asMinutes(), within * -1, 0, true) && m.author.id === msg.author.id;
   });
 
   if (authorMessages.size <= equals) {
@@ -51,7 +49,7 @@ export const duptext = (msg, within, equals, distance, client) => {
   return false;
 };
 
-export const caps = (msg, threshold, minlength, client) => {
+export const caps = (msg : Message, threshold : number, minlength : number, client : CommandoClient) => {
   if (msg.author.bot || client.isOwner(msg.author) || msg.member.hasPermission('MANAGE_MESSAGES')) {
     return false;
   }
@@ -64,7 +62,7 @@ export const caps = (msg, threshold, minlength, client) => {
   return false;
 };
 
-export const emojis = (msg, threshold, minlength, client) => {
+export const emojis = (msg : Message, threshold : number, minlength : number, client : CommandoClient) => {
   if (msg.author.bot || client.isOwner(msg.author) || msg.member.hasPermission('MANAGE_MESSAGES')) {
     return false;
   }
@@ -77,7 +75,7 @@ export const emojis = (msg, threshold, minlength, client) => {
   return false;
 };
 
-export const mentions = (msg, threshold, client) => {
+export const mentions = (msg : Message, threshold : number, client : CommandoClient) => {
   if (msg.author.bot || client.isOwner(msg.author) || msg.member.hasPermission('MANAGE_MESSAGES')) {
     return false;
   }
@@ -88,7 +86,7 @@ export const mentions = (msg, threshold, client) => {
   return false;
 };
 
-export const links = (msg, client) => {
+export const links = (msg : Message, client : CommandoClient) => {
   if (msg.author.bot || client.isOwner(msg.author) || msg.member.hasPermission('MANAGE_MESSAGES')) {
     return false;
   }
@@ -99,7 +97,7 @@ export const links = (msg, client) => {
   return false;
 };
 
-export const invites = (msg, client) => {
+export const invites = (msg : Message, client : CommandoClient) => {
   if (msg.author.bot || client.isOwner(msg.author) || msg.member.hasPermission('MANAGE_MESSAGES')) {
     return false;
   }
@@ -110,24 +108,20 @@ export const invites = (msg, client) => {
   return false;
 };
 
-export const slowmode = (msg, within, client) => {
+export const slowmode = (msg : Message, within : number, client : CommandoClient) => {
   if (msg.author.bot || client.isOwner(msg.author) || msg.member.hasPermission('MANAGE_MESSAGES')) {
     return false;
   }
   const authorMessages = msg.channel.messages.filter((m) => {
-    const diff = moment.duration(moment(m.createdTimestamp).diff());
+    const diff = moment.duration(moment(m.createdTimestamp).diff(moment()));
 
-    if (numberBetween(diff.asSeconds(), within * -1, 0, true) && m.author.id === msg.author.id) {
-      return m;
-    }
-
-    return false;
+    return numberBetween(diff.asSeconds(), within * -1, 0, true) && m.author.id === msg.author.id;
   });
 
   const msgArray = authorMessages.array();
 
   if (msgArray.length) {
-    const diff = moment.duration(moment(msgArray[0].createdAt).diff());
+    const diff = moment.duration(moment(msgArray[0].createdAt).diff(moment()));
 
     if (diff.asSeconds() <= within) {
       return true;

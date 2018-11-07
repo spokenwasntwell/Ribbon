@@ -5,16 +5,33 @@ module.exports = {
         "mocha": true
     },
     "extends": ["eslint:recommended", "plugin:import/errors", "plugin:import/warnings"],
+    "parser": "typescript-eslint-parser",
     "parserOptions": {
         "sourceType": "module",
-        "ecmaVersion": 9
+        "ecmaFeatures": {
+            "modules": true
+        }
+    },
+    "plugins": ["typescript"],
+    "settings": {
+        "import/resolver": {
+            "node": {
+                "extensions": [
+                    ".js",
+                    ".ts"
+                ]
+            }
+        },
+        "import/parsers": {
+            "typescript-eslint-parser": [".ts"]
+        }
     },
     "rules": {
         "accessor-pairs": "error",
         "array-bracket-newline": "error",
         "array-bracket-spacing": [
             "error",
-            "never"
+            "always"
         ],
         "array-callback-return": "error",
         "array-element-newline": "off",
@@ -43,7 +60,13 @@ module.exports = {
         "camelcase": "error",
         "capitalized-comments": "off",
         "class-methods-use-this": "off",
-        "comma-dangle": "error",
+        "comma-dangle": ["error", {
+            "arrays": "never",
+            "objects": "always-multiline",
+            "imports": "never",
+            "exports": "never",
+            "functions": "never"
+        }],
         "comma-spacing": [
             "error",
             {
@@ -116,10 +139,9 @@ module.exports = {
         ],
         "lines-around-comment": "error",
         "lines-around-directive": "error",
-        "lines-between-class-members": [
-            "error",
-            "always"
-        ],
+        "lines-between-class-members": ["error", "always", {
+            "exceptAfterSingleLine": true
+        }],
         "max-depth": "off",
         "max-len": ["error", 200],
         "max-lines": "off",
@@ -179,7 +201,9 @@ module.exports = {
         "no-multi-assign": "error",
         "no-multi-spaces": "error",
         "no-multi-str": "error",
-        "no-multiple-empty-lines": ["error", {"max": 1}],
+        "no-multiple-empty-lines": ["error", {
+            "max": 1
+        }],
         "no-native-reassign": "error",
         "no-negated-condition": "off",
         "no-negated-in-lhs": "error",
@@ -245,7 +269,7 @@ module.exports = {
             "ImportDeclaration": "never",
             "ExportDeclaration": "never"
         }],
-        "object-curly-spacing": ["error", "never"],
+        "object-curly-spacing": ["error", "always"],
         "object-property-newline": "error",
         "object-shorthand": "error",
         "one-var": "error",
@@ -264,7 +288,7 @@ module.exports = {
         }],
         "prefer-numeric-literals": "error",
         "prefer-promise-reject-errors": "error",
-        "prefer-reflect": "error",
+        "prefer-reflect": "off",
         "prefer-rest-params": "error",
         "prefer-spread": "error",
         "prefer-template": "error",
@@ -315,6 +339,11 @@ module.exports = {
         "yoda": [
             "error",
             "never"
-        ]
+        ],
+        "typescript/class-name-casing": "error",
+        "typescript/no-unused-vars": "error",
+        "typescript/no-use-before-define": "error",
+        "typescript/no-var-requires": "off",
+        "import/namespace": "off",
     }
 };
