@@ -9,7 +9,7 @@
     "module": "commonjs",
     "moduleResolution": "Node",
     "noFallthroughCasesInSwitch": true,
-    "noImplicitAny": false,
+    "noImplicitAny": true,
     "noImplicitReturns": true,
     "noImplicitThis": true,
     "noUnusedLocals": true,
@@ -17,7 +17,7 @@
     "removeComments": true,
     "skipLibCheck": true,
     "typeRoots": ["node_modules/@types"],
-    "types": ["node"],
+    "types": ["node", "mocha"],
   },
   "exclude": ["node_modules", "dist", "build"],
 }

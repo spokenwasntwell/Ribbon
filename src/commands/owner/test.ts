@@ -1,10 +1,7 @@
-/* eslint-disable multiline-comment-style, capitalized-comments, line-comment-position, require-await, no-console */
-/* eslint-disable no-unused-vars, consistent-return, one-var, newline-per-chained-call, no-shadow, no-undefined, newline-after-var*/
-
-import { Command } from 'discord.js-commando';
+import { Command, CommandoClient, CommandMessage } from 'discord.js-commando';
 
 export default class TestCommand extends Command {
-  constructor (client) {
+  constructor (client : CommandoClient) {
     super(client, {
       name: 'test',
       memberName: 'test',
@@ -15,7 +12,7 @@ export default class TestCommand extends Command {
     });
   }
 
-  run (msg) {
+  run (msg : CommandMessage) {
     return msg.say('derp');
   }
 }

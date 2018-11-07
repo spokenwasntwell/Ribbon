@@ -1,9 +1,9 @@
-import * as path from 'path';
-import { Client, CommandoClient, CommandoGuild, CommandMessage, SyncSQLiteProvider } from 'discord.js-commando';
 import { handleCmdErr, handleDebug, handleErr, handleGuildJoin, handleGuildLeave,
   handleMemberJoin, handleMemberLeave, handleMsg, handlePresenceUpdate,
   handleRateLimit, handleReady, handleUnknownCmd, handleWarn, handleRejection } from './components/events';
+import { Client, CommandoClient, CommandoGuild, CommandMessage, SyncSQLiteProvider } from 'discord.js-commando';
 import { GuildMember, Message, RateLimitData } from 'discord.js';
+import * as path from 'path';
 import * as Database from 'better-sqlite3';
 
 export default class Ribbon {
@@ -87,7 +87,7 @@ export default class Ribbon {
       })
       .registerCommandsIn({
         dirname: path.join(__dirname, 'commands'),
-        filter: fileName => (/\.ts/).test(fileName) ? fileName : null,
+        filter: (fileName : string) => (/\.ts/).test(fileName) ? fileName : null,
       });
 
     return this.client.login(this.token);

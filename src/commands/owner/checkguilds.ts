@@ -6,11 +6,11 @@
  * @returns {Message} Amount and list of guilds in code blocks
  */
 
-import { Command } from 'discord.js-commando';
+import { Command, CommandoClient, CommandMessage } from 'discord.js-commando';
 import { stripIndents } from 'common-tags';
 
 export default class CheckGuildsCommand extends Command {
-  constructor (client) {
+  constructor (client : CommandoClient) {
     super(client, {
       name: 'checkguilds',
       memberName: 'checkguilds',
@@ -21,7 +21,7 @@ export default class CheckGuildsCommand extends Command {
     });
   }
 
-  run (msg) {
+  run (msg : CommandMessage) {
     return msg.say(stripIndents`\`\`\`The current guild count: ${this.client.guilds.size}
         
         Guild list:

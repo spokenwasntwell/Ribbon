@@ -55,7 +55,7 @@ const renderReminderMessage = async (client : CommandoClient) => {
       }
     }
   } catch (err) {
-    const channel = client.channels.get(process.env.ribbonlogchannel) as TextChannel;
+    const channel = client.channels.get(process.env.ISSUE_LOG_CHANNEL_ID) as TextChannel;
 
     channel.send(stripIndents`
       <@${client.owners[0].id}> Error occurred sending someone their reminder!
@@ -121,7 +121,7 @@ const renderCountdownMessage = (client : CommandoClient) => {
       }
     }
   } catch (err) {
-    const channel = client.channels.get(process.env.ribbonlogchannel) as TextChannel;
+    const channel = client.channels.get(process.env.ISSUE_LOG_CHANNEL_ID) as TextChannel;
 
     channel.send(stripIndents`
     <@${client.owners[0].id}> Error occurred sending a countdown!
@@ -247,7 +247,7 @@ const renderLottoMessage = (client : CommandoClient) => {
       }
     }
   } catch (err) {
-    const channel = client.channels.get(process.env.ribbonlogchannel) as TextChannel;
+    const channel = client.channels.get(process.env.ISSUE_LOG_CHANNEL_ID) as TextChannel;
 
     channel.send(stripIndents`
     <@${client.owners[0].id}> Error occurred giving someone their lotto payout!
@@ -291,7 +291,7 @@ const renderTimerMessage = (client : CommandoClient) => {
       }
     }
   } catch (err) {
-    const channel = client.channels.get(process.env.ribbonlogchannel) as TextChannel;
+    const channel = client.channels.get(process.env.ISSUE_LOG_CHANNEL_ID) as TextChannel;
 
     channel.send(stripIndents`
     <@${client.owners[0].id}> Error occurred sending a timed message!
@@ -326,7 +326,7 @@ const forceStopTyping = (client : CommandoClient) => {
 };
 
 export const handleCmdErr = (client : CommandoClient, cmd : Command, err : Error, msg : CommandMessage) => {
-  const channel = client.channels.get(process.env.ribbonlogchannel) as TextChannel;
+  const channel = client.channels.get(process.env.ISSUE_LOG_CHANNEL_ID) as TextChannel;
 
   channel.send(stripIndents`
   Caught **Command Error**!
@@ -343,7 +343,7 @@ export const handleDebug = (info : string) => {
 };
 
 export const handleErr = (client : CommandoClient, err : string) => {
-  const channel = client.channels.get(process.env.ribbonlogchannel) as TextChannel;
+  const channel = client.channels.get(process.env.ISSUE_LOG_CHANNEL_ID) as TextChannel;
 
   channel.send(stripIndents`
   Caught **WebSocket Error**!
@@ -403,7 +403,7 @@ export const handleGuildLeave = (client : CommandoClient, guild: CommandoGuild) 
   try {
     casinoConn.exec(`DROP TABLE IF EXISTS "${guild.id}"`);
   } catch (err) {
-    const channel = client.channels.get(process.env.ribbonlogchannel) as TextChannel;
+    const channel = client.channels.get(process.env.ISSUE_LOG_CHANNEL_ID) as TextChannel;
 
     channel.send(stripIndents`
       <@${client.owners[0].id}> Failed to purge ${guild.name} (${guild.id}) from the casino database!
@@ -415,7 +415,7 @@ export const handleGuildLeave = (client : CommandoClient, guild: CommandoGuild) 
   try {
     pastasConn.exec(`DROP TABLE IF EXISTS "${guild.id}"`);
   } catch (err) {
-    const channel = client.channels.get(process.env.ribbonlogchannel) as TextChannel;
+    const channel = client.channels.get(process.env.ISSUE_LOG_CHANNEL_ID) as TextChannel;
 
     channel.send(stripIndents`
       <@${client.owners[0].id}> Failed to purge ${guild.name} (${guild.id}) from the pastas database!
@@ -427,7 +427,7 @@ export const handleGuildLeave = (client : CommandoClient, guild: CommandoGuild) 
   try {
     timerConn.exec(`DROP TABLE IF EXISTS "${guild.id}"`);
   } catch (err) {
-    const channel = client.channels.get(process.env.ribbonlogchannel) as TextChannel;
+    const channel = client.channels.get(process.env.ISSUE_LOG_CHANNEL_ID) as TextChannel;
 
     channel.send(stripIndents`
       <@${client.owners[0].id}> Failed to purge ${guild.name} (${guild.id}) from the timers database!
@@ -439,7 +439,7 @@ export const handleGuildLeave = (client : CommandoClient, guild: CommandoGuild) 
   try {
     warningsConn.exec(`DROP TABLE IF EXISTS "${guild.id}"`);
   } catch (err) {
-    const channel = client.channels.get(process.env.ribbonlogchannel) as TextChannel;
+    const channel = client.channels.get(process.env.ISSUE_LOG_CHANNEL_ID) as TextChannel;
 
     channel.send(stripIndents`
       <@${client.owners[0].id}> Failed to purge ${guild.name} (${guild.id}) from the warnings database!
@@ -482,7 +482,7 @@ export const handleMemberJoin = (client : CommandoClient, joinMember : GuildMemb
       }
     }
   } catch (err) {
-    const channel = client.channels.get(process.env.ribbonlogchannel) as TextChannel;
+    const channel = client.channels.get(process.env.ISSUE_LOG_CHANNEL_ID) as TextChannel;
 
     channel.send(stripIndents`
   <@${client.owners[0].id}> An error sending the member join memberlog message!
@@ -497,7 +497,7 @@ export const handleMemberJoin = (client : CommandoClient, joinMember : GuildMemb
       renderJoinMessage(joinMember);
     }
   } catch (err) {
-    const channel = client.channels.get(process.env.ribbonlogchannel) as TextChannel;
+    const channel = client.channels.get(process.env.ISSUE_LOG_CHANNEL_ID) as TextChannel;
 
     channel.send(stripIndents`
   <@${client.owners[0].id}> An error occurred sending the member join image!
@@ -531,7 +531,7 @@ export const handleMemberLeave = (client : CommandoClient, leaveMember : GuildMe
     }
 
   } catch (err) {
-    const channel = client.channels.get(process.env.ribbonlogchannel) as TextChannel;
+    const channel = client.channels.get(process.env.ISSUE_LOG_CHANNEL_ID) as TextChannel;
 
     channel.send(stripIndents`
     <@${client.owners[0].id}> An error occurred sending the member left memberlog message!
@@ -557,7 +557,7 @@ export const handleMemberLeave = (client : CommandoClient, leaveMember : GuildMe
       renderLeaveMessage(leaveMember);
     }
   } catch (err) {
-    const channel = client.channels.get(process.env.ribbonlogchannel) as TextChannel;
+    const channel = client.channels.get(process.env.ISSUE_LOG_CHANNEL_ID) as TextChannel;
 
     channel.send(stripIndents`
     <@${client.owners[0].id}> An error occurred sending the member leave image!
@@ -617,9 +617,9 @@ export const handlePresenceUpdate = async (client : CommandoClient, oldMember : 
         }
         if (!(/(twitch)/i).test(oldActivity.url) && (/(twitch)/i).test(newActivity.url)) {
           const userFetch = await fetch(`https://api.twitch.tv/helix/users?${querystring.stringify({ login: newActivity.url.split('/')[3] })}`,
-              { headers: { 'Client-ID': process.env.twitchclientid } }),
+              { headers: { 'Client-ID': process.env.TWITCH_CLIENT_ID } }),
             userData = await userFetch.json(),
-            streamFetch = await fetch(`https://api.twitch.tv/helix/streams?${querystring.stringify({ channel: userData.data[0].id })}`, { headers: { 'Client-ID': process.env.twitchclientid } }),
+            streamFetch = await fetch(`https://api.twitch.tv/helix/streams?${querystring.stringify({ channel: userData.data[0].id })}`, { headers: { 'Client-ID': process.env.TWITCH_CLIENT_ID } }),
             streamData = await streamFetch.json(),
             twitchChannelID = curGuild.settings.get('twitchchannelID', null),
             twitchChannel = twitchChannelID ? curGuild.channels.get(twitchChannelID) as TextChannel : null,
@@ -651,7 +651,7 @@ export const handlePresenceUpdate = async (client : CommandoClient, oldMember : 
           }
         }
       } catch (err) {
-        const channel = client.channels.get(process.env.ribbonlogchannel) as TextChannel;
+        const channel = client.channels.get(process.env.ISSUE_LOG_CHANNEL_ID) as TextChannel;
 
         channel.send(stripIndents`
               <@${client.owners[0].id}> Error occurred in sending a twitch live notifier!
@@ -668,7 +668,7 @@ export const handlePresenceUpdate = async (client : CommandoClient, oldMember : 
 };
 
 export const handleRateLimit = (client : CommandoClient, info : RateLimitData) => {
-  const channel = client.channels.get(process.env.ribbonlogchannel) as TextChannel;
+  const channel = client.channels.get(process.env.ISSUE_LOG_CHANNEL_ID) as TextChannel;
 
   channel.send(stripIndents`
       Ran into a **rate limit**!
@@ -711,7 +711,7 @@ export const handleReady = (client : CommandoClient) => {
 };
 
 export const handleRejection = (client: CommandoClient, reason: Error | any, p: Promise<any>) => {
-  const channel = client.channels.get(process.env.ribbonlogchannel) as TextChannel;
+  const channel = client.channels.get(process.env.ISSUE_LOG_CHANNEL_ID) as TextChannel;
 
   channel.send(stripIndents`
       Caught **Unhandled Rejection **!
@@ -734,7 +734,7 @@ export const handleUnknownCmd = (client : CommandoClient, msg : CommandMessage) 
 };
 
 export const handleWarn = (client : CommandoClient, warn : string) => {
-  const channel = client.channels.get(process.env.ribbonlogchannel) as TextChannel;
+  const channel = client.channels.get(process.env.ISSUE_LOG_CHANNEL_ID) as TextChannel;
 
   channel.send(stripIndents`
       Caught **General Warning**!
