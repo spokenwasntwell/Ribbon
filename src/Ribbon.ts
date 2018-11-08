@@ -16,6 +16,7 @@ export default class Ribbon {
       commandPrefix: '!',
       owner: [ '112001393140723712', '268792781713965056' ],
       unknownCommandResponse: false,
+      typescript: true,
       presence: {
         status: 'online',
         activity: {
