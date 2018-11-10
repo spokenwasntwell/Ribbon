@@ -69,7 +69,8 @@ export default class CopyPastaCommand extends Command {
           for (const part of splitContent) {
             await msg.say(part);
           }
-          
+          stopTyping(msg);
+
           return null;
         }
 

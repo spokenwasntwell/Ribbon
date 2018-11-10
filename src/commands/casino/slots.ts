@@ -38,7 +38,7 @@ export default class SlotsCommand extends Command {
           key: 'chips',
           prompt: 'How many chips do you want to gamble?',
           type: 'integer',
-          validate: (chips : number) => chips === 1 || chips === 2 || chips === 3 
+          validate: (chips : number) => Number(chips) === 1 || Number(chips) === 2 || Number(chips) === 3 
             ? true 
             : stripIndents`Reply with a chips amount
                            Has to be either 1, 2 or 3

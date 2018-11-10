@@ -6,7 +6,7 @@
 
 /* eslint-disable one-var */
 
-import { GuildMember, Message, MessageAttachment, MessageEmbed, RateLimitData, TextChannel } from 'discord.js';
+import { GuildMember, MessageAttachment, MessageEmbed, RateLimitData, TextChannel } from 'discord.js';
 import { badwords, caps, duptext, emojis, invites, links, mentions, slowmode } from './automod';
 import { Command, CommandMessage, CommandoClient, CommandoGuild } from 'discord.js-commando';
 import { oneLine, stripIndents } from 'common-tags';
@@ -569,7 +569,7 @@ export const handleMemberLeave = (client : CommandoClient, leaveMember : GuildMe
 };
 
 // eslint-disable-next-line complexity, consistent-return
-export const handleMsg = (client : CommandoClient, msg : Message) : void => {
+export const handleMsg = (client : CommandoClient, msg : CommandMessage) : void => {
   const guild = msg.guild as CommandoGuild;
 
   if (msg.guild && msg.deletable && guild.settings.get('automod', false).enabled) {
