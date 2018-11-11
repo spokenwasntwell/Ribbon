@@ -15,16 +15,18 @@ import { Command, CommandMessage, CommandoClient } from 'discord.js-commando';
 import { deleteCommandMessages, modLogMessage, startTyping, stopTyping, validateBool } from '../../components/util';
 
 export default class ExcessiveCapsCommand extends Command {
-  constructor (client : CommandoClient) {
+  constructor (client: CommandoClient) {
     super(client, {
       name: 'excessivecaps',
-      memberName: 'excessivecaps',
-      group: 'automod',
       aliases: [ 'spammedcaps', 'manycaps', 'caps' ],
+      group: 'automod',
+      memberName: 'excessivecaps',
       description: 'Toggle the excessive caps filter',
       format: 'BooleanResolvable',
       examples: [ 'excessivecaps enable' ],
       guildOnly: true,
+      clientPermissions: [ 'MANAGE_MESSAGES' ],
+      userPermissions: [ 'MANAGE_MESSAGES' ],
       throttling: {
         usages: 2,
         duration: 3,
@@ -34,14 +36,14 @@ export default class ExcessiveCapsCommand extends Command {
           key: 'option',
           prompt: 'Enable or disable the Excessive Caps filter?',
           type: 'boolean',
-          validate: (bool : boolean) => validateBool(bool),
+          validate: (bool: boolean) => validateBool(bool),
         },
         {
           key: 'threshold',
           prompt: 'After how much percent of caps should a message be deleted?',
           type: 'string',
           default: '60',
-          validate: (t : string) => {
+          validate: (t: string) => {
             if ((/(?:[%])/).test(t)) {
               if (Number(t.slice(0, -1))) {
                 return true;
@@ -60,26 +62,20 @@ export default class ExcessiveCapsCommand extends Command {
           default: 10,
         }
       ],
-      clientPermissions: [ 'MANAGE_MESSAGES' ],
-      userPermissions: [ 'MANAGE_MESSAGES' ],
     });
   }
 
-  run (msg : CommandMessage, { option, threshold, minlength }) {
+  public run (msg: CommandMessage, { option, threshold, minlength }) {
     startTyping(msg);
-    if ((/(?:[%])/).test(threshold)) {
-      threshold = Number(threshold.slice(0, -1));
-    } else {
-      threshold = Number(threshold);
-    }
+    threshold = ((/(?:[%])/).test(threshold)) ? Number(threshold.slice(0, -1)) : Number(threshold);
 
-    const ecfEmbed = new MessageEmbed(),
-      modlogChannel = msg.guild.settings.get('modlogchannel',
-        msg.guild.channels.find(c => c.name === 'mod-logs') ? msg.guild.channels.find(c => c.name === 'mod-logs').id : null),
-      options = {
-        enabled: option,
-        threshold,
+    const ecfEmbed = new MessageEmbed();
+    const modlogChannel = msg.guild.settings.get('modlogchannel',
+        msg.guild.channels.find(c => c.name === 'mod-logs') ? msg.guild.channels.find(c => c.name === 'mod-logs').id : null);
+    const options = {
         minlength,
+        threshold,
+        enabled: option,
       };
 
     msg.guild.settings.set('caps', options);

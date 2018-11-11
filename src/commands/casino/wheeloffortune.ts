@@ -18,12 +18,12 @@ import * as path from 'path';
 import { deleteCommandMessages, roundNumber, startTyping, stopTyping } from '../../components/util';
 
 export default class WheelOfFortuneCommand extends Command {
-  constructor (client : CommandoClient) {
+  constructor (client: CommandoClient) {
     super(client, {
       name: 'wheeloffortune',
-      memberName: 'wheeloffortune',
-      group: 'casino',
       aliases: [ 'wheel', 'wof' ],
+      group: 'casino',
+      memberName: 'wheeloffortune',
       description: 'Gamble your chips iat the wheel of fortune',
       format: 'AmountOfChips',
       examples: [ 'wof 50' ],
@@ -37,19 +37,19 @@ export default class WheelOfFortuneCommand extends Command {
           key: 'chips',
           prompt: 'How many chips do you want to gamble?',
           type: 'integer',
-          validate: (chips : number) => chips >= 1 && chips <= 1000000 ? true : 'Reply with a chips amount between 1 and 10000. Example: `10`',
-          parse: (chips : number) => roundNumber(chips),
+          validate: (chips: number) => chips >= 1 && chips <= 1000000 ? true : 'Reply with a chips amount between 1 and 10000. Example: `10`',
+          parse: (chips: number) => roundNumber(chips),
         }
       ],
     });
   }
 
-  run (msg : CommandMessage, { chips }) {
-    const arrowmojis = [ '⬆', '↖', '⬅', '↙', '⬇', '↘', '➡', '↗' ],
-      conn = new Database(path.join(__dirname, '../../data/databases/casino.sqlite3')),
-      multipliers = [ 0.1, 0.2, 0.3, 0.5, 1.2, 1.5, 1.7, 2.4 ] as Array<number>,
-      spin = Math.floor(Math.random() * multipliers.length) as number,
-      wofEmbed = new MessageEmbed();
+  public run (msg: CommandMessage, { chips }) {
+    const arrowmojis = [ '⬆', '↖', '⬅', '↙', '⬇', '↘', '➡', '↗' ];
+    const conn = new Database(path.join(__dirname, '../../data/databases/casino.sqlite3'));
+    const multipliers = [ 0.1, 0.2, 0.3, 0.5, 1.2, 1.5, 1.7, 2.4 ] as Array<number>;
+    const spin = Math.floor(Math.random() * multipliers.length) as number;
+    const wofEmbed = new MessageEmbed();
 
     wofEmbed
       .setAuthor(msg.member.displayName, msg.author.displayAvatarURL({ format: 'png' }))
@@ -75,15 +75,15 @@ export default class WheelOfFortuneCommand extends Command {
 
         wofEmbed
           .setTitle(`${msg.author.tag} ${multipliers[spin] < 1
-            ? `lost ${roundNumber(chips - (chips * multipliers[spin]))}` 
+            ? `lost ${roundNumber(chips - (chips * multipliers[spin]))}`
             : `won ${roundNumber((chips * multipliers[spin]) - chips)}`} chips`)
           .addField('Previous Balance', prevBal, true)
           .addField('New Balance', query.balance, true)
           .setDescription(`
   『${multipliers[1]}』   『${multipliers[0]}』   『${multipliers[7]}』
-  
+
   『${multipliers[2]}』      ${arrowmojis[spin]}        『${multipliers[6]}』
-  
+
   『${multipliers[3]}』   『${multipliers[4]}』   『${multipliers[5]}』
       `);
 

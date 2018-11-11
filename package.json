@@ -17,8 +17,8 @@
     "docs": "jsdoc2md --template ./docs/template.hbs --files ./src/commands/**/*.ts | tee docs/index.md ../Ribbon.wiki/All-Commands.md > NUL",
     "docs:json": "jsdoc2md --json --files ./src/commands/**/*.ts > ../favna.xyz/public/dist/ribbondocs.json",
     "docs:deploy": "yarn run docs && yarn run docs:json && git commit -am documentation && git push && cd ../Ribbon.wiki/ && git commit -am documentation && git push && cd ../favna.xyz/ && git commit -am documentation && git push",
-    "lint": "eslint src/commands/**/*.ts src/*.ts src/components/*.ts",
-    "lint:fix": "eslint --fix src/commands/**/*.ts src/*.ts src/components/*.ts",
+    "lint": "tslint -p . -c tslint.json src/**/**/*.ts src/*.ts",
+    "lint:fix": "yarn lint --fix",
     "start": "ts-node src/app.ts bow",
     "start:ribbon": "ts-node src/app.ts",
     "test": "yarn lint && mocha"
@@ -92,16 +92,13 @@
     "@types/chai": "^4.1.7",
     "@types/mocha": "^5.2.5",
     "chai": "^4.2.0",
-    "eslint": "^5.8.0",
-    "eslint-plugin-import": "^2.14.0",
-    "eslint-plugin-typescript": "^0.13.0",
     "jsdoc-to-markdown": "^4.0.1",
     "mocha": "^5.2.0",
     "mocha-typescript": "^1.1.17",
     "source-map-support": "^0.5.9",
     "ts-node": "^7.0.1",
-    "typescript": "^3.1.6",
-    "typescript-eslint-parser": "^20.1.1"
+    "tslint": "^5.11.0",
+    "typescript": "^3.1.6"
   },
   "directories": {
     "doc": "./docs",

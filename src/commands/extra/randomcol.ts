@@ -5,28 +5,28 @@
  * @module
  * @category extra
  * @name randomcol
- * @example randomcol  
- * -OR-  
- * randomcol #990000  
- * -OR-  
+ * @example randomcol
+ * -OR-
+ * randomcol #990000
+ * -OR-
  * randomcol 36B56e
  * @param {StringResolvable} [hex] Optional: Color hex to display
  * @returns {MessageEmbed} Color of embed matches generated color
  */
 
-import Jimp = require('jimp');
-import { Command, CommandoClient, CommandMessage } from 'discord.js-commando'; 
-import { MessageEmbed, MessageAttachment } from 'discord.js'; 
-import { deleteCommandMessages, stopTyping, startTyping } from '../../components/util';
 import { stripIndents } from 'common-tags';
+import { MessageAttachment, MessageEmbed } from 'discord.js';
+import { Command, CommandMessage, CommandoClient } from 'discord.js-commando';
+import Jimp = require('jimp');
+import { deleteCommandMessages, startTyping, stopTyping } from '../../components/util';
 
 export default class RandomColCommand extends Command {
-  constructor (client : CommandoClient) {
+  constructor (client: CommandoClient) {
     super(client, {
       name: 'randomcol',
-      memberName: 'randomcol',
-      group: 'extra',
       aliases: [ 'randhex', 'rhex', 'randomcolor', 'randcol', 'randomhex' ],
+      group: 'extra',
+      memberName: 'randomcol',
       description: 'Generate a random color',
       format: '[hex color]',
       examples: [ 'randomcol', 'randomcol #990000', 'randomcol 36B56e' ],
@@ -41,14 +41,14 @@ export default class RandomColCommand extends Command {
           prompt: 'What color do you want to preview?',
           type: 'string',
           default: 'random',
-          validate: (col : string) => {
+          validate: (col: string) => {
             if ((/^#{0,1}(?:[0-9a-fA-F]{6})$/i).test(col) || col === 'random') {
               return true;
             }
 
             return 'Respond with a hex formatted color of 6 characters, example: `#990000` or `36B56e`';
           },
-          parse: (col : string) => {
+          parse: (col: string) => {
             if ((/^#{0}(?:[0-9a-fA-F]{6})$/i).test(col)) {
               return `#${col}`;
             }
@@ -60,21 +60,21 @@ export default class RandomColCommand extends Command {
     });
   }
 
-  hextodec (color : string) {
+  public hextodec (color: string) {
     return parseInt(color.replace('#', ''), 16);
   }
 
-  hextorgb (color : string) {
+  public hextorgb (color: string) {
     const result = (/^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})(?:[a-f\d])*$/i).exec(color);
 
     return {
       r: parseInt(result[1], 16),
-      g: parseInt(result[2], 16),
+      g: parseInt(result[2], 16), /* tslint:disable-line:object-literal-sort-keys */
       b: parseInt(result[3], 16),
     };
   }
 
-  async run (msg : CommandMessage, { col }) {
+  public async run (msg: CommandMessage, { col }) {
     startTyping(msg);
     const embed = new MessageEmbed();
     const hex = col !== 'random' ? col : `#${Math.floor(Math.random() * 16777215).toString(16)}`;

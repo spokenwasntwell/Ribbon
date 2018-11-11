@@ -15,16 +15,18 @@ import { Command, CommandMessage, CommandoClient } from 'discord.js-commando';
 import { deleteCommandMessages, modLogMessage, startTyping, stopTyping, validateBool } from '../../components/util';
 
 export default class InvitesFilterCommand extends Command {
-  constructor (client : CommandoClient) {
+  constructor (client: CommandoClient) {
     super(client, {
       name: 'invitesfilter',
-      memberName: 'invitesfilter',
-      group: 'automod',
       aliases: [ 'if', 'noinvites' ],
+      group: 'automod',
+      memberName: 'invitesfilter',
       description: 'Toggle the Discord server invites filter',
       format: 'BooleanResolvable',
       examples: [ 'invitesfilter enable' ],
       guildOnly: true,
+      clientPermissions: [ 'MANAGE_MESSAGES' ],
+      userPermissions: [ 'MANAGE_MESSAGES' ],
       throttling: {
         usages: 2,
         duration: 3,
@@ -34,19 +36,17 @@ export default class InvitesFilterCommand extends Command {
           key: 'option',
           prompt: 'Enable or disable the external links filter?',
           type: 'boolean',
-          validate: (bool : boolean) => validateBool(bool),
+          validate: (bool: boolean) => validateBool(bool),
         }
       ],
-      clientPermissions: [ 'MANAGE_MESSAGES' ],
-      userPermissions: [ 'MANAGE_MESSAGES' ],
     });
   }
 
-  run (msg : CommandMessage, { option }) {
+  public run (msg: CommandMessage, { option }) {
     startTyping(msg);
 
-    const ifEmbed = new MessageEmbed(),
-      modlogChannel = msg.guild.settings.get('modlogchannel',
+    const ifEmbed = new MessageEmbed();
+    const modlogChannel = msg.guild.settings.get('modlogchannel',
         msg.guild.channels.find(c => c.name === 'mod-logs') ? msg.guild.channels.find(c => c.name === 'mod-logs').id : null);
 
     msg.guild.settings.set('invites', option);

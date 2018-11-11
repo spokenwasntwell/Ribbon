@@ -1,4 +1,5 @@
-/* eslint-disable consistent-return, max-len, no-continue, one-var*/
+/* tslint:disable */
+// @ts-nocheck
 
 export const BattleAbilities = [
   {
@@ -29,18 +30,6 @@ export const BattleAbilities = [
       'If this Pokemon is KOed with a contact move, that move\'s user loses 1/4 its max HP.',
     id: 'aftermath',
     name: 'Aftermath',
-    onAfterDamageOrder: 1,
-    onAfterDamage (target, source, move) {
-      if (
-        source &&
-        source !== target &&
-        move &&
-        move.flags.contact &&
-        !target.hp
-      ) {
-        this.damage(source.maxhp / 4, source, target);
-      }
-    },
     rating: 2.5,
     num: 106,
   },
@@ -76,9 +65,6 @@ export const BattleAbilities = [
   {
     shortDesc:
       'While this Pokemon is active, the effects of weather conditions are disabled.',
-    onStart (pokemon) {
-      this.add('-ability', pokemon, 'Air Lock');
-    },
     suppressWeather: true,
     id: 'airlock',
     name: 'Air Lock',
@@ -111,27 +97,6 @@ export const BattleAbilities = [
       'On switch-in, this Pokemon is alerted if any opposing Pokemon has an attack that is super effective on this Pokemon, or an OHKO move. Counter, Metal Burst, and Mirror Coat count as attacking moves of their respective types, while Hidden Power, Judgment, Natural Gift, Techno Blast, and Weather Ball are considered Normal-type moves.',
     shortDesc:
       'On switch-in, this Pokemon shudders if any foe has a supereffective or OHKO move.',
-    onStart (pokemon) {
-      for (const target of pokemon.side.foe.active) {
-        if (target.fainted) {
-          continue;
-        }
-        for (const moveSlot of target.moveSlots) {
-          const move = this.getMove(moveSlot.move);
-
-          if (
-            move.category !== 'Status' &&
-            ((this.getImmunity(move.type, pokemon) &&
-              this.getEffectiveness(move.type, pokemon) > 0) ||
-              move.ohko)
-          ) {
-            this.add('-ability', pokemon, 'Anticipation');
-
-            return;
-          }
-        }
-      }
-    },
     id: 'anticipation',
     name: 'Anticipation',
     rating: 1,
@@ -142,25 +107,6 @@ export const BattleAbilities = [
       'Prevents adjacent opposing Pokemon from choosing to switch out unless they are immune to trapping or are airborne.',
     shortDesc:
       'Prevents adjacent foes from choosing to switch unless they are airborne.',
-    onFoeTrapPokemon (pokemon) {
-      if (!this.isAdjacent(pokemon, this.effectData.target)) {
-        return;
-      }
-      if (pokemon.isGrounded()) {
-        pokemon.tryTrap(true);
-      }
-    },
-    onFoeMaybeTrapPokemon (pokemon, source) {
-      if (!source) {
-        source = this.effectData.target;
-      }
-      if (!this.isAdjacent(pokemon, source)) {
-        return;
-      }
-      if (pokemon.isGrounded(!pokemon.knownType)) {
-        pokemon.maybeTrapped = true;
-      }
-    },
     id: 'arenatrap',
     name: 'Arena Trap',
     rating: 4.5,
@@ -171,29 +117,6 @@ export const BattleAbilities = [
       'This Pokemon and its allies cannot be affected by Attract, Disable, Encore, Heal Block, Taunt, or Torment.',
     shortDesc:
       'Protects user/allies from Attract, Disable, Encore, Heal Block, Taunt, and Torment.',
-    onAllyTryAddVolatile (status, target, effect) {
-      if (
-        [
-          'attract',
-          'disable',
-          'encore',
-          'healblock',
-          'taunt',
-          'torment'
-        ].includes(status.id)
-      ) {
-        if (effect.effectType === 'Move') {
-          this.add(
-            '-activate',
-            this.effectData.target,
-            'ability: Aroma Veil',
-            `[of] ${target}`
-          );
-        }
-
-        return null;
-      }
-    },
     id: 'aromaveil',
     name: 'Aroma Veil',
     rating: 1.5,
@@ -204,15 +127,6 @@ export const BattleAbilities = [
       'While this Pokemon is active, the effects of the Abilities Dark Aura and Fairy Aura are reversed, multiplying the power of Dark- and Fairy-type moves, respectively, by 3/4 instead of 1.33.',
     shortDesc:
       'While this Pokemon is active, the Dark Aura and Fairy Aura power modifier is 0.75x.',
-    onStart (pokemon) {
-      this.add('-ability', pokemon, 'Aura Break');
-    },
-    onAnyTryPrimaryHit (target, source, move) {
-      if (target === source || move.category === 'Status') {
-        return;
-      }
-      move.hasAuraBreak = true;
-    },
     id: 'aurabreak',
     name: 'Aura Break',
     rating: 1.5,
@@ -223,21 +137,6 @@ export const BattleAbilities = [
       'Causes adjacent opposing Pokemon to lose 1/8 of their maximum HP, rounded down, at the end of each turn if they are asleep.',
     shortDesc:
       'Causes sleeping adjacent foes to lose 1/8 of their max HP at the end of each turn.',
-    onResidualOrder: 26,
-    onResidualSubOrder: 1,
-    onResidual (pokemon) {
-      if (!pokemon.hp) {
-        return;
-      }
-      for (const target of pokemon.side.foe.active) {
-        if (!target || !target.hp) {
-          continue;
-        }
-        if (target.status === 'slp' || target.hasAbility('comatose')) {
-          this.damage(target.maxhp / 8, target, pokemon);
-        }
-      }
-    },
     id: 'baddreams',
     name: 'Bad Dreams',
     rating: 2,
@@ -265,28 +164,7 @@ export const BattleAbilities = [
       'If this Pokemon is a Greninja, it transforms into Ash-Greninja after knocking out a Pokemon. As Ash-Greninja, its Water Shuriken has 20 base power and always hits 3 times.',
     shortDesc:
       'After KOing a Pokemon: becomes Ash-Greninja, Water Shuriken: 20 power, hits 3x.',
-    onSourceFaint (source, effect) {
-      if (
-        effect &&
-        effect.effectType === 'Move' &&
-        source.template.speciesid === 'greninja' &&
-        source.hp &&
-        !source.transformed &&
-        source.side.foe.pokemonLeft
-      ) {
-        this.add('-activate', source, 'ability: Battle Bond');
-        source.formeChange('Greninja-Ash', this.effect, true);
-      }
-    },
     onModifyMovePriority: -1,
-    onModifyMove (move, attacker) {
-      if (
-        move.id === 'watershuriken' &&
-        attacker.template.species === 'Greninja-Ash'
-      ) {
-        move.multihit = 3;
-      }
-    },
     id: 'battlebond',
     name: 'Battle Bond',
     rating: 3,

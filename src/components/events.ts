@@ -4,53 +4,51 @@
  * @copyright © 2017-2018 Favna
  */
 
-/* eslint-disable one-var */
-
-import { GuildMember, MessageAttachment, MessageEmbed, RateLimitData, TextChannel } from 'discord.js';
-import { badwords, caps, duptext, emojis, invites, links, mentions, slowmode } from './automod';
-import { Command, CommandMessage, CommandoClient, CommandoGuild } from 'discord.js-commando';
-import { oneLine, stripIndents } from 'common-tags';
-import { ordinal } from './util';
 import * as Database from 'better-sqlite3';
-// import * as fs from 'fs';
+import { oneLine, stripIndents } from 'common-tags';
+import { GuildMember, MessageAttachment, MessageEmbed, RateLimitData, TextChannel } from 'discord.js';
+import { Command, CommandMessage, CommandoClient, CommandoGuild } from 'discord.js-commando';
+import * as fs from 'fs';
+import Jimp = require('jimp');
 import * as moment from 'moment';
-import * as path from 'path';
-import Jimp from 'jimp';
-// import { decache } from 'decache';
-// import eshop from 'nintendo-switch-eshop';
-import fetch from 'node-fetch';
-import querystring from 'querystring';
-import ms from './ms';
 import 'moment-duration-format';
+import eshop from 'nintendo-switch-eshop';
+import fetch from 'node-fetch';
+import * as path from 'path';
+import querystring from 'querystring';
+import { badwords, caps, duptext, emojis, invites, links, mentions, slowmode } from './automod';
+import { decache } from './decache';
+import ms from './ms';
+import { ordinal } from './util';
 
-const renderReminderMessage = async (client : CommandoClient) => {
-  
+const renderReminderMessage = async (client: CommandoClient) => {
+
   const conn = new Database(path.join(__dirname, '../data/databases/reminders.sqlite3'));
 
   try {
     const query = conn.prepare('SELECT * FROM "reminders"').all();
 
     for (const row in query) {
-      const remindTime = moment(query[row].remindTime),
-        dura = moment.duration(remindTime.diff(moment()));
+      const remindTime = moment(query[row].remindTime);
+      const dura = moment.duration(remindTime.diff(moment()));
 
       if (dura.asMinutes() <= 0) {
-        const user = await client.users.get(query[row].userID);
+        const user = await client.users.fetch(query[row].userID);
 
         user.send({
           embed: {
+            author: {
+              iconURL: client.user.displayAvatarURL({ format: 'png' }),
+              name: 'Ribbon Reminders',
+            },
             color: 10610610,
             description: query[row].remindText,
-            author: {
-              name: 'Ribbon Reminders',
-              iconURL: client.user.displayAvatarURL({ format: 'png' }),
-            },
             thumbnail: { url: 'https://favna.xyz/images/ribbonhost/reminders.png' },
           },
         });
         conn.prepare('DELETE FROM "reminders" WHERE userID = $userid AND remindTime = $remindTime').run({
-          userid: query[row].userID,
           remindTime: query[row].remindTime,
+          userid: query[row].userID,
         });
       }
     }
@@ -65,7 +63,7 @@ const renderReminderMessage = async (client : CommandoClient) => {
   }
 };
 
-const renderCountdownMessage = (client : CommandoClient) => {
+const renderCountdownMessage = (client: CommandoClient) => {
   const conn = new Database(path.join(__dirname, '../data/databases/countdowns.sqlite3'));
 
   try {
@@ -75,14 +73,14 @@ const renderCountdownMessage = (client : CommandoClient) => {
       const rows = conn.prepare(`SELECT * FROM "${tables[table].name}"`).all();
 
       for (const row in rows) {
-        const cdmoment = moment(rows[row].lastsend).add(24, 'hours'),
-          dura = moment.duration(cdmoment.diff(moment()));
+        const cdmoment = moment(rows[row].lastsend).add(24, 'hours');
+        const dura = moment.duration(cdmoment.diff(moment()));
 
         if (dura.asMinutes() <= 0) {
-          const guild = client.guilds.get(tables[table].name),
-            channel = guild.channels.get(rows[row].channel) as TextChannel,
-            timerEmbed = new MessageEmbed(),
-            { me } = client.guilds.get(tables[table].name);
+          const guild = client.guilds.get(tables[table].name);
+          const channel = guild.channels.get(rows[row].channel) as TextChannel;
+          const timerEmbed = new MessageEmbed();
+          const { me } = client.guilds.get(tables[table].name);
 
           timerEmbed
             .setAuthor('Countdown Reminder', me.user.displayAvatarURL({ format: 'png' }))
@@ -131,15 +129,15 @@ const renderCountdownMessage = (client : CommandoClient) => {
   }
 };
 
-const renderJoinMessage = async (member : GuildMember) => {
+const renderJoinMessage = async (member: GuildMember) => {
   try {
-    const avatar = await Jimp.read(member.user.displayAvatarURL({ format: 'png' })),
-      border = await Jimp.read('https://www.favna.xyz/images/ribbonhost/jimp/border.png'),
-      canvas = await Jimp.read(500, 150),
-      newMemberEmbed = new MessageEmbed(),
-      fontLarge = await Jimp.loadFont(path.join(__dirname, '../data/fonts/roboto-large.fnt')),
-      fontMedium = await Jimp.loadFont(path.join(__dirname, '../data/fonts/roboto-medium.fnt')),
-      mask = await Jimp.read('https://www.favna.xyz/images/ribbonhost/jimp/mask.png');
+    const avatar = await Jimp.read(member.user.displayAvatarURL({ format: 'png' }));
+    const border = await Jimp.read('https://www.favna.xyz/images/ribbonhost/jimp/border.png');
+    const canvas = await Jimp.read(500, 150);
+    const newMemberEmbed = new MessageEmbed();
+    const fontLarge = await Jimp.loadFont(path.join(__dirname, '../data/fonts/roboto-large.fnt'));
+    const fontMedium = await Jimp.loadFont(path.join(__dirname, '../data/fonts/roboto-medium.fnt'));
+    const mask = await Jimp.read('https://www.favna.xyz/images/ribbonhost/jimp/mask.png');
 
     avatar.resize(136, Jimp.AUTO);
     mask.resize(136, Jimp.AUTO);
@@ -151,8 +149,8 @@ const renderJoinMessage = async (member : GuildMember) => {
     canvas.print(fontMedium, 160, 60, `you are the ${ordinal(member.guild.memberCount)} member`.toUpperCase());
     canvas.print(fontMedium, 160, 80, `of ${member.guild.name}`.toUpperCase());
 
-    const buffer = await canvas.getBufferAsync(Jimp.MIME_PNG),
-      embedAttachment = new MessageAttachment(buffer, 'joinimg.png');
+    const buffer = await canvas.getBufferAsync(Jimp.MIME_PNG);
+    const embedAttachment = new MessageAttachment(buffer, 'joinimg.png');
 
     newMemberEmbed
       .attachFiles([ embedAttachment ])
@@ -160,9 +158,9 @@ const renderJoinMessage = async (member : GuildMember) => {
       .setTitle('NEW MEMBER!')
       .setDescription(`Please give a warm welcome to __**${member.displayName}**__  (\`${member.id}\`)`)
       .setImage('attachment://joinimg.png');
- 
-    const guild = member.guild as CommandoGuild,
-      channel = member.guild.channels.get(guild.settings.get('joinmsgchannel')) as TextChannel;
+
+    const guild = member.guild as CommandoGuild;
+    const channel = member.guild.channels.get(guild.settings.get('joinmsgchannel')) as TextChannel;
 
     return channel.send(`Welcome <@${member.id}> 🎗️!`, { embed: newMemberEmbed });
   } catch (err) {
@@ -170,15 +168,15 @@ const renderJoinMessage = async (member : GuildMember) => {
   }
 };
 
-const renderLeaveMessage = async (member : GuildMember) => {
+const renderLeaveMessage = async (member: GuildMember) => {
   try {
-    const avatar = await Jimp.read(member.user.displayAvatarURL({ format: 'png' })),
-      border = await Jimp.read('https://www.favna.xyz/images/ribbonhost/jimp/border.png'),
-      canvas = await Jimp.read(500, 150),
-      leaveMemberEmbed = new MessageEmbed(),
-      fontMedium = await Jimp.loadFont(path.join(__dirname, '../data/fonts/roboto-medium.fnt')),
-      fontLarge = await Jimp.loadFont(path.join(__dirname, '../data/fonts/roboto-large.fnt')),
-      mask = await Jimp.read('https://www.favna.xyz/images/ribbonhost/jimp/mask.png');
+    const avatar = await Jimp.read(member.user.displayAvatarURL({ format: 'png' }));
+    const border = await Jimp.read('https://www.favna.xyz/images/ribbonhost/jimp/border.png');
+    const canvas = await Jimp.read(500, 150);
+    const leaveMemberEmbed = new MessageEmbed();
+    const fontMedium = await Jimp.loadFont(path.join(__dirname, '../data/fonts/roboto-medium.fnt'));
+    const fontLarge = await Jimp.loadFont(path.join(__dirname, '../data/fonts/roboto-large.fnt'));
+    const mask = await Jimp.read('https://www.favna.xyz/images/ribbonhost/jimp/mask.png');
 
     avatar.resize(136, Jimp.AUTO);
     mask.resize(136, Jimp.AUTO);
@@ -190,9 +188,8 @@ const renderLeaveMessage = async (member : GuildMember) => {
     canvas.print(fontMedium, 160, 60, `there are now ${member.guild.memberCount} members`.toUpperCase());
     canvas.print(fontMedium, 160, 80, `on ${member.guild.name}`.toUpperCase());
 
-    // eslint-disable-next-line one-var
-    const buffer = await canvas.getBufferAsync(Jimp.MIME_PNG),
-      embedAttachment = new MessageAttachment(buffer, 'leaveimg.png');
+    const buffer = await canvas.getBufferAsync(Jimp.MIME_PNG);
+    const embedAttachment = new MessageAttachment(buffer, 'leaveimg.png');
 
     leaveMemberEmbed
       .attachFiles([ embedAttachment ])
@@ -201,8 +198,8 @@ const renderLeaveMessage = async (member : GuildMember) => {
       .setDescription(`You will be missed __**${member.displayName}**__ (\`${member.id}\`)`)
       .setImage('attachment://leaveimg.png');
 
-    const guild = member.guild as CommandoGuild,
-      channel = member.guild.channels.get(guild.settings.get('leavemsgchannel')) as TextChannel;
+    const guild = member.guild as CommandoGuild;
+    const channel = member.guild.channels.get(guild.settings.get('leavemsgchannel')) as TextChannel;
 
     return channel.send('', { embed: leaveMemberEmbed });
   } catch (err) {
@@ -210,27 +207,26 @@ const renderLeaveMessage = async (member : GuildMember) => {
   }
 };
 
-const renderLottoMessage = (client : CommandoClient) => {
+const renderLottoMessage = (client: CommandoClient) => {
   const conn = new Database(path.join(__dirname, '../data/databases/casino.sqlite3'));
 
   try {
     const tables = conn.prepare('SELECT name FROM sqlite_master WHERE type=\'table\'').all();
 
     for (const table in tables) {
-      const rows = conn.prepare(`SELECT * FROM "${tables[table].name}"`).all(),
-        winner = Math.floor(Math.random() * rows.length),
-        prevBal = rows[winner].balance;
+      const rows = conn.prepare(`SELECT * FROM "${tables[table].name}"`).all();
+      const winner = Math.floor(Math.random() * rows.length);
+      const prevBal = rows[winner].balance;
 
       rows[winner].balance += 2000;
 
       conn.prepare(`UPDATE "${tables[table].name}" SET balance=$balance WHERE userID="${rows[winner].userID}"`).run({ balance: rows[winner].balance });
 
-      // eslint-disable-next-line one-var
-      const defaultChannel = client.guilds.get(tables[table].name).systemChannel,
-        winnerEmbed = new MessageEmbed(),
-        winnerLastMessage = client.guilds.get(tables[table].name).members.get(rows[winner].userID).lastMessageChannelID,
-        winnerLastMessageChannel = winnerLastMessage ? client.guilds.get(tables[table].name).channels.get(winnerLastMessage) as TextChannel : null,
-        winnerLastMessageChannelPermitted = winnerLastMessageChannel ? winnerLastMessageChannel.permissionsFor(client.user).has('SEND_MESSAGES') : false;
+      const defaultChannel = client.guilds.get(tables[table].name).systemChannel;
+      const winnerEmbed = new MessageEmbed();
+      const winnerLastMessage = client.guilds.get(tables[table].name).members.get(rows[winner].userID).lastMessageChannelID;
+      const winnerLastMessageChannel = winnerLastMessage ? client.guilds.get(tables[table].name).channels.get(winnerLastMessage) as TextChannel : null;
+      const winnerLastMessageChannelPermitted = winnerLastMessageChannel ? winnerLastMessageChannel.permissionsFor(client.user).has('SEND_MESSAGES') : false;
 
       winnerEmbed
         .setColor('#7CFC00')
@@ -257,7 +253,7 @@ const renderLottoMessage = (client : CommandoClient) => {
   }
 };
 
-const renderTimerMessage = (client : CommandoClient) => {
+const renderTimerMessage = (client: CommandoClient) => {
   const conn = new Database(path.join(__dirname, '../data/databases/timers.sqlite3'));
 
   try {
@@ -267,18 +263,18 @@ const renderTimerMessage = (client : CommandoClient) => {
       const rows = conn.prepare(`SELECT * FROM "${tables[table].name}"`).all();
 
       for (const row in rows) {
-        const timermoment = moment(rows[row].lastsend).add(rows[row].interval, 'ms'),
-          dura = moment.duration(timermoment.diff(moment()));
+        const timermoment = moment(rows[row].lastsend).add(rows[row].interval, 'ms');
+        const dura = moment.duration(timermoment.diff(moment()));
 
         if (dura.asMinutes() <= 0) {
           conn.prepare(`UPDATE "${tables[table].name}" SET lastsend=$lastsend WHERE id=$id;`).run({
             id: rows[row].id,
             lastsend: moment().format('YYYY-MM-DD HH:mm'),
           });
-          const guild = client.guilds.get(tables[table].name),
-            channel = guild.channels.get(rows[row].channel) as TextChannel,
-            timerEmbed = new MessageEmbed(),
-            { me } = client.guilds.get(tables[table].name);
+          const guild = client.guilds.get(tables[table].name);
+          const channel = guild.channels.get(rows[row].channel) as TextChannel;
+          const timerEmbed = new MessageEmbed();
+          const { me } = client.guilds.get(tables[table].name);
 
           timerEmbed
             .setAuthor('Ribbon Timed Message', me.user.displayAvatarURL({ format: 'png' }))
@@ -301,17 +297,17 @@ const renderTimerMessage = (client : CommandoClient) => {
   }
 };
 
-// const forceEshopUpdate = async (client : CommandoClient) => {
-//   try {
-//     fs.writeFileSync(path.join(__dirname, '../data/databases/eshop.json'), JSON.stringify(await eshop.getGamesAmerica({ shop: 'all' })), 'utf8');
-//     decache(path.join(__dirname, '../data/databases/eshop.json'));
-//     client.registry.resolveCommand('searches:eshop').reload();
-//   } catch (err) {
-//     null;
-//   }
-// };
+const forceEshopUpdate = async (client: CommandoClient) => {
+  try {
+    fs.writeFileSync(path.join(__dirname, '../data/databases/eshop.json'), JSON.stringify(await eshop.getGamesAmerica({ shop: 'all' })), 'utf8');
+    decache(path.join(__dirname, '../data/databases/eshop.json'));
+    client.registry.resolveCommand('searches:eshop').reload();
+  } catch (err) {
+    return null;
+  }
+};
 
-const forceStopTyping = (client : CommandoClient) => {
+const forceStopTyping = (client: CommandoClient) => {
   const allChannels = client.channels;
 
   for (const channel of allChannels.values()) {
@@ -325,7 +321,7 @@ const forceStopTyping = (client : CommandoClient) => {
   }
 };
 
-export const handleCmdErr = (client : CommandoClient, cmd : Command, err : Error, msg : CommandMessage) => {
+export const handleCmdErr = (client: CommandoClient, cmd: Command, err: Error, msg: CommandMessage) => {
   const channel = client.channels.get(process.env.ISSUE_LOG_CHANNEL_ID) as TextChannel;
 
   channel.send(stripIndents`
@@ -338,11 +334,11 @@ export const handleCmdErr = (client : CommandoClient, cmd : Command, err : Error
   `);
 };
 
-export const handleDebug = (info : string) => {
-  console.log(info); // eslint-disable-line no-console
+export const handleDebug = (info: string) => {
+  console.log(info); /* tslint:disable-line:no-console */
 };
 
-export const handleErr = (client : CommandoClient, err : string) => {
+export const handleErr = (client: CommandoClient, err: string) => {
   const channel = client.channels.get(process.env.ISSUE_LOG_CHANNEL_ID) as TextChannel;
 
   channel.send(stripIndents`
@@ -352,15 +348,15 @@ export const handleErr = (client : CommandoClient, err : string) => {
   `);
 };
 
-export const handleGuildJoin = async (client : CommandoClient, guild: CommandoGuild) => {
+export const handleGuildJoin = async (client: CommandoClient, guild: CommandoGuild) => {
   try {
-    const avatar = await Jimp.read(client.user.displayAvatarURL({ format: 'png' })),
-      border = await Jimp.read('https://www.favna.xyz/images/ribbonhost/jimp/border.png'),
-      canvas = await Jimp.read(500, 150),
-      mask = await Jimp.read('https://www.favna.xyz/images/ribbonhost/jimp/mask.png'),
-      fontMedium = await Jimp.loadFont(path.join(__dirname, '../data/fonts/roboto-medium.fnt')),
-      newGuildEmbed = new MessageEmbed(),
-      channel = guild.systemChannel ? guild.systemChannel : null;
+    const avatar = await Jimp.read(client.user.displayAvatarURL({ format: 'png' }));
+    const border = await Jimp.read('https://www.favna.xyz/images/ribbonhost/jimp/border.png');
+    const canvas = await Jimp.read(500, 150);
+    const mask = await Jimp.read('https://www.favna.xyz/images/ribbonhost/jimp/mask.png');
+    const fontMedium = await Jimp.loadFont(path.join(__dirname, '../data/fonts/roboto-medium.fnt'));
+    const newGuildEmbed = new MessageEmbed();
+    const channel = guild.systemChannel ? guild.systemChannel : null;
 
     avatar.resize(136, Jimp.AUTO);
     mask.resize(136, Jimp.AUTO);
@@ -371,8 +367,8 @@ export const handleGuildJoin = async (client : CommandoClient, guild: CommandoGu
     canvas.print(fontMedium, 155, 55, `Currently powering up ${client.guilds.size} servers`.toUpperCase());
     canvas.print(fontMedium, 155, 75, `serving ${client.users.size} Discord users`.toUpperCase());
 
-    const buffer = await canvas.getBufferAsync(Jimp.MIME_PNG),
-      embedAttachment = new MessageAttachment(buffer, 'added.png');
+    const buffer = await canvas.getBufferAsync(Jimp.MIME_PNG);
+    const embedAttachment = new MessageAttachment(buffer, 'added.png');
 
     newGuildEmbed
       .attachFiles([ embedAttachment ])
@@ -382,7 +378,7 @@ export const handleGuildJoin = async (client : CommandoClient, guild: CommandoGu
       I'm an all-purpose bot and I hope I can make your server better!
       I've got many commands, you can see them all by using \`${client.commandPrefix}help\`
       Don't like the prefix? The admins can change my prefix by using \`${client.commandPrefix}prefix [new prefix]\`
-      
+
       **All these commands can also be called by mentioning me instead of using a prefix, for example \`@${client.user.tag} help\`**
       `)
       .setImage('attachment://added.png');
@@ -393,12 +389,12 @@ export const handleGuildJoin = async (client : CommandoClient, guild: CommandoGu
   }
 };
 
-export const handleGuildLeave = (client : CommandoClient, guild: CommandoGuild) => {
+export const handleGuildLeave = (client: CommandoClient, guild: CommandoGuild) => {
   guild.settings.clear();
-  const casinoConn = new Database(path.join(__dirname, '../data/databases/casino.sqlite3')),
-    pastasConn = new Database(path.join(__dirname, '../data/databases/pastas.sqlite3')),
-    timerConn = new Database(path.join(__dirname, '../data/databases/timers.sqlite3')),
-    warningsConn = new Database(path.join(__dirname, '../data/databases/warnings.sqlite3'));
+  const casinoConn = new Database(path.join(__dirname, '../data/databases/casino.sqlite3'));
+  const pastasConn = new Database(path.join(__dirname, '../data/databases/pastas.sqlite3'));
+  const timerConn = new Database(path.join(__dirname, '../data/databases/timers.sqlite3'));
+  const warningsConn = new Database(path.join(__dirname, '../data/databases/warnings.sqlite3'));
 
   try {
     casinoConn.exec(`DROP TABLE IF EXISTS "${guild.id}"`);
@@ -449,9 +445,9 @@ export const handleGuildLeave = (client : CommandoClient, guild: CommandoGuild) 
   }
 };
 
-export const handleMemberJoin = (client : CommandoClient, joinMember : GuildMember) => {
-  const memberJoinLogEmbed = new MessageEmbed(),
-    guild = joinMember.guild as CommandoGuild;
+export const handleMemberJoin = (client: CommandoClient, joinMember: GuildMember) => {
+  const memberJoinLogEmbed = new MessageEmbed();
+  const guild = joinMember.guild as CommandoGuild;
 
   try {
     if (guild.settings.get('defaultRole') && joinMember.guild.roles.get(guild.settings.get('defaultRole'))) {
@@ -459,8 +455,8 @@ export const handleMemberJoin = (client : CommandoClient, joinMember : GuildMemb
       joinMember.roles.add(guild.settings.get('defaultRole'));
       memberJoinLogEmbed.setDescription(`Automatically assigned the role ${joinMember.guild.roles.get(guild.settings.get('defaultRole')).name} to this member`);
     }
-  } catch (err) {
-    null;
+  } catch (err) { /* tslint:disable-line:no-empty */
+
   }
 
   try {
@@ -508,14 +504,14 @@ export const handleMemberJoin = (client : CommandoClient, joinMember : GuildMemb
   }
 };
 
-export const handleMemberLeave = (client : CommandoClient, leaveMember : GuildMember) => {
+export const handleMemberLeave = (client: CommandoClient, leaveMember: GuildMember) => {
   const guild = leaveMember.guild as CommandoGuild;
 
   try {
     if (guild.settings.get('memberlogs', true)) {
-      const memberLeaveLogEmbed = new MessageEmbed(),
-        memberLogs = guild.settings.get('memberlogchannel',
-          leaveMember.guild.channels.find(c => c.name === 'member-logs') ? leaveMember.guild.channels.find(c => c.name === 'member-logs').id : null);
+      const memberLeaveLogEmbed = new MessageEmbed();
+      const memberLogs = guild.settings.get('memberlogchannel',
+        leaveMember.guild.channels.find(c => c.name === 'member-logs') ? leaveMember.guild.channels.find(c => c.name === 'member-logs').id : null);
 
       memberLeaveLogEmbed.setAuthor(`${leaveMember.user.tag} (${leaveMember.id})`, leaveMember.user.displayAvatarURL({ format: 'png' }))
         .setFooter('User left')
@@ -542,14 +538,14 @@ export const handleMemberLeave = (client : CommandoClient, leaveMember : GuildMe
   }
 
   try {
-    const conn = new Database(path.join(__dirname, 'data/databases/casino.sqlite3')),
-      query = conn.prepare(`SELECT * FROM "${leaveMember.guild.id}" WHERE userID = ?`).get(leaveMember.id);
+    const conn = new Database(path.join(__dirname, 'data/databases/casino.sqlite3'));
+    const query = conn.prepare(`SELECT * FROM "${leaveMember.guild.id}" WHERE userID = ?`).get(leaveMember.id);
 
     if (query) {
       conn.prepare(`DELETE FROM "${leaveMember.guild.id}" WHERE userID = ?`).run(leaveMember.id);
     }
   } catch (err) {
-    null;
+      return undefined;
   }
 
   try {
@@ -568,8 +564,7 @@ export const handleMemberLeave = (client : CommandoClient, leaveMember : GuildMe
   }
 };
 
-// eslint-disable-next-line complexity, consistent-return
-export const handleMsg = (client : CommandoClient, msg : CommandMessage) : void => {
+export const handleMsg = (client: CommandoClient, msg: CommandMessage): void => {
   const guild = msg.guild as CommandoGuild;
 
   if (msg.guild && msg.deletable && guild.settings.get('automod', false).enabled) {
@@ -597,16 +592,16 @@ export const handleMsg = (client : CommandoClient, msg : CommandMessage) : void 
   }
 };
 
-export const handlePresenceUpdate = async (client : CommandoClient, oldMember : GuildMember, newMember : GuildMember) => {
+export const handlePresenceUpdate = async (client: CommandoClient, oldMember: GuildMember, newMember: GuildMember) => {
   const guild = newMember.guild as CommandoGuild;
 
   if (guild.settings.get('twitchnotifiers', false)) {
     if (guild.settings.get('twitchmonitors', []).includes(newMember.id)) {
-      const curDisplayName = newMember.displayName,
-        curGuild = newMember.guild as CommandoGuild,
-        curUser = newMember.user;
-      const newActivity = newMember.presence.activity,
-        oldActivity = oldMember.presence.activity;
+      const curDisplayName = newMember.displayName;
+      const curGuild = newMember.guild as CommandoGuild;
+      const curUser = newMember.user;
+      const newActivity = newMember.presence.activity;
+      const oldActivity = oldMember.presence.activity;
 
       try {
         if (!oldActivity) {
@@ -617,13 +612,13 @@ export const handlePresenceUpdate = async (client : CommandoClient, oldMember : 
         }
         if (!(/(twitch)/i).test(oldActivity.url) && (/(twitch)/i).test(newActivity.url)) {
           const userFetch = await fetch(`https://api.twitch.tv/helix/users?${querystring.stringify({ login: newActivity.url.split('/')[3] })}`,
-              { headers: { 'Client-ID': process.env.TWITCH_CLIENT_ID } }),
-            userData = await userFetch.json(),
-            streamFetch = await fetch(`https://api.twitch.tv/helix/streams?${querystring.stringify({ channel: userData.data[0].id })}`, { headers: { 'Client-ID': process.env.TWITCH_CLIENT_ID } }),
-            streamData = await streamFetch.json(),
-            twitchChannelID = curGuild.settings.get('twitchchannelID', null),
-            twitchChannel = twitchChannelID ? curGuild.channels.get(twitchChannelID) as TextChannel : null,
-            twitchEmbed = new MessageEmbed();
+              { headers: { 'Client-ID': process.env.TWITCH_CLIENT_ID } });
+          const userData = await userFetch.json();
+          const streamFetch = await fetch(`https://api.twitch.tv/helix/streams?${querystring.stringify({ channel: userData.data[0].id })}`, { headers: { 'Client-ID': process.env.TWITCH_CLIENT_ID } });
+          const streamData = await streamFetch.json();
+          const twitchChannelID = curGuild.settings.get('twitchchannelID', null);
+          const twitchChannel = twitchChannelID ? curGuild.channels.get(twitchChannelID) as TextChannel : null;
+          const twitchEmbed = new MessageEmbed();
 
           twitchEmbed
             .setThumbnail(curUser.displayAvatarURL())
@@ -644,7 +639,7 @@ export const handlePresenceUpdate = async (client : CommandoClient, oldMember : 
             const streamTime = moment(streamData.data[0].started_at).isValid() ? moment(streamData.data[0].started_at).toDate() : null;
 
             twitchEmbed.setFooter('Stream started');
-            streamTime ? twitchEmbed.setTimestamp(streamTime) : null;
+            if (streamTime) twitchEmbed.setTimestamp(streamTime);
           }
           if (twitchChannel) {
             twitchChannel.send('', { embed: twitchEmbed });
@@ -667,7 +662,7 @@ export const handlePresenceUpdate = async (client : CommandoClient, oldMember : 
   }
 };
 
-export const handleRateLimit = (client : CommandoClient, info : RateLimitData) => {
+export const handleRateLimit = (client: CommandoClient, info: RateLimitData) => {
   const channel = client.channels.get(process.env.RATELIMIT_LOG_CHANNEL_ID) as TextChannel;
 
   channel.send(stripIndents`
@@ -681,8 +676,8 @@ export const handleRateLimit = (client : CommandoClient, info : RateLimitData) =
       `);
 };
 
-export const handleReady = (client : CommandoClient) => {
-  // eslint-disable-next-line no-console
+export const handleReady = (client: CommandoClient) => {
+  /* tslint:disable-next-line:no-console */
   console.log(oneLine`Client ready at ${moment().format('HH:mm:ss')};
         logged in as ${client.user.username}#${client.user.discriminator} (${client.user.id})`);
   const bot = client;
@@ -699,15 +694,15 @@ export const handleReady = (client : CommandoClient) => {
 
   setInterval(() => {
     renderLottoMessage(bot);
-    // forceEshopUpdate(bot);
+    forceEshopUpdate(bot);
   }, ms('24h'));
 
-  // fs.watch(path.join(__dirname, '../data/dex/formats.json'), (eventType, filename) => {
-  //   if (filename) {
-  //     decache(path.join(__dirname, '../data/dex/formats.json'));
-  //     client.registry.resolveCommand('pokemon:dex').reload();
-  //   }
-  // });
+  fs.watch(path.join(__dirname, '../data/dex/formats.json'), (eventType, filename) => {
+    if (filename) {
+      decache(path.join(__dirname, '../data/dex/formats.json'));
+      client.registry.resolveCommand('casino:chips').reload();
+    }
+  });
 };
 
 export const handleRejection = (client: CommandoClient, reason: Error | any, p: Promise<any>) => {
@@ -721,7 +716,7 @@ export const handleRejection = (client: CommandoClient, reason: Error | any, p: 
       `);
 };
 
-export const handleUnknownCmd = (client : CommandoClient, msg : CommandMessage) => {
+export const handleUnknownCmd = (client: CommandoClient, msg: CommandMessage) => {
   const guild = msg.guild as CommandoGuild;
 
   if (guild && guild.settings.get('unknownmessages', true)) {
@@ -733,7 +728,7 @@ export const handleUnknownCmd = (client : CommandoClient, msg : CommandMessage) 
   }
 };
 
-export const handleWarn = (client : CommandoClient, warn : string) => {
+export const handleWarn = (client: CommandoClient, warn: string) => {
   const channel = client.channels.get(process.env.ISSUE_LOG_CHANNEL_ID) as TextChannel;
 
   channel.send(stripIndents`

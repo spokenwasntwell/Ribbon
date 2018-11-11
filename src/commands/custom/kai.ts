@@ -9,27 +9,27 @@
  * @returns {MessageEmbed} A MessageEmbed with a spiteful image and a mention to kai. Also deletes the other kai spites 🤔
  */
 
-import { Command, CommandoClient, CommandMessage } from 'discord.js-commando'; 
-import { stopTyping, startTyping } from '../../components/util';
+import { Command, CommandMessage, CommandoClient } from 'discord.js-commando';
+import { startTyping, stopTyping } from '../../components/util';
 
 export default class KaiCommand extends Command {
-  constructor (client : CommandoClient) {
+  constructor (client: CommandoClient) {
     super(client, {
       name: 'kai',
-      memberName: 'kai',
       group: 'custom',
+      memberName: 'kai',
       description: 'Kai get lost',
       details: 'Custom commands can be made for your server too! Just join the support server (use the `stats` command) and request the command.',
       guildOnly: true,
-      patterns: [ /^\.kai$/im ],
       throttling: {
         usages: 2,
         duration: 3,
       },
+      patterns: [ /^\.kai$/im ],
     });
   }
 
-  fetchImage () {
+  public fetchImage () {
     const images = [
         'https://favna.xyz/images/ribbonhost/kai/antikai01.png',
         'https://favna.xyz/images/ribbonhost/kai/antikai02.png',
@@ -41,13 +41,13 @@ export default class KaiCommand extends Command {
         'https://favna.xyz/images/ribbonhost/kai/antikai08.png',
         'https://favna.xyz/images/ribbonhost/kai/antikai09.png',
         'https://favna.xyz/images/ribbonhost/kai/antikai10.png'
-      ],
-      curImage = Math.floor(Math.random() * images.length);
+      ];
+    const curImage = Math.floor(Math.random() * images.length);
 
     return images[curImage];
   }
 
-  verifyRmt (msg : CommandMessage) {
+  public verifyRmt (msg: CommandMessage) {
     if (msg.guild.id === '373826006651240450') return true;
     if (msg.guild.commandPrefix === '.') return true;
     if (msg.guild.settings.get('regexmatches', false)) return true;
@@ -56,15 +56,15 @@ export default class KaiCommand extends Command {
     return false;
   }
 
-  run (msg : CommandMessage) {
+  public run (msg: CommandMessage) {
     if (msg.patternMatches && !this.verifyRmt(msg)) return null;
     startTyping(msg);
     msg.delete();
     stopTyping(msg);
 
     return msg.embed({
-      image: { url: this.fetchImage() },
       color: msg.guild ? msg.guild.me.displayColor : 10610610,
+      image: { url: this.fetchImage() },
     },
     'Please <@418504046337589249> get lost');
   }

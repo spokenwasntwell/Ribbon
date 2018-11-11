@@ -19,12 +19,12 @@ import * as path from 'path';
 import { deleteCommandMessages, roundNumber, startTyping, stopTyping } from '../../components/util';
 
 export default class GiveCommand extends Command {
-  constructor (client : CommandoClient) {
+  constructor (client: CommandoClient) {
     super(client, {
       name: 'give',
-      memberName: 'give',
-      group: 'casino',
       aliases: [ 'donate' ],
+      group: 'casino',
+      memberName: 'give',
       description: 'Give another player some chips',
       format: 'AnyMember ChipsAmount',
       examples: [ 'give GuyInShroomSuit 50' ],
@@ -43,16 +43,16 @@ export default class GiveCommand extends Command {
           key: 'chips',
           prompt: 'How many chips do you want to give?',
           type: 'integer',
-          validate: (chips : number) => chips >= 1 && chips <= 1000000 ? true : 'Reply with a chips amount between 1 and 10000. Example: `10`',
-          parse: (chips : number) => roundNumber(chips),
+          validate: (chips: number) => chips >= 1 && chips <= 1000000 ? true : 'Reply with a chips amount between 1 and 10000. Example: `10`',
+          parse: (chips: number) => roundNumber(chips),
         }
       ],
     });
   }
 
-  run (msg : CommandMessage, { player, chips }) {
-    const conn = new Database(path.join(__dirname, '../../data/databases/casino.sqlite3')),
-      giveEmbed = new MessageEmbed();
+  public run (msg: CommandMessage, { player, chips }) {
+    const conn = new Database(path.join(__dirname, '../../data/databases/casino.sqlite3'));
+    const giveEmbed = new MessageEmbed();
 
     giveEmbed
       .setTitle('Transaction Log')
@@ -70,8 +70,8 @@ export default class GiveCommand extends Command {
         return msg.reply(`looks like either you or the person you want to donate to has no balance yet. Use \`${msg.guild.commandPrefix}chips\` to get some`);
       }
 
-      let giverEntry = 0,
-        receiverEntry = 0;
+      let giverEntry = 0;
+      let receiverEntry = 0;
 
       for (const row in query) {
         if (query[row].userID === msg.author.id) {
@@ -82,8 +82,8 @@ export default class GiveCommand extends Command {
         }
       }
 
-      const oldGiverBalance = query[giverEntry].balance, // eslint-disable-line one-var
-        oldReceiverEntry = query[receiverEntry].balance;
+      const oldGiverBalance = query[giverEntry].balance;
+      const oldReceiverEntry = query[receiverEntry].balance;
 
       query[giverEntry].balance -= chips;
       query[receiverEntry].balance += chips;

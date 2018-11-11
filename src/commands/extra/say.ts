@@ -9,17 +9,17 @@
  * @returns {Message} Your message said by Ribbon
  */
 
-import { Command, CommandoClient, CommandMessage } from 'discord.js-commando';
-import { stopTyping, startTyping } from '../../components/util';
-import { badwords, duptext, caps, emojis, mentions, links, invites } from '../../components/automod';
+import { Command, CommandMessage, CommandoClient } from 'discord.js-commando';
+import { badwords, caps, duptext, emojis, invites, links, mentions } from '../../components/automod';
+import { startTyping, stopTyping } from '../../components/util';
 
 export default class SayCommand extends Command {
-  constructor (client : CommandoClient) {
+  constructor (client: CommandoClient) {
     super(client, {
       name: 'say',
-      memberName: 'say',
-      group: 'extra',
       aliases: [ 'sayd', 'repeat' ],
+      group: 'extra',
+      memberName: 'say',
       description: 'I will repeat your message',
       format: 'MessageToSay',
       examples: [ 'say Favna is a great coder!' ],
@@ -33,7 +33,7 @@ export default class SayCommand extends Command {
           key: 'txt',
           prompt: 'What should I say?',
           type: 'string',
-          validate: (text : string, msg : CommandMessage) => {
+          validate: (text: string, msg: CommandMessage) => {
             if (msg.content.toLowerCase().includes('@here') ||
             msg.content.toLowerCase().includes('@everyone') ||
             msg.cleanContent.toLowerCase().includes('@here') ||
@@ -52,9 +52,9 @@ export default class SayCommand extends Command {
     });
   }
 
-  run (msg : CommandMessage, { txt }) {
+  public run (msg: CommandMessage, { txt }) {
     if (msg.guild && msg.deletable && msg.guild.settings.get('automod', false)) {
-      /* eslint-disable max-len*/
+
       if (msg.guild.settings.get('caps', false).enabled) {
         const opts = msg.guild.settings.get('caps');
 
@@ -70,23 +70,24 @@ export default class SayCommand extends Command {
 
         if (emojis(msg, opts.threshold, opts.minlength, this.client)) return msg.reply(`you cannot use \`${msg.guild.commandPrefix}say\` to bypass the no excessive emojis filter`);
       }
+      /* tslint:disable:max-line-length */
       if (msg.guild.settings.get('badwords', false).enabled && badwords(msg, msg.guild.settings.get('badwords').words, this.client)) return msg.reply(`you cannot use \`${msg.guild.commandPrefix}say\` to bypass the no bad words filter`);
       if (msg.guild.settings.get('invites', false) && invites(msg, this.client)) return msg.reply(`you cannot use \`${msg.guild.commandPrefix}say\` to bypass the no server invites filter`);
       if (msg.guild.settings.get('links', false) && links(msg, this.client)) return msg.reply(`you cannot use \`${msg.guild.commandPrefix}say\` to bypass the no external links filter`);
       if (msg.guild.settings.get('mentions', false).enabled && mentions(msg, msg.guild.settings.get('mentions').threshold, this.client)) return msg.reply(`you cannot use \`${msg.guild.commandPrefix}say\` to bypass the no excessive mentions filter`);
-      /* eslint-enable max-len */
+      /* tslint:enable:max-line-length */
     }
 
     startTyping(msg);
 
     const saydata = {
-      memberHexColor: msg.member.displayHexColor,
-      commandPrefix: msg.guild.commandPrefix,
-      authorTag: msg.author.tag,
-      authorID: msg.author.id,
-      avatarURL: msg.author.displayAvatarURL({ format: 'png' }),
-      messageDate: msg.createdAt,
       argString: msg.argString.slice(1),
+      authorID: msg.author.id,
+      authorTag: msg.author.tag,
+      avatarURL: msg.author.displayAvatarURL({ format: 'png' }),
+      commandPrefix: msg.guild.commandPrefix,
+      memberHexColor: msg.member.displayHexColor,
+      messageDate: msg.createdAt,
     };
 
     if (msg.deletable) {

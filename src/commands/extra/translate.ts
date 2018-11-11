@@ -12,24 +12,24 @@
  * @returns {MessageEmbed} The input and output of the translation
  */
 
-import * as moment from 'moment';
-import * as qs from 'querystring';
-import fetch from 'node-fetch';
-import { Command, CommandoClient, CommandMessage } from 'discord.js-commando';
-import { MessageEmbed, TextChannel } from 'discord.js';
 import { oneLine, stripIndents } from 'common-tags';
-import { deleteCommandMessages, stopTyping, startTyping } from '../../components/util';
+import { MessageEmbed, TextChannel } from 'discord.js';
+import { Command, CommandMessage, CommandoClient } from 'discord.js-commando';
+import * as moment from 'moment';
+import fetch from 'node-fetch';
+import * as qs from 'querystring';
+import { deleteCommandMessages, startTyping, stopTyping } from '../../components/util';
 
 export default class TranslateCommand extends Command {
-  constructor (client : CommandoClient) {
+  constructor (client: CommandoClient) {
     super(client, {
       name: 'translate',
-      memberName: 'translate',
-      group: 'extra',
       aliases: [ 'tr' ],
+      group: 'extra',
+      memberName: 'translate',
       description: 'Translate any word from any language to any other language',
-      details: 'Language specifications can be either 1 or 2 letter ISO 639 or full names',
       format: 'FromLanguage ToLanguage Text',
+      details: 'Language specifications can be either 1 or 2 letter ISO 639 or full names',
       examples: [ 'translate en nl Hello World' ],
       guildOnly: false,
       throttling: {
@@ -56,20 +56,20 @@ export default class TranslateCommand extends Command {
     });
   }
 
-  async run (msg : CommandMessage, { fromlang, tolang, text }) {
+  public async run (msg: CommandMessage, { fromlang, tolang, text }) {
     try {
       startTyping(msg);
-    
+
       const transEmbed = new MessageEmbed();
       const request = await fetch(`https://translation.googleapis.com/language/translate/v2?${qs.stringify({
-        q: text,
-        target: tolang,
-        source: fromlang,
         format: 'text',
         key: process.env.GOOGLE_API_KEY,
+        q: text,
+        source: fromlang,
+        target: tolang,
       })}`, {
+        headers: { 'Content-Type': 'application/json' },
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' }, 
       });
       const response = await request.json();
 
@@ -80,7 +80,7 @@ export default class TranslateCommand extends Command {
         .setTitle(`__Translating from ${fromlang.toUpperCase()} to ${tolang.toUpperCase()}__`)
         .setDescription(stripIndents`
         \`${text}\`
-        
+
         \`${response.data.translations[0].translatedText}\``);
 
       deleteCommandMessages(msg, this.client);

@@ -1,7 +1,7 @@
 /**
  * @file Extra RemindCommand - Set a reminder and Ribbon will remind you  
  * Works by reminding you after a given amount of minutes, hours or days in the format of `5m`, `2h` or `1d`  
- * **Aliases**: `remindme`, `reminder`  
+ * **Aliases**: `remindme`, `reminder`
  * @module
  * @category extra
  * @name remind
@@ -12,23 +12,23 @@
  */
 
 import * as Database from 'better-sqlite3';
+import { oneLine, stripIndents } from 'common-tags';
+import { MessageEmbed, TextChannel } from 'discord.js';
+import { Command, CommandMessage, CommandoClient } from 'discord.js-commando';
 import * as moment from 'moment';
 import * as path from 'path';
-import { Command, CommandMessage, CommandoClient } from 'discord.js-commando';
-import { MessageEmbed, TextChannel } from 'discord.js';
-import { oneLine, stripIndents } from 'common-tags';
-import { deleteCommandMessages, stopTyping, startTyping } from '../../components/util';
+import { deleteCommandMessages, startTyping, stopTyping } from '../../components/util';
 
 export default class RemindCommand extends Command {
-  constructor (client : CommandoClient) {
+  constructor (client: CommandoClient) {
     super(client, {
       name: 'remind',
-      memberName: 'remind',
-      group: 'extra',
       aliases: [ 'remindme', 'reminder' ],
+      group: 'extra',
+      memberName: 'remind',
       description: 'Set a reminder and Ribbon will remind you',
-      details: 'Works by reminding you after a given amount of minutes, hours or days in the format of `5m`, `2h` or `1d`',
       format: 'Time Reminder',
+      details: 'Works by reminding you after a given amount of minutes, hours or days in the format of `5m`, `2h` or `1d`',
       examples: [ 'remind 1h To continue developing Ribbon' ],
       guildOnly: false,
       throttling: {
@@ -40,14 +40,14 @@ export default class RemindCommand extends Command {
           key: 'time',
           prompt: 'Reply with the time in which you want to be reminded?',
           type: 'string',
-          validate: (t : string) => {
+          validate: (t: string) => {
             if ((/^(?:[0-9]{1,2}(?:m|h|hr|d){1})$/i).test(t)) {
               return true;
             }
 
             return 'Has to be in the pattern of `50m`, `2h`, `3hr` or `01d` wherein `m` would be minutes, `h` (or `hr`) would be hours and `d` would be days';
           },
-          parse: (t : string) => {
+          parse: (t: string) => {
             const match = t.match(/[a-z]+|[^a-z]+/gi);
             let multiplier = 1;
 
@@ -79,27 +79,27 @@ export default class RemindCommand extends Command {
     });
   }
 
-  run (msg : CommandMessage, { time, reminder }) {
-    const conn = new Database(path.join(__dirname, '../../data/databases/reminders.sqlite3')),
-      remindEmbed = new MessageEmbed();
+  public run (msg: CommandMessage, { time, reminder }) {
+    const conn = new Database(path.join(__dirname, '../../data/databases/reminders.sqlite3'));
+    const remindEmbed = new MessageEmbed();
 
     try {
       startTyping(msg);
       conn.prepare('INSERT INTO "reminders" VALUES ($userid, $remindtime, $remindtext);').run({
-        userid: msg.author.id,
+        remindtext: reminder,
         remindtime: moment().add(time, 'minutes')
           .format('YYYY-MM-DD HH:mm:ss'),
-        remindtext: reminder,
+        userid: msg.author.id,
       });
     } catch (err) {
       if ((/(?:no such table)/i).test(err.toString())) {
         conn.prepare('CREATE TABLE IF NOT EXISTS "reminders" (userID TEXT PRIMARY KEY, remindTime TEXT, remindText TEXT);').run();
 
         conn.prepare('INSERT INTO "reminders" VALUES ($userid, $remindtime, $remindtext);').run({
-          userid: msg.author.id,
+          remindtext: reminder,
           remindtime: moment().add(time, 'minutes')
             .format('YYYY-MM-DD HH:mm:ss'),
-          remindtext: reminder,
+          userid: msg.author.id,
         });
       } else {
         deleteCommandMessages(msg, this.client);
@@ -114,7 +114,7 @@ export default class RemindCommand extends Command {
           **Input:** \`${time}\` || \`${reminder}\`
           **Error Message:** ${err}
           `);
-  
+
         return msg.reply(oneLine`An error occurred but I notified ${this.client.owners[0].username}
           Want to know more about the error? Join the support server by getting an invite by using the \`${msg.guild.commandPrefix}invite\` command `);
       }

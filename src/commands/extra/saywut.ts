@@ -7,19 +7,19 @@
  * @returns {MessageEmbed} Info on who used the "say" command last
  */
 
-import * as moment from 'moment';
-import { Command, CommandMessage, CommandoClient } from 'discord.js-commando';
-import { MessageEmbed } from 'discord.js';
 import { oneLine } from 'common-tags';
-import { deleteCommandMessages, stopTyping, startTyping } from '../../components/util';
+import { MessageEmbed } from 'discord.js';
+import { Command, CommandMessage, CommandoClient } from 'discord.js-commando';
+import * as moment from 'moment';
+import { deleteCommandMessages, startTyping, stopTyping } from '../../components/util';
 
 export default class SayWutCommand extends Command {
-  constructor (client : CommandoClient) {
+  constructor (client: CommandoClient) {
     super(client, {
       name: 'saywut',
-      memberName: 'saywut',
-      group: 'extra',
       aliases: [ 'saywat', 'saywot' ],
+      group: 'extra',
+      memberName: 'saywut',
       description: 'Bust the last "say" user',
       examples: [ 'saywut' ],
       guildOnly: true,
@@ -30,10 +30,10 @@ export default class SayWutCommand extends Command {
     });
   }
 
-  run (msg : CommandMessage) {
+  public run (msg: CommandMessage) {
     startTyping(msg);
-    const saydata = msg.guild.settings.get('saydata', null),
-      wutEmbed = new MessageEmbed();
+    const saydata = msg.guild.settings.get('saydata', null);
+    const wutEmbed = new MessageEmbed();
 
     if (saydata) {
       wutEmbed

@@ -13,23 +13,22 @@
  * @returns {MessageEmbed} Input and output currency's and the amount your input is worth in both
  */
 
-// import currencySymbol from 'currency-symbol-map';
-import fetch from 'node-fetch';
-import * as moment from 'moment';
-import * as qs from 'querystring';
-import { Command, CommandMessage, CommandoClient } from 'discord.js-commando';
-import { MessageEmbed, TextChannel } from 'discord.js';
 import { stripIndents } from 'common-tags';
-import { deleteCommandMessages, stopTyping, startTyping } from '../../components/util';
+import { MessageEmbed, TextChannel } from 'discord.js';
+import { Command, CommandMessage, CommandoClient } from 'discord.js-commando';
+import * as moment from 'moment';
+import fetch from 'node-fetch';
+import * as qs from 'querystring';
 import { convert, currencymap } from '../../components/money';
+import { deleteCommandMessages, startTyping, stopTyping } from '../../components/util';
 
 export default class MoneyCommand extends Command {
-  constructor (client : CommandoClient) {
+  constructor (client: CommandoClient) {
     super(client, {
       name: 'oxr',
-      memberName: 'oxr',
-      group: 'extra',
       aliases: [ 'money', 'rate', 'convert' ],
+      group: 'extra',
+      memberName: 'oxr',
       description: 'Currency converter - makes use of ISO 4217 standard currency codes (see list here: <https://docs.openexchangerates.org/docs/supported-currencies>)',
       format: 'CurrencyAmount FirstValuta SecondValuta',
       examples: [ 'convert 50 USD EUR' ],
@@ -48,7 +47,7 @@ export default class MoneyCommand extends Command {
           key: 'fromCurrency',
           prompt: 'What is the valuta you want to convert **from**?',
           type: 'string',
-          validate: (curs : string) => {
+          validate: (curs: string) => {
             const validCurs = [
               'AED', 'AFN', 'ALL', 'AMD', 'ANG', 'AOA', 'ARS', 'AUD', 'AWG', 'AZN', 'BAM', 'BBD', 'BDT', 'BGN', 'BHD', 'BIF', 'BMD', 'BND', 'BOB', 'BRL', 'BSD', 'BTC', 'BTN', 'BTS',
               'BWP', 'BYN', 'BZD', 'CAD', 'CDF', 'CHF', 'CLF', 'CLP', 'CNH', 'CNY', 'COP', 'CRC', 'CUC', 'CUP', 'CVE', 'CZK', 'DASH', 'DJF', 'DKK', 'DOGE', 'DOP', 'DZD', 'EAC', 'EGP', 'EMC', 'ERN',
@@ -66,13 +65,13 @@ export default class MoneyCommand extends Command {
 
             return 'Respond with a supported currency. See the list here: <https://docs.openexchangerates.org/docs/supported-currencies>';
           },
-          parse: (p : string) => p.toUpperCase(),
+          parse: (p: string) => p.toUpperCase(),
         },
         {
           key: 'toCurrency',
           prompt: 'What is the valuta you want to convert **to**?',
           type: 'string',
-          validate: (curs : string) => {
+          validate: (curs: string) => {
             const validCurs = [
               'AED', 'AFN', 'ALL', 'AMD', 'ANG', 'AOA', 'ARS', 'AUD', 'AWG', 'AZN', 'BAM', 'BBD', 'BDT', 'BGN', 'BHD', 'BIF', 'BMD', 'BND', 'BOB', 'BRL', 'BSD', 'BTC', 'BTN', 'BTS',
               'BWP', 'BYN', 'BZD', 'CAD', 'CDF', 'CHF', 'CLF', 'CLP', 'CNH', 'CNY', 'COP', 'CRC', 'CUC', 'CUP', 'CVE', 'CZK', 'DASH', 'DJF', 'DKK', 'DOGE', 'DOP', 'DZD', 'EAC', 'EGP', 'EMC', 'ERN',
@@ -90,17 +89,16 @@ export default class MoneyCommand extends Command {
 
             return 'Respond with a supported currency. See the list here: <https://docs.openexchangerates.org/docs/supported-currencies>';
           },
-          parse: (p : string) => p.toUpperCase(),
+          parse: (p: string) => p.toUpperCase(),
         }
       ],
     });
   }
 
-  async run (msg : CommandMessage, { value, fromCurrency, toCurrency }) {
+  public async run (msg: CommandMessage, { value, fromCurrency, toCurrency }) {
     try {
       startTyping(msg);
 
-      /* eslint-disable camelcase*/
       const oxrEmbed = new MessageEmbed();
       const request = await fetch(`https://openexchangerates.org/api/latest.json?${qs.stringify({
         app_id: process.env.OXR_API_KEY,
@@ -109,7 +107,6 @@ export default class MoneyCommand extends Command {
       })}`);
       const response = await request.json();
       const result = convert(response.rates, fromCurrency, toCurrency, value);
-      /* eslint-enable camelcase*/
 
       oxrEmbed
         .setColor(msg.guild ? msg.guild.me.displayHexColor : '#7CFC00')

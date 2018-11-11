@@ -15,16 +15,18 @@ import { Command, CommandMessage, CommandoClient } from 'discord.js-commando';
 import { deleteCommandMessages, modLogMessage, startTyping, stopTyping, validateBool } from '../../components/util';
 
 export default class ExcessiveEmojisCommand extends Command {
-  constructor (client : CommandoClient) {
+  constructor (client: CommandoClient) {
     super(client, {
       name: 'excessiveemojis',
-      memberName: 'excessiveemojis',
-      group: 'automod',
       aliases: [ 'ef', 'emojifilter', 'spammedemojis', 'manyemojis' ],
+      group: 'automod',
+      memberName: 'excessiveemojis',
       description: 'Toggle the excessive emojis filter',
       format: 'BooleanResolvable',
       examples: [ 'excessiveemojis enable' ],
       guildOnly: true,
+      clientPermissions: [ 'MANAGE_MESSAGES' ],
+      userPermissions: [ 'MANAGE_MESSAGES' ],
       throttling: {
         usages: 2,
         duration: 3,
@@ -34,7 +36,7 @@ export default class ExcessiveEmojisCommand extends Command {
           key: 'option',
           prompt: 'Enable or disable the Excessive Emojis filter?',
           type: 'boolean',
-          validate: (bool : boolean) => validateBool(bool),
+          validate: (bool: boolean) => validateBool(bool),
         },
         {
           key: 'threshold',
@@ -49,21 +51,20 @@ export default class ExcessiveEmojisCommand extends Command {
           default: 10,
         }
       ],
-      clientPermissions: [ 'MANAGE_MESSAGES' ],
-      userPermissions: [ 'MANAGE_MESSAGES' ],
+
     });
   }
 
-  run (msg : CommandMessage, { option, threshold, minlength }) {
+  public run (msg: CommandMessage, { option, threshold, minlength }) {
     startTyping(msg);
 
-    const eeEmbed = new MessageEmbed(),
-      modlogChannel = msg.guild.settings.get('modlogchannel',
-        msg.guild.channels.find(c => c.name === 'mod-logs') ? msg.guild.channels.find(c => c.name === 'mod-logs').id : null),
-      options = {
-        enabled: option,
-        threshold,
-        minlength,
+    const eeEmbed = new MessageEmbed();
+    const modlogChannel = msg.guild.settings.get('modlogchannel',
+        msg.guild.channels.find(c => c.name === 'mod-logs') ? msg.guild.channels.find(c => c.name === 'mod-logs').id : null);
+    const options = {
+      minlength,
+      threshold,
+      enabled: option,
       };
 
     msg.guild.settings.set('emojis', options);

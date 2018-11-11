@@ -9,20 +9,20 @@
  * @returns {MessageEmbed} Your equation and its answer
  */
 
-import fetch from 'node-fetch';
-import * as moment from 'moment';
-import { Command, CommandMessage, CommandoClient } from 'discord.js-commando';
-import { MessageEmbed, TextChannel } from 'discord.js';
 import { oneLine, stripIndents } from 'common-tags';
-import { deleteCommandMessages, stopTyping, startTyping } from '../../components/util';
+import { MessageEmbed, TextChannel } from 'discord.js';
+import { Command, CommandMessage, CommandoClient } from 'discord.js-commando';
+import * as moment from 'moment';
+import fetch from 'node-fetch';
+import { deleteCommandMessages, startTyping, stopTyping } from '../../components/util';
 
 export default class MathCommand extends Command {
-  constructor (client : CommandoClient) {
+  constructor (client: CommandoClient) {
     super(client, {
       name: 'math',
-      memberName: 'math',
-      group: 'extra',
       aliases: [ 'maths', 'calc' ],
+      group: 'extra',
+      memberName: 'math',
       description: 'Calculate anything',
       format: 'EquationToSolve',
       examples: [ 'math (PI - 1) * 3' ],
@@ -36,21 +36,21 @@ export default class MathCommand extends Command {
           key: 'equation',
           prompt: 'What is the equation to solve?',
           type: 'string',
-          parse: (p : string) => p.toLowerCase().replace(/x/gim, '*'),
+          parse: (p: string) => p.toLowerCase().replace(/x/gim, '*'),
         }
       ],
     });
   }
 
-  async run (msg : CommandMessage, { equation }) {
+  public async run (msg: CommandMessage, { equation }) {
     try {
       startTyping(msg);
       const calculator = await fetch('http://api.mathjs.org/v4/', {
-          method: 'POST',
           body: JSON.stringify({ expr: equation }),
-        }),
-        maths = await calculator.json(),
-        mathEmbed = new MessageEmbed();
+          method: 'POST',
+        });
+      const maths = await calculator.json();
+      const  mathEmbed = new MessageEmbed();
 
       if (maths.error) throw new Error('matherr');
 

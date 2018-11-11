@@ -18,12 +18,12 @@ import * as path from 'path';
 import { deleteCommandMessages, startTyping, stopTyping } from '../../components/util';
 
 export default class ChipsCommand extends Command {
-  constructor (client : CommandoClient) {
+  constructor (client: CommandoClient) {
     super(client, {
       name: 'chips',
-      memberName: 'chips',
-      group: 'casino',
       aliases: [ 'bal', 'cash', 'balance' ],
+      group: 'casino',
+      memberName: 'chips',
       description: 'Retrieves your current balance for the casino',
       guildOnly: true,
       throttling: {
@@ -33,9 +33,9 @@ export default class ChipsCommand extends Command {
     });
   }
 
-  run (msg : CommandMessage) {
-    const balEmbed = new MessageEmbed(),
-      conn = new Database(path.join(__dirname, '../../data/databases/casino.sqlite3'));
+  public run (msg: CommandMessage) {
+    const balEmbed = new MessageEmbed();
+    const conn = new Database(path.join(__dirname, '../../data/databases/casino.sqlite3'));
 
     balEmbed
       .setAuthor(msg.member.displayName, msg.author.displayAvatarURL({ format: 'png' }))
@@ -46,8 +46,8 @@ export default class ChipsCommand extends Command {
       const query = conn.prepare(`SELECT * FROM "${msg.guild.id}" WHERE userID = ?;`).get(msg.author.id);
 
       if (query) {
-        const topupdate = moment(query.lasttopup).add(24, 'hours'),
-          dura = moment.duration(topupdate.diff(moment()));
+        const topupdate = moment(query.lasttopup).add(24, 'hours');
+        const dura = moment.duration(topupdate.diff(moment()));
 
         balEmbed
           .setDescription(stripIndents`**Balance**
@@ -61,9 +61,9 @@ export default class ChipsCommand extends Command {
         return msg.embed(balEmbed);
       }
       conn.prepare(`INSERT INTO "${msg.guild.id}" VALUES ($userid, $balance, $date);`).run({
-        userid: msg.author.id,
         balance: '500',
         date: moment().format('YYYY-MM-DD HH:mm'),
+        userid: msg.author.id,
       });
       stopTyping(msg);
     } catch (err) {
@@ -72,9 +72,9 @@ export default class ChipsCommand extends Command {
         conn.prepare(`CREATE TABLE IF NOT EXISTS "${msg.guild.id}" (userID TEXT PRIMARY KEY, balance INTEGER, lasttopup TEXT);`).run();
 
         conn.prepare(`INSERT INTO "${msg.guild.id}" VALUES ($userid, $balance, $date);`).run({
-          userid: msg.author.id,
           balance: '500',
           date: moment().format('YYYY-MM-DD HH:mm'),
+          userid: msg.author.id,
         });
       } else {
         const channel = this.client.channels.get(process.env.ISSUE_LOG_CHANNEL_ID) as TextChannel;

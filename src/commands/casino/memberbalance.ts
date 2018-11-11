@@ -18,12 +18,12 @@ import * as path from 'path';
 import { deleteCommandMessages, startTyping, stopTyping } from '../../components/util';
 
 export default class MemberBalanceCommand extends Command {
-  constructor (client : CommandoClient) {
+  constructor (client: CommandoClient) {
     super(client, {
       name: 'memberbalance',
-      memberName: 'memberbalance',
-      group: 'casino',
       aliases: [ 'mbal', 'mcash', 'mbalance', 'mchips' ],
+      group: 'casino',
+      memberName: 'memberbalance',
       description: 'Retrieves the amount of chips another member has for the casino',
       format: 'MemberID|MemberName(partial or full)',
       examples: [ 'memberbalance Sagiri' ],
@@ -42,9 +42,9 @@ export default class MemberBalanceCommand extends Command {
     });
   }
 
-  run (msg : CommandMessage, { player }) {
-    const conn = new Database(path.join(__dirname, '../../data/databases/casino.sqlite3')),
-      mbalEmbed = new MessageEmbed();
+  public run (msg: CommandMessage, { player }) {
+    const conn = new Database(path.join(__dirname, '../../data/databases/casino.sqlite3'));
+    const mbalEmbed = new MessageEmbed();
 
     mbalEmbed
       .setAuthor(player.displayName, player.user.displayAvatarURL({ format: 'png' }))

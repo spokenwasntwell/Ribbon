@@ -15,16 +15,18 @@ import { Command, CommandMessage, CommandoClient } from 'discord.js-commando';
 import { deleteCommandMessages, modLogMessage, startTyping, stopTyping, validateBool } from '../../components/util';
 
 export default class SlowmodeCommand extends Command {
-  constructor (client : CommandoClient) {
+  constructor (client: CommandoClient) {
     super(client, {
       name: 'slowmode',
-      memberName: 'slowmode',
-      group: 'automod',
       aliases: [ 'slowdown' ],
+      group: 'automod',
+      memberName: 'slowmode',
       description: 'Toggle the server invites filter',
       format: 'BooleanResolvable',
       examples: [ 'slowmode enable' ],
       guildOnly: true,
+      clientPermissions: [ 'MANAGE_MESSAGES' ],
+      userPermissions: [ 'MANAGE_MESSAGES' ],
       throttling: {
         usages: 2,
         duration: 3,
@@ -34,7 +36,7 @@ export default class SlowmodeCommand extends Command {
           key: 'option',
           prompt: 'Enable or disable the server invites filter?',
           type: 'boolean',
-          validate: (bool : boolean) => validateBool(bool),
+          validate: (bool: boolean) => validateBool(bool),
         },
         {
           key: 'within',
@@ -43,20 +45,18 @@ export default class SlowmodeCommand extends Command {
           default: 10,
         }
       ],
-      clientPermissions: [ 'MANAGE_MESSAGES' ],
-      userPermissions: [ 'MANAGE_MESSAGES' ],
     });
   }
 
-  run (msg : CommandMessage, { option, within }) {
+  public run (msg: CommandMessage, { option, within }) {
     startTyping(msg);
 
-    const slEmbed = new MessageEmbed(),
-      modlogChannel = msg.guild.settings.get('modlogchannel',
-        msg.guild.channels.find(c => c.name === 'mod-logs') ? msg.guild.channels.find(c => c.name === 'mod-logs').id : null),
-      options = {
-        enabled: option,
+    const slEmbed = new MessageEmbed();
+    const  modlogChannel = msg.guild.settings.get('modlogchannel',
+        msg.guild.channels.find(c => c.name === 'mod-logs') ? msg.guild.channels.find(c => c.name === 'mod-logs').id : null);
+    const options = {
         within,
+        enabled: option,
       };
 
     msg.guild.settings.set('slowmode', options);

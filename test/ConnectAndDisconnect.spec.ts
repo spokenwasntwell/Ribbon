@@ -26,7 +26,7 @@ suite('Connect & Disconnect bot', () => {
     client.on('ready', () => {
       readyTracker = true;
       client.destroy();
-      process.exit(); // eslint-disable-line no-process-exit
+      process.exit();
       expect(readyTracker).to.be.ok;
     });
   });

@@ -5,22 +5,22 @@
  * @module
  * @category extra
  * @name zalgo
- * @example zalgo HE COMES 
+ * @example zalgo HE COMES
  * @param {StringResolvable} SomeText Your input to transform with Zalgo
  * @returns {Message} Your text zalgo-fied
  */
 
-import { banish, zalgolize } from '../../components/zalgolize';
 import { Command, CommandMessage, CommandoClient } from 'discord.js-commando';
-import { deleteCommandMessages, stopTyping, startTyping } from '../../components/util';
+import { deleteCommandMessages, startTyping, stopTyping } from '../../components/util';
+import { banish, zalgolize } from '../../components/zalgolize';
 
 export default class ZalgoCommand extends Command {
-  constructor (client : CommandoClient) {
+  constructor (client: CommandoClient) {
     super(client, {
       name: 'zalgo',
-      memberName: 'zalgo',
-      group: 'extra',
       aliases: [ 'trash' ],
+      group: 'extra',
+      memberName: 'zalgo',
       description: 'F*ck up text using Zalgo',
       format: 'ContentToTransform',
       examples: [ 'zalgo HE COMES' ],
@@ -39,7 +39,7 @@ export default class ZalgoCommand extends Command {
     });
   }
 
-  run (msg : CommandMessage, { txt }) {
+  public run (msg: CommandMessage, { txt }) {
     startTyping(msg);
     deleteCommandMessages(msg, this.client);
     stopTyping(msg);

@@ -11,26 +11,26 @@
  * @returns {MessageEmbed} Various statistics about the current forecast
  */
 
-import fetch from 'node-fetch';
-import * as moment from 'moment';
-import * as qs from 'querystring';
-import { Command, CommandoClient, CommandMessage } from 'discord.js-commando';
-import { MessageEmbed } from 'discord.js';
 import { oneLine, stripIndents } from 'common-tags';
-import { deleteCommandMessages, roundNumber, stopTyping, startTyping } from '../../components/util';
+import { MessageEmbed } from 'discord.js';
+import { Command, CommandMessage, CommandoClient } from 'discord.js-commando';
+import * as moment from 'moment';
+import fetch from 'node-fetch';
+import * as qs from 'querystring';
+import { deleteCommandMessages, roundNumber, startTyping, stopTyping } from '../../components/util';
 
 export default class WeatherCommand extends Command {
-  constructor (client : CommandoClient) {
+  constructor (client: CommandoClient) {
     super(client, {
       name: 'weather',
-      memberName: 'weather',
-      group: 'extra',
       aliases: [ 'temp', 'forecast', 'fc', 'wth' ],
+      group: 'extra',
+      memberName: 'weather',
       description: 'Get the weather in a city',
+      format: 'CityName',
       details: stripIndents`
       Potentially you'll have to specify city if the city is in multiple countries, i.e. \`weather amsterdam\` will not be the same as \`weather amsterdam missouri\`
       Uses Google's Geocoding to determine the correct location therefore supports any location indication, country, city or even as exact as a street.`,
-      format: 'CityName',
       examples: [ 'weather amsterdam' ],
       guildOnly: false,
       throttling: {
@@ -47,38 +47,38 @@ export default class WeatherCommand extends Command {
     });
   }
 
-  async getCords (location : string) {
+  public async getCords (location: string) {
     const res = await fetch(`https://maps.googleapis.com/maps/api/geocode/json?${qs.stringify({
         address: location,
         key: process.env.GOOGLE_API_KEY,
-      })}`),
-      cords = await res.json();
+      })}`);
+    const cords = await res.json();
 
     return {
+      address: cords.results[0].formatted_address,
       lat: cords.results[0].geometry.location.lat,
       long: cords.results[0].geometry.location.lng,
-      address: cords.results[0].formatted_address,
     };
   }
 
-  fahrenify (temp : number) {
+  public fahrenify (temp: number) {
     return temp * 1.8 + 32;
   }
 
-  mileify (speed : number) {
+  public mileify (speed: number) {
     return speed * 0.6214;
   }
 
-  async run (msg : CommandMessage, { location }) {
+  public async run (msg: CommandMessage, { location }) {
     try {
       startTyping(msg);
-      const cords = await this.getCords(location),
-        res = await fetch(`https://api.darksky.net/forecast/${process.env.DARK_SKY_API_KEY}/${cords.lat},${cords.long}?${qs.stringify({
+      const cords = await this.getCords(location);
+      const res = await fetch(`https://api.darksky.net/forecast/${process.env.DARK_SKY_API_KEY}/${cords.lat},${cords.long}?${qs.stringify({
           exclude: [ 'minutely', 'hourly', 'alerts', 'flags' ],
           units: 'si',
-        })}`),
-        weather = await res.json(),
-        weatherEmbed = new MessageEmbed();
+        })}`);
+      const weather = await res.json();
+      const weatherEmbed = new MessageEmbed();
 
       weatherEmbed
         .setTitle(`Weather forecast for ${cords.address}`)
@@ -97,10 +97,10 @@ export default class WeatherCommand extends Command {
         .addField('🌡️ Feels Like', `${weather.currently.apparentTemperature} °C | ${roundNumber(this.fahrenify(weather.currently.apparentTemperature), 2)} °F`, true)
         .addField('🏙️ Condition', weather.daily.data[0].summary, false)
         .addField(`🛰️ Forecast ${moment.unix(weather.daily.data[1].time).format('dddd MMMM Do')}`,
-          oneLine`High: ${weather.daily.data[1].temperatureHigh} °C (${roundNumber(this.fahrenify(weather.daily.data[1].temperatureHigh), 2)} °F) 
+          oneLine`High: ${weather.daily.data[1].temperatureHigh} °C (${roundNumber(this.fahrenify(weather.daily.data[1].temperatureHigh), 2)} °F)
           | Low: ${weather.daily.data[1].temperatureLow} °C (${roundNumber(this.fahrenify(weather.daily.data[1].temperatureLow), 2)} °F)`, false)
         .addField(`🛰️ Forecast ${moment.unix(weather.daily.data[2].time).format('dddd MMMM Do')}`,
-          oneLine`High: ${weather.daily.data[2].temperatureHigh} °C (${roundNumber(this.fahrenify(weather.daily.data[2].temperatureHigh), 2)} °F) 
+          oneLine`High: ${weather.daily.data[2].temperatureHigh} °C (${roundNumber(this.fahrenify(weather.daily.data[2].temperatureHigh), 2)} °F)
           | Low: ${weather.daily.data[2].temperatureLow} °C (${roundNumber(this.fahrenify(weather.daily.data[2].temperatureLow), 2)} °F)`, false);
 
       deleteCommandMessages(msg, this.client);

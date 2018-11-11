@@ -1,6 +1,6 @@
-/* eslint-disable object-property-newline*/
+/* tslint:disable:object-literal-sort-keys */
 
-const map : any = {
+const map: any = {
   AED: 'د.إ', AFN: '؋', ALL: 'L', AMD: '֏', ANG: 'ƒ', AOA: 'Kz', ARS: '$', AUD: '$', AWG: 'ƒ', AZN: '₼', BAM: 'KM', BBD: '$', BDT: '৳',
   BGN: 'лв', BHD: '.د.ب', BIF: 'FBu', BMD: '$', BND: '$', BOB: '$b', BRL: 'R$', BSD: '$', BTC: '฿', BTN: 'Nu.', BWP: 'P', BYR: 'Br',
   BYN: 'Br', BZD: 'BZ$', CAD: '$', CDF: 'FC', CHF: 'CHF', CLP: '$', CNY: '¥', COP: '$', CRC: '₡', CUC: '$', CUP: '₱', CVE: '$', CZK: 'Kč',
@@ -16,11 +16,11 @@ const map : any = {
   UYU: '$U', UZS: 'лв', VEF: 'Bs', VND: '₫', VUV: 'VT', WST: 'WS$', XAF: 'FCFA', XBT: 'Ƀ', XCD: '$', XOF: 'CFA', XPF: '₣', YER: '﷼', ZAR: 'R', ZWD: 'Z$',
 };
 
-export const currencymap = (code : string) => {
+export const currencymap = (code: string) => {
   code = code.toUpperCase();
   if (!(code in map)) return null;
 
   return map[code];
 };
 
-export const convert = (rates : any, fromCurrency : string, toCurrency : string, value : number) => value * (rates[toCurrency] * (1 / rates[fromCurrency]));
+export const convert = (rates: any, fromCurrency: string, toCurrency: string, value: number) => value * (rates[toCurrency] * (1 / rates[fromCurrency]));

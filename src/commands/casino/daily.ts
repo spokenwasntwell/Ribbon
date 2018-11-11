@@ -16,12 +16,12 @@ import * as path from 'path';
 import { deleteCommandMessages, startTyping, stopTyping } from '../../components/util';
 
 export default class DailyCommand extends Command {
-  constructor (client : CommandoClient) {
+  constructor (client: CommandoClient) {
     super(client, {
       name: 'daily',
-      memberName: 'daily',
-      group: 'casino',
       aliases: [ 'topup', 'bonus' ],
+      group: 'casino',
+      memberName: 'daily',
       description: 'Receive your daily cash top up of 500 chips',
       guildOnly: true,
       throttling: {
@@ -31,9 +31,9 @@ export default class DailyCommand extends Command {
     });
   }
 
-  run (msg : CommandMessage) {
-    const balEmbed = new MessageEmbed(),
-      conn = new Database(path.join(__dirname, '../../data/databases/casino.sqlite3'));
+  public run (msg: CommandMessage) {
+    const balEmbed = new MessageEmbed();
+    const conn = new Database(path.join(__dirname, '../../data/databases/casino.sqlite3'));
 
     let returnMsg = '';
 
@@ -47,11 +47,11 @@ export default class DailyCommand extends Command {
       const query = conn.prepare(`SELECT * FROM "${msg.guild.id}" WHERE userID = ?;`).get(msg.author.id);
 
       if (query) {
-        const topupdate = moment(query.lasttopup).add(24, 'hours'),
-          dura = moment.duration(topupdate.diff(moment()));
+        const topupdate = moment(query.lasttopup).add(24, 'hours');
+        const dura = moment.duration(topupdate.diff(moment()));
 
-        let chipStr = '',
-          resetStr = '';
+        let chipStr = '';
+        let resetStr = '';
 
         if (dura.asHours() <= 0) {
           conn.prepare(`UPDATE "${msg.guild.id}" SET balance=$balance, lasttopup=$date WHERE userID="${msg.author.id}";`).run({
@@ -81,9 +81,9 @@ export default class DailyCommand extends Command {
       }
       stopTyping(msg);
       conn.prepare(`INSERT INTO "${msg.guild.id}" VALUES ($userid, $balance, $date);`).run({
-        userid: msg.author.id,
         balance: '500',
         date: moment().format('YYYY-MM-DD HH:mm'),
+        userid: msg.author.id,
       });
     } catch (err) {
       stopTyping(msg);
@@ -91,9 +91,9 @@ export default class DailyCommand extends Command {
         conn.prepare(`CREATE TABLE IF NOT EXISTS "${msg.guild.id}" (userID TEXT PRIMARY KEY, balance INTEGER, lasttopup TEXT);`).run();
 
         conn.prepare(`INSERT INTO "${msg.guild.id}" VALUES ($userid, $balance, $date);`).run({
-          userid: msg.author.id,
           balance: '500',
           date: moment().format('YYYY-MM-DD HH:mm'),
+          userid: msg.author.id,
         });
       } else {
         const channel = this.client.channels.get(process.env.ISSUE_LOG_CHANNEL_ID) as TextChannel;

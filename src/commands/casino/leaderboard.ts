@@ -16,12 +16,12 @@ import * as path from 'path';
 import { deleteCommandMessages, startTyping, stopTyping } from '../../components/util';
 
 export default class LeaderboardCommand extends Command {
-  constructor (client : CommandoClient) {
+  constructor (client: CommandoClient) {
     super(client, {
       name: 'leaderboard',
-      memberName: 'leaderboard',
-      group: 'casino',
       aliases: [ 'lb', 'casinolb', 'leaderboards' ],
+      group: 'casino',
+      memberName: 'leaderboard',
       description: 'Shows the top 5 ranking players for your server',
       guildOnly: true,
       throttling: {
@@ -31,9 +31,9 @@ export default class LeaderboardCommand extends Command {
     });
   }
 
-  run (msg : CommandMessage) {
-    const conn = new Database(path.join(__dirname, '../../data/databases/casino.sqlite3')),
-      lbEmbed = new MessageEmbed();
+  public run (msg: CommandMessage) {
+    const conn = new Database(path.join(__dirname, '../../data/databases/casino.sqlite3'));
+    const lbEmbed = new MessageEmbed();
 
     lbEmbed
       .setTitle('Top 5 players')

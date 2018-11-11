@@ -10,20 +10,20 @@
  * @returns {MessageEmbed} Current date, current time, country and DST offset
  */
 
+import { stripIndents } from 'common-tags';
+import { MessageEmbed } from 'discord.js';
+import { Command, CommandMessage, CommandoClient } from 'discord.js-commando';
 import fetch from 'node-fetch';
 import * as qs from 'querystring';
-import { Command, CommandMessage, CommandoClient } from 'discord.js-commando';
-import { MessageEmbed } from 'discord.js';
-import { stripIndents } from 'common-tags';
-import { deleteCommandMessages, stopTyping, startTyping } from '../../components/util';
+import { deleteCommandMessages, startTyping, stopTyping } from '../../components/util';
 
 export default class TimeCommand extends Command {
-  constructor (client : CommandoClient) {
+  constructor (client: CommandoClient) {
     super(client, {
       name: 'time',
-      memberName: 'time',
-      group: 'extra',
       aliases: [ 'citytime' ],
+      group: 'extra',
+      memberName: 'time',
       description: 'Gets the time in any given city',
       format: 'CityName',
       examples: [ 'time London' ],
@@ -42,33 +42,33 @@ export default class TimeCommand extends Command {
     });
   }
 
-  async getCords (location : string) {
+  public async getCords (location: string) {
     const res = await fetch(`https://maps.googleapis.com/maps/api/geocode/json?${qs.stringify({
         address: location,
         key: process.env.GOOGLE_API_KEY,
-      })}`),
-      cords = await res.json();
+      })}`);
+    const cords = await res.json();
 
     return {
+      address: cords.results[0].formatted_address,
       lat: cords.results[0].geometry.location.lat,
       long: cords.results[0].geometry.location.lng,
-      address: cords.results[0].formatted_address,
     };
   }
 
-  async run (msg : CommandMessage, { location }) {
+  public async run (msg: CommandMessage, { location }) {
     try {
       startTyping(msg);
-      const cords = await this.getCords(location),
-        res = await fetch(`http://api.timezonedb.com/v2/get-time-zone?${qs.stringify({
-          key: process.env.TIMEZONE_DB_API_KEY,
-          format: 'json',
-          by: 'position',
-          lat: cords.lat,
-          lng: cords.long,
-        })}`),
-        time = await res.json(),
-        timeEmbed = new MessageEmbed();
+      const cords = await this.getCords(location);
+      const res = await fetch(`http://api.timezonedb.com/v2/get-time-zone?${qs.stringify({
+        by: 'position',
+        format: 'json',
+        key: process.env.TIMEZONE_DB_API_KEY,
+        lat: cords.lat,
+        lng: cords.long,
+        })}`);
+      const time = await res.json();
+      const timeEmbed = new MessageEmbed();
 
       timeEmbed
         .setTitle(`:flag_${time.countryCode.toLowerCase()}: ${cords.address}`)

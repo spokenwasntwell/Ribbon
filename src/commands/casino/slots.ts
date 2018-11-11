@@ -19,12 +19,12 @@ import { SlotMachine, SlotSymbol } from 'slot-machine';
 import { deleteCommandMessages, startTyping, stopTyping } from '../../components/util';
 
 export default class SlotsCommand extends Command {
-  constructor (client : CommandoClient) {
+  constructor (client: CommandoClient) {
     super(client, {
       name: 'slots',
-      memberName: 'slots',
-      group: 'casino',
       aliases: [ 'slot', 'fruits' ],
+      group: 'casino',
+      memberName: 'slots',
       description: 'Gamble your chips at the slot machine',
       format: 'AmountOfChips',
       examples: [ 'slots 50' ],
@@ -38,8 +38,8 @@ export default class SlotsCommand extends Command {
           key: 'chips',
           prompt: 'How many chips do you want to gamble?',
           type: 'integer',
-          validate: (chips : number) => Number(chips) === 1 || Number(chips) === 2 || Number(chips) === 3 
-            ? true 
+          validate: (chips: number) => Number(chips) === 1 || Number(chips) === 2 || Number(chips) === 3
+            ? true
             : stripIndents`Reply with a chips amount
                            Has to be either 1, 2 or 3
                            1 to just win on the middle horizontal line
@@ -50,10 +50,9 @@ export default class SlotsCommand extends Command {
     });
   }
 
-  // eslint-disable-next-line max-statements
-  run (msg : CommandMessage, { chips }) {
-    const conn = new Database(path.join(__dirname, '../../data/databases/casino.sqlite3')),
-      slotEmbed = new MessageEmbed();
+  public run (msg: CommandMessage, { chips }) {
+    const conn = new Database(path.join(__dirname, '../../data/databases/casino.sqlite3'));
+    const slotEmbed = new MessageEmbed();
 
     slotEmbed
       .setAuthor(msg.member.displayName, msg.author.displayAvatarURL({ format: 'png' }))
@@ -73,67 +72,71 @@ export default class SlotsCommand extends Command {
             display: '<:bar:466061610088267776>',
             points: 50,
             weight: 20,
-          }),
-          cherry = new SlotSymbol('cherry', {
+          });
+        const cherry = new SlotSymbol('cherry', {
             display: '<:cherry:466061632821395456>',
             points: 6,
             weight: 100,
-          }),
-          diamond = new SlotSymbol('diamond', {
+          });
+        const diamond = new SlotSymbol('diamond', {
             display: '<:diamond:466061645118963732>',
             points: 15,
             weight: 40,
-          }),
-          lemon = new SlotSymbol('lemon', {
+          });
+        const lemon = new SlotSymbol('lemon', {
             display: '<:lemon:466061677448790026>',
             points: 8,
             weight: 80,
-          }),
-          seven = new SlotSymbol('seven', {
+          });
+        const seven = new SlotSymbol('seven', {
             display: '<:seven:466061686629990421>',
             points: 300,
             weight: 10,
-          }),
-          watermelon = new SlotSymbol('watermelon', {
+          });
+        const watermelon = new SlotSymbol('watermelon', {
             display: '<:watermelon:466061696704839704>',
             points: 10,
             weight: 60,
           });
 
-        const machine = new SlotMachine(3, [ bar, cherry, diamond, lemon, seven, watermelon ]), // eslint-disable-line one-var
-          prevBal = query.balance,
-          result = machine.play();
+        const machine = new SlotMachine(3, [ bar, cherry, diamond, lemon, seven, watermelon ]);
+        const prevBal = query.balance;
+        const result = machine.play();
 
-        let titleString = '',
-          winningPoints = 0;
+        let titleString = '';
+        let winningPoints = 0;
 
-        if (chips === 1 && result.lines[1].isWon) {
-          winningPoints += result.lines[1].points;
-        } else if (chips === 2) {
-          for (let i = 0; i <= 2; ++i) {
-            if (result.lines[i].isWon) {
-              winningPoints += result.lines[i].points;
+        switch (chips) {
+          case 1:
+            winningPoints += result.lines[1].points;
+            break;
+          case 2:
+            for (let i = 0; i <= 2; ++i) {
+              if (result.lines[i].isWon) {
+                winningPoints += result.lines[i].points;
+              }
             }
-          }
-        } else if (chips === 3) {
-          for (let i = 0; i < result.lines.length; ++i) {
-            if (result.lines[i].isWon) {
-              winningPoints += result.lines[i].points;
+            break;
+          case 3:
+            for (const line of result.lines) {
+              if (line.isWon) {
+                winningPoints += line.points;
+              }
             }
-          }
+            break;
+          default:
+            break;
         }
 
         winningPoints !== 0 ? query.balance += winningPoints - chips : query.balance -= chips;
 
         conn.prepare(`UPDATE "${msg.guild.id}" SET balance=$balance WHERE userID="${msg.author.id}";`).run({ balance: query.balance });
 
-        if (chips === winningPoints) {
-          titleString = 'won back their exact input';
-        } else if (chips > winningPoints) {
-          titleString = `lost ${chips - winningPoints} chips ${winningPoints !== 0 ? `(slots gave back ${winningPoints})` : ''}`;
-        } else {
-          titleString = `won ${query.balance - prevBal} chips`;
-        }
+        titleString = chips === winningPoints
+         ? 'won back their exact input'
+         : chips > winningPoints
+            ? `lost ${chips - winningPoints} chips ${winningPoints !== 0 ? `(slots gave back ${winningPoints})` : ''}`
+            : `won ${query.balance - prevBal} chips`;
 
         slotEmbed
           .setTitle(`${msg.author.tag} ${titleString}`)

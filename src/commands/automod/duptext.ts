@@ -1,7 +1,7 @@
 /**
  * @file Automod DuplicateTextCommand - Toggle the duplicate text filter  
  * Uses the Levenshtein Distance Algorithm to determine similarity. If the distance is less than 10 the messages are considered duplicate.  
- * You can specify the minutes within messages should be checked (defaults to 3), the amount of allowed similar messages (defaults to 2) and the Levenshtein distance (defaults to 20)
+ * You can specify the minutes within messages should be checked (defaults to 3), the amount of allowed similar messages (defaults to 2) and the Levenshtein distance (defaults to 20)  
  * **Aliases**: `duplicatefilter`, `duplicatetextfilter`, `dtf`
  * @module
  * @category automod
@@ -17,19 +17,21 @@ import { Command, CommandMessage, CommandoClient } from 'discord.js-commando';
 import { deleteCommandMessages, modLogMessage, startTyping, stopTyping, validateBool } from '../../components/util';
 
 export default class DuplicateTextCommand extends Command {
-  constructor (client : CommandoClient) {
+  constructor (client: CommandoClient) {
     super(client, {
       name: 'duptext',
-      memberName: 'duptext',
-      group: 'automod',
       aliases: [ 'duplicatefilter', 'duplicatetextfilter', 'dtf' ],
+      group: 'automod',
+      memberName: 'duptext',
       description: 'Toggle the duplicate text filter',
+      format: 'BooleanResolvable',
       details: stripIndents`
       Uses the Levenshtein Distance Algorithm to determine similarity. If the distance is less than 10 the messages are considered duplicate.
       You can specify the minutes within messages should be checked (defaults to 3), the amount of allowed similar messages (defaults to 2) and the Levenshtein distance (defaults to 20)`,
-      format: 'BooleanResolvable',
       examples: [ 'duptext enable', 'duptext enable 3 2 20' ],
       guildOnly: true,
+      clientPermissions: [ 'MANAGE_MESSAGES' ],
+      userPermissions: [ 'MANAGE_MESSAGES' ],
       throttling: {
         usages: 2,
         duration: 3,
@@ -39,7 +41,7 @@ export default class DuplicateTextCommand extends Command {
           key: 'option',
           prompt: 'Enable or disable the duplicate text filter?',
           type: 'boolean',
-          validate: (bool : boolean) => validateBool(bool),
+          validate: (bool: boolean) => validateBool(bool),
         },
         {
           key: 'within',
@@ -60,22 +62,20 @@ export default class DuplicateTextCommand extends Command {
           default: 20,
         }
       ],
-      clientPermissions: [ 'MANAGE_MESSAGES' ],
-      userPermissions: [ 'MANAGE_MESSAGES' ],
     });
   }
 
-  run (msg : CommandMessage, { option, within, equals, distance }) {
+  public run (msg: CommandMessage, { option, within, equals, distance }) {
     startTyping(msg);
 
-    const dtfEmbed = new MessageEmbed(),
-      modlogChannel = msg.guild.settings.get('modlogchannel',
-        msg.guild.channels.find(c => c.name === 'mod-logs') ? msg.guild.channels.find(c => c.name === 'mod-logs').id : null),
-      options = {
-        enabled: option,
-        within,
-        equals,
-        distance,
+    const dtfEmbed = new MessageEmbed();
+    const modlogChannel = msg.guild.settings.get('modlogchannel',
+        msg.guild.channels.find(c => c.name === 'mod-logs') ? msg.guild.channels.find(c => c.name === 'mod-logs').id : null);
+    const options = {
+      distance,
+      equals,
+      within,
+      enabled: option,
       };
 
     msg.guild.settings.set('duptext', options);

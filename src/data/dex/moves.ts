@@ -1,4 +1,3 @@
-/* eslint-disable consistent-return, max-len, no-continue, one-var*/
 export const BattleMovedex = [
   {
     num: 719,

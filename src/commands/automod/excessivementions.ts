@@ -16,16 +16,18 @@ import { Command, CommandMessage, CommandoClient } from 'discord.js-commando';
 import { deleteCommandMessages, modLogMessage, startTyping, stopTyping, validateBool } from '../../components/util';
 
 export default class ExcessiveMentionsCommand extends Command {
-  constructor (client : CommandoClient) {
+  constructor (client: CommandoClient) {
     super(client, {
       name: 'excessivementions',
-      memberName: 'excessivementions',
-      group: 'automod',
       aliases: [ 'emf', 'mfilter', 'spammedmentions', 'manymentions' ],
+      group: 'automod',
+      memberName: 'excessivementions',
       description: 'Toggle the excessive mentions filter',
       format: 'BooleanResolvable',
       examples: [ 'excessivementions enable', 'emf enable 3' ],
       guildOnly: true,
+      clientPermissions: [ 'MANAGE_MESSAGES' ],
+      userPermissions: [ 'MANAGE_MESSAGES' ],
       throttling: {
         usages: 2,
         duration: 3,
@@ -35,7 +37,7 @@ export default class ExcessiveMentionsCommand extends Command {
           key: 'option',
           prompt: 'Enable or disable the Excessive Emojis filter?',
           type: 'boolean',
-          validate: (bool : boolean) => validateBool(bool),
+          validate: (bool: boolean) => validateBool(bool),
         },
         {
           key: 'threshold',
@@ -44,20 +46,18 @@ export default class ExcessiveMentionsCommand extends Command {
           default: 5,
         }
       ],
-      clientPermissions: [ 'MANAGE_MESSAGES' ],
-      userPermissions: [ 'MANAGE_MESSAGES' ],
     });
   }
 
-  run (msg : CommandMessage, { option, threshold }) {
+  public run (msg: CommandMessage, { option, threshold }) {
     startTyping(msg);
 
-    const emEmbed = new MessageEmbed(),
-      modlogChannel = msg.guild.settings.get('modlogchannel',
-        msg.guild.channels.find(c => c.name === 'mod-logs') ? msg.guild.channels.find(c => c.name === 'mod-logs').id : null),
-      options = {
-        enabled: option,
+    const emEmbed = new MessageEmbed();
+    const modlogChannel = msg.guild.settings.get('modlogchannel',
+        msg.guild.channels.find(c => c.name === 'mod-logs') ? msg.guild.channels.find(c => c.name === 'mod-logs').id : null);
+    const options = {
         threshold,
+        enabled: option,
       };
 
     msg.guild.settings.set('mentions', options);

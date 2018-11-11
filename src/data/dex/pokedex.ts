@@ -1,4 +1,3 @@
-/* eslint-disable max-len */
 export const BattlePokedex = [
   {
     num: 1,

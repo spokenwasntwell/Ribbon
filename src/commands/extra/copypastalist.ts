@@ -8,20 +8,20 @@
  */
 
 import * as Database from 'better-sqlite3';
+import { stripIndents } from 'common-tags';
+import { TextChannel, Util } from 'discord.js';
+import { Command, CommandMessage, CommandoClient } from 'discord.js-commando';
 import * as moment from 'moment';
 import * as path from 'path';
-import { Command, CommandoClient, CommandMessage } from 'discord.js-commando';
-import { Util, TextChannel } from 'discord.js';
-import { stripIndents } from 'common-tags';
-import { deleteCommandMessages, stopTyping, startTyping } from '../../components/util';
+import { deleteCommandMessages, startTyping, stopTyping } from '../../components/util';
 
 export default class CopyPastaListCommand extends Command {
-  constructor (client : CommandoClient) {
+  constructor (client: CommandoClient) {
     super(client, {
       name: 'copypastalist',
-      memberName: 'copypastalist',
-      group: 'extra',
       aliases: [ 'cplist', 'copylist', 'pastalist' ],
+      group: 'extra',
+      memberName: 'copypastalist',
       description: 'Gets all copypastas available to the server',
       guildOnly: false,
       throttling: {
@@ -31,7 +31,7 @@ export default class CopyPastaListCommand extends Command {
     });
   }
 
-  async run (msg : CommandMessage) {
+  public async run (msg: CommandMessage) {
     const conn = new Database(path.join(__dirname, '../../data/databases/pastas.sqlite3'));
 
     try {
@@ -52,9 +52,9 @@ export default class CopyPastaListCommand extends Command {
 
         for (const part of splitTotal) {
           await msg.embed({
-            title: 'Copypastas available on this server',
-            description: part,
             color: msg.guild.me.displayColor,
+            description: part,
+            title: 'Copypastas available on this server',
           });
         }
         stopTyping(msg);
@@ -65,9 +65,9 @@ export default class CopyPastaListCommand extends Command {
       stopTyping(msg);
 
       return msg.embed({
-        title: 'Copypastas available on this server',
-        description: list.join('\n'),
         color: msg.guild.me.displayColor,
+        description: list.join('\n'),
+        title: 'Copypastas available on this server',
       });
 
     } catch (err) {

@@ -1,31 +1,30 @@
 /**
  * @file Ribbon Automod - Automod module for Ribbon
  * @author Jeroen Claassens (favna) <sharkie.jeroen@gmail.com>
- * @copyright © 2017-2018 Favna  
+ * @copyright © 2017-2018 Favna
  */
 
-/* eslint-disable one-var */
-import { countCaps, countEmojis, countMentions, numberBetween } from './util';
-import { CommandoClient, CommandMessage } from 'discord.js-commando';
+import { CommandMessage, CommandoClient } from 'discord.js-commando';
 import levenshtein from 'fast-levenshtein';
 import * as moment from 'moment';
+import { countCaps, countEmojis, countMentions, numberBetween } from './util';
 
-export const badwords = (msg : CommandMessage, words : Array<String>, client : CommandoClient) => {
+export const badwords = (msg: CommandMessage, words: Array<string>, client: CommandoClient) => {
   if (msg.author.bot || client.isOwner(msg.author) || msg.member.hasPermission('MANAGE_MESSAGES')) {
     return false;
   }
-  if (words.some((v : string) => msg.content.indexOf(v) >= 0)) {
+  if (words.some((v: string) => msg.content.indexOf(v) >= 0)) {
     return true;
   }
 
   return false;
 };
 
-export const duptext = (msg : CommandMessage, within : number, equals : number, distance : number, client : CommandoClient) => {
+export const duptext = (msg: CommandMessage, within: number, equals: number, distance: number, client: CommandoClient) => {
   if (msg.author.bot || client.isOwner(msg.author) || msg.member.hasPermission('MANAGE_MESSAGES')) {
     return false;
   }
-  const authorMessages = msg.channel.messages.filter((m) => {
+  const authorMessages = msg.channel.messages.filter(m => {
     const diff = moment.duration(moment(m.createdTimestamp).diff(moment()));
 
     return numberBetween(diff.asMinutes(), within * -1, 0, true) && m.author.id === msg.author.id;
@@ -48,7 +47,7 @@ export const duptext = (msg : CommandMessage, within : number, equals : number, 
   return false;
 };
 
-export const caps = (msg : CommandMessage, threshold : number, minlength : number, client : CommandoClient) => {
+export const caps = (msg: CommandMessage, threshold: number, minlength: number, client: CommandoClient) => {
   if (msg.author.bot || client.isOwner(msg.author) || msg.member.hasPermission('MANAGE_MESSAGES')) {
     return false;
   }
@@ -61,7 +60,7 @@ export const caps = (msg : CommandMessage, threshold : number, minlength : numbe
   return false;
 };
 
-export const emojis = (msg : CommandMessage, threshold : number, minlength : number, client : CommandoClient) => {
+export const emojis = (msg: CommandMessage, threshold: number, minlength: number, client: CommandoClient) => {
   if (msg.author.bot || client.isOwner(msg.author) || msg.member.hasPermission('MANAGE_MESSAGES')) {
     return false;
   }
@@ -74,7 +73,7 @@ export const emojis = (msg : CommandMessage, threshold : number, minlength : num
   return false;
 };
 
-export const mentions = (msg : CommandMessage, threshold : number, client : CommandoClient) => {
+export const mentions = (msg: CommandMessage, threshold: number, client: CommandoClient) => {
   if (msg.author.bot || client.isOwner(msg.author) || msg.member.hasPermission('MANAGE_MESSAGES')) {
     return false;
   }
@@ -85,7 +84,7 @@ export const mentions = (msg : CommandMessage, threshold : number, client : Comm
   return false;
 };
 
-export const links = (msg : CommandMessage, client : CommandoClient) => {
+export const links = (msg: CommandMessage, client: CommandoClient) => {
   if (msg.author.bot || client.isOwner(msg.author) || msg.member.hasPermission('MANAGE_MESSAGES')) {
     return false;
   }
@@ -96,7 +95,7 @@ export const links = (msg : CommandMessage, client : CommandoClient) => {
   return false;
 };
 
-export const invites = (msg : CommandMessage, client : CommandoClient) => {
+export const invites = (msg: CommandMessage, client: CommandoClient) => {
   if (msg.author.bot || client.isOwner(msg.author) || msg.member.hasPermission('MANAGE_MESSAGES')) {
     return false;
   }
@@ -107,11 +106,11 @@ export const invites = (msg : CommandMessage, client : CommandoClient) => {
   return false;
 };
 
-export const slowmode = (msg : CommandMessage, within : number, client : CommandoClient) => {
+export const slowmode = (msg: CommandMessage, within: number, client: CommandoClient) => {
   if (msg.author.bot || client.isOwner(msg.author) || msg.member.hasPermission('MANAGE_MESSAGES')) {
     return false;
   }
-  const authorMessages = msg.channel.messages.filter((m) => {
+  const authorMessages = msg.channel.messages.filter(m => {
     const diff = moment.duration(moment(m.createdTimestamp).diff(moment()));
 
     return numberBetween(diff.asSeconds(), within * -1, 0, true) && m.author.id === msg.author.id;

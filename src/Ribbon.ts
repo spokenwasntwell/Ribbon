@@ -1,61 +1,52 @@
 import * as Database from 'better-sqlite3';
-import * as path from 'path';
 import { GuildMember, RateLimitData } from 'discord.js';
 import { Client, CommandMessage, CommandoClient, CommandoGuild, SyncSQLiteProvider } from 'discord.js-commando';
-import { handleCmdErr, handleDebug, handleErr, handleGuildJoin, handleGuildLeave, 
+import * as path from 'path';
+import { handleCmdErr, handleDebug, handleErr, handleGuildJoin, handleGuildLeave,
   handleMemberJoin, handleMemberLeave, handleMsg, handlePresenceUpdate, handleRateLimit,
   handleReady, handleRejection, handleUnknownCmd, handleWarn } from './components/events';
 
 export default class Ribbon {
-  token: string;
-  client: CommandoClient;
+  public token: string;
+  public client: CommandoClient;
 
-  constructor (token : string) {
+  constructor (token: string) {
     this.token = token;
     this.client = new Client({
       commandPrefix: '!',
       owner: [ '112001393140723712', '268792781713965056' ],
-      unknownCommandResponse: false,
-      typescript: true,
       presence: {
         status: 'online',
         activity: {
-          application: '376520643862331396',
           name: '@Ribbon help',
           type: 'WATCHING',
-          details: 'Made by Favna',
-          state: 'https://favna.xyz/ribbon',
-          assets: {
-            largeImage: '385133227997921280',
-            smallImage: '385133144245927946',
-            largeText: 'Invite me to your server!',
-            smallText: 'https://favna.xyz/redirect/ribbon',
-          },
         },
       },
-    });
+      typescript: true,
+      unknownCommandResponse: false,
+    }
+   );
   }
 
-  init () {
+  public init () {
     this.client
       .on('commandError', (cmd, err, msg) => handleCmdErr(this.client, cmd, err, msg))
-      .on('debug', (info : string) => handleDebug(info))
-      .on('error', (err : string) => handleErr(this.client, err))
-      .on('guildCreate', (guild : CommandoGuild) => handleGuildJoin(this.client, guild))
-      .on('guildDelete', (guild : CommandoGuild) => handleGuildLeave(this.client, guild))
-      .on('guildMemberAdd', (member : GuildMember) => handleMemberJoin(this.client, member))
-      .on('guildMemberRemove', (member : GuildMember) => handleMemberLeave(this.client, member))
-      .on('message', (message : CommandMessage) => handleMsg(this.client, message))
-      .on('presenceUpdate', (oldMember : GuildMember, newMember : GuildMember) => handlePresenceUpdate(this.client, oldMember, newMember))
-      .on('rateLimit', (info : RateLimitData) => handleRateLimit(this.client, info))
+      .on('debug', (info: string) => handleDebug(info))
+      .on('error', (err: string) => handleErr(this.client, err))
+      .on('guildCreate', (guild: CommandoGuild) => handleGuildJoin(this.client, guild))
+      .on('guildDelete', (guild: CommandoGuild) => handleGuildLeave(this.client, guild))
+      .on('guildMemberAdd', (member: GuildMember) => handleMemberJoin(this.client, member))
+      .on('guildMemberRemove', (member: GuildMember) => handleMemberLeave(this.client, member))
+      .on('message', (message: CommandMessage) => handleMsg(this.client, message))
+      .on('presenceUpdate', (oldMember: GuildMember, newMember: GuildMember) => handlePresenceUpdate(this.client, oldMember, newMember))
+      .on('rateLimit', (info: RateLimitData) => handleRateLimit(this.client, info))
       .on('ready', () => handleReady(this.client))
-      .on('unknownCommand', (message : CommandMessage) => handleUnknownCmd(this.client, message))
-      .on('warn', (warn : string) => handleWarn(this.client, warn));
-    process.on('unhandledRejection', (reason : Error | any, p : Promise<any>) => handleRejection(this.client, reason, p));
+      .on('unknownCommand', (message: CommandMessage) => handleUnknownCmd(this.client, message))
+      .on('warn', (warn: string) => handleWarn(this.client, warn));
+    process.on('unhandledRejection', (reason: Error | any, p: Promise<any>) => handleRejection(this.client, reason, p));
 
-    /* eslint-disable multiline-comment-style, capitalized-comments, line-comment-position*/
     const db = new Database(path.join(__dirname, 'data/databases/settings.sqlite3'));
-    
+
     this.client.setProvider(
       new SyncSQLiteProvider(db)
     );
@@ -83,12 +74,13 @@ export default class Ribbon {
       .registerDefaultCommands({
         help: true,
         prefix: true,
-        ping: true,
         eval: true,
+        ping: true,
+        commandState: true,
       })
       .registerCommandsIn({
         dirname: path.join(__dirname, 'commands'),
-        filter: (fileName : string) => (/\.ts/).test(fileName) ? fileName : null,
+        filter: (fileName: string) => (/\.ts/).test(fileName) ? fileName : undefined,
       });
 
     return this.client.login(this.token);

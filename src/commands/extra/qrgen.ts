@@ -1,5 +1,5 @@
 /**
- * @file Extra QRGenCommand - Generates a QR code from text (like a URL)
+ * @file Extra QRGenCommand - Generates a QR code from text (like a URL)  
  * **Aliases**: `qr`, `qrcode`
  * @module
  * @category extra
@@ -9,20 +9,20 @@
  * @returns {MessageEmbed} Embedded QR code and original image URL
  */
 
+import { oneLine, stripIndents } from 'common-tags';
+import { MessageAttachment, MessageEmbed, TextChannel } from 'discord.js';
+import { Command, CommandMessage, CommandoClient } from 'discord.js-commando';
 import * as moment from 'moment';
 import { toDataURL as qr } from 'qrcode';
-import { Command, CommandMessage, CommandoClient } from 'discord.js-commando';
-import { MessageAttachment, MessageEmbed, TextChannel } from 'discord.js';
-import { oneLine, stripIndents } from 'common-tags';
 import { deleteCommandMessages, startTyping, stopTyping } from '../../components/util';
 
 export default class QRGenCommand extends Command {
-  constructor (client : CommandoClient) {
+  constructor (client: CommandoClient) {
     super(client, {
       name: 'qrgen',
-      memberName: 'qrgen',
-      group: 'extra',
       aliases: [ 'qr', 'qrcode' ],
+      group: 'extra',
+      memberName: 'qrgen',
       description: 'Generates a QR code from text (like a URL)',
       format: 'TextToEncode',
       examples: [ 'qrgen https://github.com/Favna/Ribbon' ],
@@ -41,16 +41,16 @@ export default class QRGenCommand extends Command {
     });
   }
 
-  async run (msg : CommandMessage, { url }) {
+  public async run (msg: CommandMessage, { url }) {
     try {
       startTyping(msg);
       const base64 = await qr(url, {
           type: 'image/jpeg',
-          rendererOpts: { quality: 1 }, 
-        }),
-        buffer = Buffer.from(base64.replace(/^data:image\/png;base64,/, '').toString(), 'base64'),
-        embedAttachment = new MessageAttachment(buffer, 'qrcode.png'),
-        qrEmbed = new MessageEmbed();
+          rendererOpts: { quality: 1 },
+        });
+      const buffer = Buffer.from(base64.replace(/^data:image\/png;base64,/, '').toString(), 'base64');
+      const embedAttachment = new MessageAttachment(buffer, 'qrcode.png');
+      const qrEmbed = new MessageEmbed();
 
       qrEmbed
         .attachFiles([ embedAttachment ])

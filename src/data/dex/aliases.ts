@@ -1,4 +1,3 @@
-/* eslint-disable max-lines, one-var, object-property-newline */
 export const TierAliases = [
   { alias: 'randbats', tier: 'gen7randombattle' },
   { alias: 'randoms', tier: 'gen7randombattle' },

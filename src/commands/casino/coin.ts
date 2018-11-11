@@ -20,12 +20,12 @@ import * as path from 'path';
 import { deleteCommandMessages, roundNumber, startTyping, stopTyping } from '../../components/util';
 
 export default class CoinCommand extends Command {
-  constructor (client : CommandoClient) {
+  constructor (client: CommandoClient) {
     super(client, {
       name: 'coin',
-      memberName: 'coin',
-      group: 'casino',
       aliases: [ 'flip', 'cflip' ],
+      group: 'casino',
+      memberName: 'coin',
       description: 'Gamble your chips in a coin flip',
       format: 'AmountOfChips CoinSide',
       examples: [ 'coin 50 heads' ],
@@ -39,14 +39,14 @@ export default class CoinCommand extends Command {
           key: 'chips',
           prompt: 'How many chips do you want to gamble?',
           type: 'integer',
-          validate: (chips : number) => chips >= 1 && chips <= 1000000 ? true : 'Reply with a chips amount between 1 and 10000. Example: `10`',
-          parse: (chips : number) => roundNumber(chips),
+          validate: (chips: number) => chips >= 1 && chips <= 1000000 ? true : 'Reply with a chips amount between 1 and 10000. Example: `10`',
+          parse: (chips: number) => roundNumber(chips),
         },
         {
           key: 'side',
           prompt: 'What side will the coin land on?',
           type: 'string',
-          validate: (side : string) => {
+          validate: (side: string) => {
             const validSides = [ 'heads', 'head', 'tails', 'tail' ];
 
             if (validSides.includes(side.toLowerCase())) {
@@ -60,9 +60,9 @@ export default class CoinCommand extends Command {
     });
   }
 
-  run (msg : CommandMessage, { chips, side }) {
-    const coinEmbed = new MessageEmbed(),
-      conn = new Database(path.join(__dirname, '../../data/databases/casino.sqlite3'));
+  public run (msg: CommandMessage, { chips, side }) {
+    const coinEmbed = new MessageEmbed();
+    const conn = new Database(path.join(__dirname, '../../data/databases/casino.sqlite3'));
 
     coinEmbed
       .setAuthor(msg.member.displayName, msg.author.displayAvatarURL({ format: 'png' }))
@@ -81,9 +81,9 @@ export default class CoinCommand extends Command {
         if (side === 'head') side = 'heads';
         if (side === 'tail') side = 'tails';
 
-        const flip = Math.random() >= 0.5,
-          prevBal = query.balance,
-          res = side === 'heads';
+        const flip = Math.random() >= 0.5;
+        const prevBal = query.balance;
+        const res = side === 'heads';
 
         query.balance -= chips;
 

@@ -4,7 +4,7 @@
  * @module
  * @category extra
  * @name copypastaadd
- * @example copypastaadd lipsum Lorem ipsum dolor sit amet. 
+ * @example copypastaadd lipsum Lorem ipsum dolor sit amet.
  * @param {StringResolvable} PasteName Name for the new pasta
  * @param {StringResolvable} PastaContent Content for the new pasta
  * @returns {Message} Confirmation the copypasta was added
@@ -19,12 +19,12 @@ import * as path from 'path';
 import { deleteCommandMessages, startTyping, stopTyping } from '../../components/util';
 
 export default class CopyPastaAddCommand extends Command {
-  constructor (client : CommandoClient) {
+  constructor (client: CommandoClient) {
     super(client, {
       name: 'copypastaadd',
-      memberName: 'copypastaadd',
-      group: 'extra',
       aliases: [ 'cpadd', 'pastaadd' ],
+      group: 'extra',
+      memberName: 'copypastaadd',
       description: 'Saves a copypasta to local file',
       format: 'CopypastaName CopypastaContent',
       examples: [ 'copypasta navy what the fuck did you just say to me ... (etc.)' ],
@@ -38,7 +38,7 @@ export default class CopyPastaAddCommand extends Command {
           key: 'name',
           prompt: 'What is the name of the copypasta you want to save?',
           type: 'string',
-          parse: (p : string) => p.toLowerCase(),
+          parse: (p: string) => p.toLowerCase(),
         },
         {
           key: 'content',
@@ -49,9 +49,9 @@ export default class CopyPastaAddCommand extends Command {
     });
   }
 
-  run (msg : CommandMessage, { name, content }) {
-    const conn = new Database(path.join(__dirname, '../../data/databases/pastas.sqlite3')),
-      pastaAddEmbed = new MessageEmbed();
+  public run (msg: CommandMessage, { name, content }) {
+    const conn = new Database(path.join(__dirname, '../../data/databases/pastas.sqlite3'));
+    const pastaAddEmbed = new MessageEmbed();
 
     pastaAddEmbed
       .setAuthor(msg.member.displayName, msg.author.displayAvatarURL({ format: 'png' }))
@@ -64,8 +64,8 @@ export default class CopyPastaAddCommand extends Command {
 
       if (query) {
         conn.prepare(`UPDATE "${msg.guild.id}" SET content=$content WHERE name=$name`).run({
-          name,
           content,
+          name,
         });
 
         pastaAddEmbed.setTitle(`Copypasta \`${name}\` Updated`);
@@ -76,8 +76,8 @@ export default class CopyPastaAddCommand extends Command {
         return msg.embed(pastaAddEmbed);
       }
       conn.prepare(`INSERT INTO "${msg.guild.id}" VALUES ($name, $content);`).run({
-        name,
         content,
+        name,
       });
       pastaAddEmbed.setTitle(`Copypasta \`${name}\` Added`);
 
@@ -90,8 +90,8 @@ export default class CopyPastaAddCommand extends Command {
         conn.prepare(`CREATE TABLE IF NOT EXISTS "${msg.guild.id}" (name TEXT PRIMARY KEY, content TEXT);`).run();
 
         conn.prepare(`INSERT INTO "${msg.guild.id}" VALUES ($name, $content);`).run({
-          name,
           content,
+          name,
         });
         pastaAddEmbed.setTitle(`Copypasta \`${name}\` Added`);
 

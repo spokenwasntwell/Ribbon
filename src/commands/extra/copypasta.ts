@@ -20,12 +20,12 @@ import * as path from 'path';
 import { deleteCommandMessages, startTyping, stopTyping } from '../../components/util';
 
 export default class CopyPastaCommand extends Command {
-  constructor (client : CommandoClient) {
+  constructor (client: CommandoClient) {
     super(client, {
       name: 'copypasta',
-      memberName: 'copypasta',
-      group: 'extra',
       aliases: [ 'cp', 'pasta' ],
+      group: 'extra',
+      memberName: 'copypasta',
       description: 'Sends a copypasta to the chat',
       format: 'CopypastaName',
       examples: [ 'copypasta navy' ],
@@ -39,15 +39,15 @@ export default class CopyPastaCommand extends Command {
           key: 'name',
           prompt: 'Which copypasta should I send?',
           type: 'string',
-          parse: (p : string) => p.toLowerCase(),
+          parse: (p: string) => p.toLowerCase(),
         }
       ],
     });
   }
 
-  async run (msg : CommandMessage, { name }) {
-    const conn = new Database(path.join(__dirname, '../../data/databases/pastas.sqlite3')),
-      pastaEmbed = new MessageEmbed();
+  public async run (msg: CommandMessage, { name }) {
+    const conn = new Database(path.join(__dirname, '../../data/databases/pastas.sqlite3'));
+    const pastaEmbed = new MessageEmbed();
 
     try {
       msg.say('test');
@@ -83,8 +83,8 @@ export default class CopyPastaCommand extends Command {
         stopTyping(msg);
 
         return msg.embed(pastaEmbed);
-      } 
-      // eslint-disable-next-line one-var
+      }
+
       const maybe = dym(name, conn.prepare(`SELECT name FROM "${msg.guild.id}";`)
         .all()
         .map(a => a.name), { deburr: true });
@@ -92,10 +92,10 @@ export default class CopyPastaCommand extends Command {
       deleteCommandMessages(msg, this.client);
       stopTyping(msg);
 
-      return msg.reply(oneLine`that copypasta does not exist! ${maybe 
-        ? oneLine`Did you mean \`${maybe}\`?` 
+      return msg.reply(oneLine`that copypasta does not exist! ${maybe
+        ? oneLine`Did you mean \`${maybe}\`?`
         : `You can save it with \`${msg.guild.commandPrefix}copypastaadd <name> <content>\``}`);
-      
+
     } catch (err) {
       deleteCommandMessages(msg, this.client);
       stopTyping(msg);
