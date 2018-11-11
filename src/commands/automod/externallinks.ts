@@ -42,7 +42,7 @@ export default class ExternalLinksCommand extends Command {
     });
   }
 
-  public run (msg: CommandMessage, { option }) {
+  public run (msg: CommandMessage, { option }: {option: boolean}) {
     startTyping(msg);
 
     const elEmbed = new MessageEmbed();

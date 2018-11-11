@@ -49,7 +49,7 @@ export default class ExcessiveMentionsCommand extends Command {
     });
   }
 
-  public run (msg: CommandMessage, { option, threshold }) {
+  public run (msg: CommandMessage, { option, threshold }: {option: boolean, threshold: number}) {
     startTyping(msg);
 
     const emEmbed = new MessageEmbed();

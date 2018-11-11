@@ -56,7 +56,7 @@ export default class TranslateCommand extends Command {
     });
   }
 
-  public async run (msg: CommandMessage, { fromlang, tolang, text }) {
+  public async run (msg: CommandMessage, { fromlang, tolang, text }: {fromlang: string, tolang: string, text: string}) {
     try {
       startTyping(msg);
 

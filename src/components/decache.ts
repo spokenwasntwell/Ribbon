@@ -8,9 +8,9 @@ const find = (moduleName: string) => {
     }
 };
 
-const searchCache = (moduleName: string, callback: (arg) => void) => {
+const searchCache = (moduleName: string, callback: (arg: any) => void) => {
     let mod = require.resolve(moduleName);
-    const visited = {};
+    const visited: any = {};
 
     /* tslint:disable-next-line:no-conditional-assignment */
     if (mod && ((mod = require.cache[mod]) !== undefined)) {
@@ -18,7 +18,7 @@ const searchCache = (moduleName: string, callback: (arg) => void) => {
         const run = (current: any) => {
             visited[current.id] = true;
 
-            current.children.forEach(child => {
+            current.children.forEach((child: any) => {
 
                 if (path.extname(child.filename) !== '.node' && !visited[child.id]) {
                     run(child);
@@ -42,7 +42,7 @@ export const decache = (moduleName: string) => {
     });
 
     // @ts-ignore
-    Object.keys(module.constructor._pathCache).forEach(cacheKey => {
+    return Object.keys(module.constructor._pathCache).forEach(cacheKey => {
         if (cacheKey.indexOf(moduleName) > 0) {
             // @ts-ignore
             delete module.constructor._pathCache[cacheKey]; /* tslint:disable-line:no-dynamic-delete*/

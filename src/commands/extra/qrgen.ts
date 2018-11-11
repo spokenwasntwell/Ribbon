@@ -41,7 +41,7 @@ export default class QRGenCommand extends Command {
     });
   }
 
-  public async run (msg: CommandMessage, { url }) {
+  public async run (msg: CommandMessage, { url }: {url: string}) {
     try {
       startTyping(msg);
       const base64 = await qr(url, {

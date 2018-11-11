@@ -48,7 +48,7 @@ export default class SlowmodeCommand extends Command {
     });
   }
 
-  public run (msg: CommandMessage, { option, within }) {
+  public run (msg: CommandMessage, { option, within }: {option: boolean, within: number}) {
     startTyping(msg);
 
     const slEmbed = new MessageEmbed();

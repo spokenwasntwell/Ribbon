@@ -1,7 +1,7 @@
 /**
- * @file Extra RandomColCommand - Generates a random color  
- * Providing a color hex will display that color, providing none will generate a random one  
- * **Aliases**: `randhex`, `rhex`, `randomcolor`, `randcol`, `randomhex`
+ * @file Extra RandomColCommand - Generates a random colour  
+ * Providing a colour hex will display that colour, providing none will generate a random one  
+ * **Aliases**: `randhex`, `rhex`, `randomcolour`, `randomcolor`, `randcol`, `randomhex`
  * @module
  * @category extra
  * @name randomcol
@@ -10,8 +10,8 @@
  * randomcol #990000
  * -OR-
  * randomcol 36B56e
- * @param {StringResolvable} [hex] Optional: Color hex to display
- * @returns {MessageEmbed} Color of embed matches generated color
+ * @param {StringResolvable} [hex] Optional: colour hex to display
+ * @returns {MessageEmbed} colour of embed matches generated colour
  */
 
 import { stripIndents } from 'common-tags';
@@ -24,11 +24,11 @@ export default class RandomColCommand extends Command {
   constructor (client: CommandoClient) {
     super(client, {
       name: 'randomcol',
-      aliases: [ 'randhex', 'rhex', 'randomcolor', 'randcol', 'randomhex' ],
+      aliases: [ 'randhex', 'rhex', 'randomcolour', 'randomcolor', 'randcol', 'randomhex' ],
       group: 'extra',
       memberName: 'randomcol',
-      description: 'Generate a random color',
-      format: '[hex color]',
+      description: 'Generate a random colour',
+      format: '[hex colour]',
       examples: [ 'randomcol', 'randomcol #990000', 'randomcol 36B56e' ],
       guildOnly: false,
       throttling: {
@@ -37,8 +37,8 @@ export default class RandomColCommand extends Command {
       },
       args: [
         {
-          key: 'col',
-          prompt: 'What color do you want to preview?',
+          key: 'colour',
+          prompt: 'What colour do you want to preview?',
           type: 'string',
           default: 'random',
           validate: (col: string) => {
@@ -46,26 +46,26 @@ export default class RandomColCommand extends Command {
               return true;
             }
 
-            return 'Respond with a hex formatted color of 6 characters, example: `#990000` or `36B56e`';
+            return 'Respond with a hex formatted colour of 6 characters, example: `#990000` or `36B56e`';
           },
-          parse: (col: string) => {
-            if ((/^#{0}(?:[0-9a-fA-F]{6})$/i).test(col)) {
-              return `#${col}`;
+          parse: (colour: string) => {
+            if ((/^#{0}(?:[0-9a-fA-F]{6})$/i).test(colour)) {
+              return `#${colour}`;
             }
 
-            return col;
+            return colour;
           },
         }
       ],
     });
   }
 
-  public hextodec (color: string) {
-    return parseInt(color.replace('#', ''), 16);
+  public hextodec (colour: string) {
+    return parseInt(colour.replace('#', ''), 16);
   }
 
-  public hextorgb (color: string) {
-    const result = (/^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})(?:[a-f\d])*$/i).exec(color);
+  public hextorgb (colour: string) {
+    const result = (/^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})(?:[a-f\d])*$/i).exec(colour);
 
     return {
       r: parseInt(result[1], 16),
@@ -74,10 +74,10 @@ export default class RandomColCommand extends Command {
     };
   }
 
-  public async run (msg: CommandMessage, { col }) {
+  public async run (msg: CommandMessage, { colour }: {colour: string}) {
     startTyping(msg);
     const embed = new MessageEmbed();
-    const hex = col !== 'random' ? col : `#${Math.floor(Math.random() * 16777215).toString(16)}`;
+    const hex = colour !== 'random' ? colour : `#${Math.floor(Math.random() * 16777215).toString(16)}`;
     const canvas = await Jimp.read(80, 50, this.hextodec(hex.replace('#', '0x').concat('FF')));
     const buffer = await canvas.getBufferAsync(Jimp.MIME_PNG);
     const embedAttachment = new MessageAttachment(buffer, 'canvas.png');

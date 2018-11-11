@@ -54,6 +54,7 @@ export default class ExcessiveCapsCommand extends Command {
 
             return 'has to be a valid percentile number in the format of `60% or `60`';
           },
+          parse: (t: string) => ((/(?:[%])/).test(t)) ? Number(t.slice(0, -1)) : Number(t),
         },
         {
           key: 'minlength',
@@ -65,10 +66,8 @@ export default class ExcessiveCapsCommand extends Command {
     });
   }
 
-  public run (msg: CommandMessage, { option, threshold, minlength }) {
+  public run (msg: CommandMessage, { option, threshold, minlength }: {option: boolean, threshold: number, minlength: number}) {
     startTyping(msg);
-    threshold = ((/(?:[%])/).test(threshold)) ? Number(threshold.slice(0, -1)) : Number(threshold);
-
     const ecfEmbed = new MessageEmbed();
     const modlogChannel = msg.guild.settings.get('modlogchannel',
         msg.guild.channels.find(c => c.name === 'mod-logs') ? msg.guild.channels.find(c => c.name === 'mod-logs').id : null);

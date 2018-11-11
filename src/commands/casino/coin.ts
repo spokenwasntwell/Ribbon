@@ -19,6 +19,13 @@ import * as moment from 'moment';
 import * as path from 'path';
 import { deleteCommandMessages, roundNumber, startTyping, stopTyping } from '../../components/util';
 
+enum CoinSide {
+  heads = 'heads',
+  head = 'heads',
+  tails = 'tails',
+  tail = 'tails',
+}
+
 export default class CoinCommand extends Command {
   constructor (client: CommandoClient) {
     super(client, {
@@ -46,21 +53,13 @@ export default class CoinCommand extends Command {
           key: 'side',
           prompt: 'What side will the coin land on?',
           type: 'string',
-          validate: (side: string) => {
-            const validSides = [ 'heads', 'head', 'tails', 'tail' ];
-
-            if (validSides.includes(side.toLowerCase())) {
-              return true;
-            }
-
-            return `Has to be either \`${validSides[0]}\` or \`${validSides[1]}\``;
-          },
+          validate: (side: string) => Object.keys(CoinSide).includes(side.toLowerCase()) ? true : `Has to be one of ${Object.keys(CoinSide).map(coin => `\`${coin}\``).join(', ')}`,
         }
       ],
     });
   }
 
-  public run (msg: CommandMessage, { chips, side }) {
+  public run (msg: CommandMessage, { chips, side }: {chips: number, side: string}) {
     const coinEmbed = new MessageEmbed();
     const conn = new Database(path.join(__dirname, '../../data/databases/casino.sqlite3'));
 

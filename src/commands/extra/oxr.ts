@@ -95,7 +95,7 @@ export default class MoneyCommand extends Command {
     });
   }
 
-  public async run (msg: CommandMessage, { value, fromCurrency, toCurrency }) {
+  public async run (msg: CommandMessage, { value, fromCurrency, toCurrency }: {value: number, fromCurrency: string, toCurrency: string}) {
     try {
       startTyping(msg);
 

@@ -79,7 +79,7 @@ export default class RemindCommand extends Command {
     });
   }
 
-  public run (msg: CommandMessage, { time, reminder }) {
+  public run (msg: CommandMessage, { time, reminder }: {time: string, reminder: string}) {
     const conn = new Database(path.join(__dirname, '../../data/databases/reminders.sqlite3'));
     const remindEmbed = new MessageEmbed();
 

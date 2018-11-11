@@ -301,7 +301,8 @@ const forceEshopUpdate = async (client: CommandoClient) => {
   try {
     fs.writeFileSync(path.join(__dirname, '../data/databases/eshop.json'), JSON.stringify(await eshop.getGamesAmerica({ shop: 'all' })), 'utf8');
     decache(path.join(__dirname, '../data/databases/eshop.json'));
-    client.registry.resolveCommand('searches:eshop').reload();
+
+    return client.registry.resolveCommand('searches:eshop').reload();
   } catch (err) {
     return null;
   }
@@ -504,7 +505,7 @@ export const handleMemberJoin = (client: CommandoClient, joinMember: GuildMember
   }
 };
 
-export const handleMemberLeave = (client: CommandoClient, leaveMember: GuildMember) => {
+export const handleMemberLeave = (client: CommandoClient, leaveMember: GuildMember): any => {
   const guild = leaveMember.guild as CommandoGuild;
 
   try {
@@ -525,7 +526,6 @@ export const handleMemberLeave = (client: CommandoClient, leaveMember: GuildMemb
         channel.send('', { embed: memberLeaveLogEmbed });
       }
     }
-
   } catch (err) {
     const channel = client.channels.get(process.env.ISSUE_LOG_CHANNEL_ID) as TextChannel;
 

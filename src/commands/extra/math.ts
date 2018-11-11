@@ -42,7 +42,7 @@ export default class MathCommand extends Command {
     });
   }
 
-  public async run (msg: CommandMessage, { equation }) {
+  public async run (msg: CommandMessage, { equation }: {equation: string}) {
     try {
       startTyping(msg);
       const calculator = await fetch('http://api.mathjs.org/v4/', {

@@ -39,7 +39,7 @@ export default class ZalgoCommand extends Command {
     });
   }
 
-  public run (msg: CommandMessage, { txt }) {
+  public run (msg: CommandMessage, { txt }: {txt: string}) {
     startTyping(msg);
     deleteCommandMessages(msg, this.client);
     stopTyping(msg);

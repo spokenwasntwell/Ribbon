@@ -50,7 +50,7 @@ export default class SlotsCommand extends Command {
     });
   }
 
-  public run (msg: CommandMessage, { chips }) {
+  public run (msg: CommandMessage, { chips }: {chips: number}) {
     const conn = new Database(path.join(__dirname, '../../data/databases/casino.sqlite3'));
     const slotEmbed = new MessageEmbed();
 

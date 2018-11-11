@@ -49,7 +49,7 @@ export default class CopyPastaAddCommand extends Command {
     });
   }
 
-  public run (msg: CommandMessage, { name, content }) {
+  public run (msg: CommandMessage, { name, content }: {name: string, content: string}) {
     const conn = new Database(path.join(__dirname, '../../data/databases/pastas.sqlite3'));
     const pastaAddEmbed = new MessageEmbed();
 

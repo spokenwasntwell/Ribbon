@@ -52,15 +52,14 @@ export default class BadWordsCommand extends Command {
 
             return 'You need at least 1 word and the valid format is `word,word,word`, for example `fbomb,darn`';
           },
-                }
+          parse: (words: string) => words.split(','),
+        }
       ],
     });
   }
 
-  public run (msg: CommandMessage, { option, words }) {
+  public run (msg: CommandMessage, { option, words }: {option: boolean, words: Array<string>}) {
     startTyping(msg);
-    words = words.split(',');
-
     const bwfEmbed = new MessageEmbed();
     const modlogChannel = msg.guild.settings.get('modlogchannel',
         msg.guild.channels.find(c => c.name === 'mod-logs') ? msg.guild.channels.find(c => c.name === 'mod-logs').id : null);

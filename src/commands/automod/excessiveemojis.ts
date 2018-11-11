@@ -55,7 +55,7 @@ export default class ExcessiveEmojisCommand extends Command {
     });
   }
 
-  public run (msg: CommandMessage, { option, threshold, minlength }) {
+  public run (msg: CommandMessage, { option, threshold, minlength }: {option: boolean, threshold: number, minlength: number}) {
     startTyping(msg);
 
     const eeEmbed = new MessageEmbed();

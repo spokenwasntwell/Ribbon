@@ -44,7 +44,7 @@ export default class WheelOfFortuneCommand extends Command {
     });
   }
 
-  public run (msg: CommandMessage, { chips }) {
+  public run (msg: CommandMessage, { chips }: {chips: number}) {
     const arrowmojis = [ '⬆', '↖', '⬅', '↙', '⬇', '↘', '➡', '↗' ];
     const conn = new Database(path.join(__dirname, '../../data/databases/casino.sqlite3'));
     const multipliers = [ 0.1, 0.2, 0.3, 0.5, 1.2, 1.5, 1.7, 2.4 ] as Array<number>;

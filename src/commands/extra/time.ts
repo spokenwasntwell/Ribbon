@@ -56,7 +56,7 @@ export default class TimeCommand extends Command {
     };
   }
 
-  public async run (msg: CommandMessage, { location }) {
+  public async run (msg: CommandMessage, { location }: {location: string}) {
     try {
       startTyping(msg);
       const cords = await this.getCords(location);

@@ -52,7 +52,7 @@ export default class SayCommand extends Command {
     });
   }
 
-  public run (msg: CommandMessage, { txt }) {
+  public run (msg: CommandMessage, { txt }: {txt: string}) {
     if (msg.guild && msg.deletable && msg.guild.settings.get('automod', false)) {
 
       if (msg.guild.settings.get('caps', false).enabled) {

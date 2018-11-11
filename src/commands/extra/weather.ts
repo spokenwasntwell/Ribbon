@@ -69,7 +69,7 @@ export default class WeatherCommand extends Command {
     return speed * 0.6214;
   }
 
-  public async run (msg: CommandMessage, { location }) {
+  public async run (msg: CommandMessage, { location }: {location: string}) {
     try {
       startTyping(msg);
       const cords = await this.getCords(location);

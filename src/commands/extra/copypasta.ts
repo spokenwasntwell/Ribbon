@@ -45,7 +45,7 @@ export default class CopyPastaCommand extends Command {
     });
   }
 
-  public async run (msg: CommandMessage, { name }) {
+  public async run (msg: CommandMessage, { name }: {name: string}) {
     const conn = new Database(path.join(__dirname, '../../data/databases/pastas.sqlite3'));
     const pastaEmbed = new MessageEmbed();
 

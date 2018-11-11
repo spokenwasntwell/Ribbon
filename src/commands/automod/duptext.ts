@@ -65,7 +65,7 @@ export default class DuplicateTextCommand extends Command {
     });
   }
 
-  public run (msg: CommandMessage, { option, within, equals, distance }) {
+  public run (msg: CommandMessage, { option, within, equals, distance }: {option: boolean, within: number, equals: number, distance: number}) {
     startTyping(msg);
 
     const dtfEmbed = new MessageEmbed();
