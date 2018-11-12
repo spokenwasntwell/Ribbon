@@ -42,20 +42,6 @@ export default class TimeCommand extends Command {
     });
   }
 
-  public async getCords (location: string) {
-    const res = await fetch(`https://maps.googleapis.com/maps/api/geocode/json?${qs.stringify({
-        address: location,
-        key: process.env.GOOGLE_API_KEY,
-      })}`);
-    const cords = await res.json();
-
-    return {
-      address: cords.results[0].formatted_address,
-      lat: cords.results[0].geometry.location.lat,
-      long: cords.results[0].geometry.location.lng,
-    };
-  }
-
   public async run (msg: CommandMessage, { location }: {location: string}) {
     try {
       startTyping(msg);
@@ -88,5 +74,19 @@ export default class TimeCommand extends Command {
 
       return msg.reply(`i wasn't able to find a location for \`${location}\``);
     }
+  }
+
+  private async getCords (location: string) {
+    const res = await fetch(`https://maps.googleapis.com/maps/api/geocode/json?${qs.stringify({
+        address: location,
+        key: process.env.GOOGLE_API_KEY,
+      })}`);
+    const cords = await res.json();
+
+    return {
+      address: cords.results[0].formatted_address,
+      lat: cords.results[0].geometry.location.lat,
+      long: cords.results[0].geometry.location.lng,
+    };
   }
 }
