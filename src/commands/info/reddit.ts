@@ -68,7 +68,7 @@ export default class RedditCommand extends Command {
           when: moment.unix(this.comments[0].data.created).fromNow(),
           permalink: `https://reddit.com${this.comments[0].data.permalink}`,
         };
-      const complexity = this.calculateTextComplexity();
+      const complexity = roundNumber(this.calculateTextComplexity(), 2);
       const complexityLevels = [ 'very low', 'low', 'medium', 'high', 'very high', 'very high' ];
       const redditEmbed = new MessageEmbed();
       const worstComment = {
