@@ -167,8 +167,6 @@ export default class ActivityCommand extends Command {
           ],
         });
       }
-      console.error(err);
-
       const channel = this.client.channels.get(process.env.ISSUE_LOG_CHANNEL_ID) as TextChannel;
 
       channel.send(stripIndents`
