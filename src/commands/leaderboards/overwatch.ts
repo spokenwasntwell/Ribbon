@@ -22,9 +22,9 @@ export default class OverwatchCommand extends Command {
   constructor (client: CommandoClient) {
     super(client, {
       name: 'overwatch',
-      memberName: 'overwatch',
-      group: 'leaderboards',
       aliases: ['owstats'],
+      group: 'leaderboards',
+      memberName: 'overwatch',
       description: 'Shows Player Stats for a given Overwatch player',
       format: 'BattleTag',
       examples: ['overwatch Camoflouge#1267'],
@@ -82,7 +82,7 @@ export default class OverwatchCommand extends Command {
   public async run (msg: CommandMessage, {player, platform, region}: {player: string, platform: string, region: string}) {
     try {
       startTyping(msg);
-      const owData = await fetch(`https://ow-api.com/v1/stats/${platform}/${region}/${player}/complete`, {headers: {'Content-Type': 'application/json'}});
+      const owData = await fetch(`https://ow-api.com/v1/stats/${platform}/${region}/${player}/complete`);
       const owEmbed = new MessageEmbed();
       const data = await owData.json();
 
@@ -90,16 +90,18 @@ export default class OverwatchCommand extends Command {
       if (!data.competitiveStats.topHeroes) throw new Error('nostats');
       if (!data.quickPlayStats.topHeroes) throw new Error('nostats');
 
-      const topCompetitiveHeroes = Object.keys(data.competitiveStats.topHeroes).map(r => ({ // Eslint-disable-line one-var
+      const topCompetitiveHeroes = Object.keys(data.competitiveStats.topHeroes).map(r => ({
           hero: r,
           time: ms(data.competitiveStats.topHeroes[r].timePlayed),
         }))
+        // @ts-ignore
           .sort((a, b) => a.time > b.time)
           .reverse();
       const topQuickPlayHeroes = Object.keys(data.quickPlayStats.topHeroes).map((r: string) => ({
           hero: r,
           time: ms(data.quickPlayStats.topHeroes[r].timePlayed),
         }))
+        // @ts-ignore
           .sort((a: any, b: any) => a.time > b.time)
           .reverse();
 

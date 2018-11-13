@@ -48,7 +48,7 @@ module.exports = class OsuCommand extends Command {
       startTyping(msg);
 
       const res = await fetch(`https://osu.ppy.sh/api/get_user?${querystring.stringify({
-          k: process.env.osukey,
+          k: process.env.OSU_API_KEY,
           u: player,
           type: 'string',
         })}`, {headers: {'Content-Type': 'application/json'}});

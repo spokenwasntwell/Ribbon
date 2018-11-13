@@ -558,10 +558,9 @@ boolbase@~1.0.0:
   resolved "https://registry.yarnpkg.com/boolbase/-/boolbase-1.0.0.tgz#68dff5fbe60c51eb37725ea9e3ed310dcc1e776e"
   integrity sha1-aN/1++YMUes3cl6p4+0xDcwed24=
 
-booru@1.3.3:
-  version "1.3.3"
-  resolved "https://registry.yarnpkg.com/booru/-/booru-1.3.3.tgz#ab054dc1e47962ec5273c0c0eadfc5770dbadf16"
-  integrity sha512-HsNW+V00DLsZPvpoFQdEz81uUm06ryEafGnbg8l3XnkLCGOEWrjgoMb2f3jGsLIPkVxf4c3liNeCnBftmJe9CQ==
+booru@favna/booru:
+  version "1.3.5"
+  resolved "https://codeload.github.com/favna/booru/tar.gz/753fc9f09ae83fe66ddaf2f394178bf086bf2ff4"
   dependencies:
     node-fetch "^2.2.0"
     xml2js "^0.4.17"
@@ -1219,10 +1218,9 @@ fs.realpath@^1.0.0:
   resolved "https://registry.yarnpkg.com/fs.realpath/-/fs.realpath-1.0.0.tgz#1504ad2523158caa40db4a2787cb01411994ea4f"
   integrity sha1-FQStJSMVjKpA20onh8sBQRmU6k8=
 
-fuse.js@^3.3.0:
-  version "3.3.0"
-  resolved "https://registry.yarnpkg.com/fuse.js/-/fuse.js-3.3.0.tgz#1e4fe172a60687230fb54a5cb247eb96e2e7e885"
-  integrity sha512-ESBRkGLWMuVkapqYCcNO1uqMg5qbCKkgb+VS6wsy17Rix0/cMS9kSOZoYkjH8Ko//pgJ/EEGu0GTjk2mjX2LGQ==
+fuse.js@ceymard/Fuse#individual-getfn:
+  version "3.2.1"
+  resolved "https://codeload.github.com/ceymard/Fuse/tar.gz/f9896f00177d882da39dceb96a5c0e243979fafd"
 
 get-caller-file@^1.0.1:
   version "1.0.3"

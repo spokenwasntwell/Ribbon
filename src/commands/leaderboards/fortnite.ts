@@ -54,7 +54,7 @@ export default class FortniteCommand extends Command {
 
       const res = await fetch(`https://api.fortnitetracker.com/v1/profile/${platform}/${user}`, {
           headers: {
-            'TRN-Api-Key': process.env.trnkey,
+            'TRN-Api-Key': process.env.TRN_API_KEY,
           },
         });
       const stats = await res.json();
