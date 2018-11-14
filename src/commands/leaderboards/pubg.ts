@@ -20,8 +20,8 @@ export default class PubgCommand extends Command {
   constructor (client: CommandoClient) {
     super(client, {
       name: 'pubg',
-      memberName: 'pubg',
       group: 'leaderboards',
+      memberName: 'pubg',
       description: 'Get statistics from a PUBG account',
       format: 'PubgUsername Shard',
       examples: [ 'pubg shroud pc-na' ],
@@ -90,8 +90,8 @@ export default class PubgCommand extends Command {
       startTyping(msg);
 
       const headers = {
-          Authorization: `Bearer ${process.env.PUBG_API_KEY}`,
           Accept: 'application/vnd.api+json',
+          Authorization: `Bearer ${process.env.PUBG_API_KEY}`,
         };
       const seasonReq = await fetch(`https://api.pubg.com/shards/${shard}/seasons`, { headers });
       const seasons = await seasonReq.json();

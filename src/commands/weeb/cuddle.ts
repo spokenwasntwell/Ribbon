@@ -11,14 +11,14 @@
 import { GuildMember } from 'discord.js';
 import {Command, CommandMessage, CommandoClient} from 'discord.js-commando';
 import fetch from 'node-fetch';
-import {deleteCommandMessages, startTyping, stopTyping} from '../../components/util.js';
+import {deleteCommandMessages, startTyping, stopTyping} from '../../components/util';
 
 export default class CuddleCommand extends Command {
   constructor (client: CommandoClient) {
     super(client, {
       name: 'cuddle',
-      memberName: 'cuddle',
       group: 'weeb',
+      memberName: 'cuddle',
       description: 'Cuuuuddlleeesss!! 💕!',
       format: '[MemberToCuddle]',
       examples: ['cuddle Velvet'],
@@ -49,11 +49,11 @@ export default class CuddleCommand extends Command {
       stopTyping(msg);
 
       return msg.embed({
+        color: msg.guild ? msg.guild.me.displayColor : 10610610,
         description: member
           ? `Awww ${msg.member.displayName} is giving ${member.displayName} cuddles 💕!`
           : `${msg.member.displayName} you must feel alone... Have a 🐈`,
         image: {url: member ? cuddleImg.url : 'http://gifimage.net/wp-content/uploads/2017/06/anime-cat-gif-17.gif'},
-        color: msg.guild ? msg.guild.me.displayColor : 10610610,
       }, `<@${member ? member.id : msg.author.id}>`);
     } catch (err) {
       stopTyping(msg);

@@ -11,20 +11,21 @@
 
 import {oneLine} from 'common-tags';
 import {Command, CommandMessage, CommandoClient} from 'discord.js-commando';
-import {deleteCommandMessages, startTyping, stopTyping, validateBool} from '../../components/util.js';
+import {deleteCommandMessages, startTyping, stopTyping, validateBool} from '../../components/util';
 
 export default class TwitchToggleCommand extends Command {
   constructor (client: CommandoClient) {
     super(client, {
       name: 'twitchtoggle',
-      memberName: 'twitchtoggle',
-      group: 'streamwatch',
       aliases: ['twitchon', 'twitchoff'],
+      group: 'streamwatch',
+      memberName: 'twitchtoggle',
       description: 'Configures whether Twitch Notifications are enabled',
-      details: 'This is a killswitch for the entire module!',
       format: 'BooleanResolvable',
+      details: 'This is a killswitch for the entire module!',
       examples: ['twitchtoggle enable'],
       guildOnly: true,
+      userPermissions: ['ADMINISTRATOR'],
       throttling: {
         usages: 2,
         duration: 3,
@@ -37,7 +38,6 @@ export default class TwitchToggleCommand extends Command {
           validate: (bool: boolean) => validateBool(bool),
         }
       ],
-      userPermissions: ['ADMINISTRATOR'],
     });
   }
 

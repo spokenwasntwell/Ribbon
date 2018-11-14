@@ -20,14 +20,14 @@ export default class PahealCommand extends Command {
   constructor (client: CommandoClient) {
     super(client, {
       name: 'paheal',
-      memberName: 'paheal',
-      group: 'nsfw',
       aliases: [ 'pa', 'heal' ],
+      group: 'nsfw',
+      memberName: 'paheal',
       description: 'Find NSFW Content on Rule34 - Paheal',
       format: 'NSFWToLookUp',
       examples: [ 'paheal Pyrrha Nikos' ],
-      guildOnly: false,
       nsfw: true,
+      guildOnly: false,
       throttling: {
         usages: 2,
         duration: 3,

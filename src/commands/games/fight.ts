@@ -18,12 +18,12 @@ export default class FightCommand extends Command {
   constructor (client: CommandoClient) {
     super(client, {
       name: 'fight',
-      memberName: 'fight',
-      group: 'games',
       aliases: [ 'combat' ],
+      group: 'games',
+      memberName: 'fight',
       description: 'Pit two things against each other in a fight to the death.',
-      details: 'Winner is determined with random.org randomization',
       format: 'FirstFighter, SecondFighter',
+      details: 'Winner is determined with random.org randomization',
       examples: [ 'fight Favna Chuck Norris' ],
       guildOnly: false,
       throttling: {

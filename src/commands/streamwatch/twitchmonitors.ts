@@ -12,19 +12,20 @@
 import {stripIndents} from 'common-tags';
 import { GuildMember } from 'discord.js';
 import {Command, CommandMessage, CommandoClient} from 'discord.js-commando';
-import {deleteCommandMessages, startTyping, stopTyping} from '../../components/util.js';
+import {deleteCommandMessages, startTyping, stopTyping} from '../../components/util';
 
 export default class TwitchMonitorsCommand extends Command {
   constructor (client: CommandoClient) {
     super(client, {
       name: 'twitchmonitors',
-      memberName: 'twitchmonitors',
-      group: 'streamwatch',
       aliases: ['monitors', 'monitor', 'twitchmonitor'],
+      group: 'streamwatch',
+      memberName: 'twitchmonitors',
       description: 'Configures which streamers to spy on',
       format: 'Member [Member Member Member]',
       examples: ['twitchmonitors Favna Techagent'],
       guildOnly: true,
+      userPermissions: ['ADMINISTRATOR'],
       throttling: {
         usages: 2,
         duration: 3,
@@ -37,7 +38,6 @@ export default class TwitchMonitorsCommand extends Command {
           infinite: true,
         }
       ],
-      userPermissions: ['ADMINISTRATOR'],
     });
   }
 

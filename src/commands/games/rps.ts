@@ -18,9 +18,9 @@ export default class RockPaperScissorCommand extends Command {
   constructor (client: CommandoClient) {
     super(client, {
       name: 'rps',
-      memberName: 'rps',
-      group: 'games',
       aliases: [ 'rockpaperscissors' ],
+      group: 'games',
+      memberName: 'rps',
       description: 'Play Rock Paper Scissors against random.org randomization',
       format: 'HandToPlay',
       examples: [ 'rps Rock' ],
@@ -46,19 +46,19 @@ export default class RockPaperScissorCommand extends Command {
       startTyping(msg);
 
       const randPost = await fetch('https://api.random.org/json-rpc/1/invoke', {
-          method: 'POST',
           body: JSON.stringify({
+            id: Math.floor(Math.random() * 42),
             jsonrpc: '2.0',
             method: 'generateIntegers',
             params: {
               apiKey: process.env.RANDOM_ORG_API_KEY,
-              n: 1,
-              min: 1,
               max: 3,
+              min: 1,
+              n: 1,
             },
-            id: Math.floor(Math.random() * 42),
           }),
           headers: { 'Content-Type': 'application/json-rpc' },
+          method: 'POST',
         });
       const random = await randPost.json();
       const randoms = random.result.random.data[0];

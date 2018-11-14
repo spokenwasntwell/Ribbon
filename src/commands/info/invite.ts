@@ -16,9 +16,9 @@ export default class InviteCommand extends Command {
   constructor (client: CommandoClient) {
     super(client, {
       name: 'invite',
-      memberName: 'invite',
-      group: 'info',
       aliases: [ 'inv', 'links', 'shill' ],
+      group: 'info',
+      memberName: 'invite',
       description: 'Gives you invitation links',
       examples: [ 'invite' ],
       guildOnly: false,

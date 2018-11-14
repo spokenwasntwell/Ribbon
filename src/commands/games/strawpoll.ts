@@ -21,12 +21,12 @@ export default class StrawpollCommand extends Command {
   constructor (client: CommandoClient) {
     super(client, {
       name: 'strawpoll',
-      memberName: 'strawpoll',
-      group: 'games',
       aliases: [ 'straw', 'poll' ],
+      group: 'games',
+      memberName: 'strawpoll',
       description: 'Strawpoll something. Recommended to use the replying with each argument method to allow spaces in the title',
-      details: 'Has a very specific syntax! Be sure to adapt the example!',
       format: '\'Title Of Strawpoll\' OptionA OptionB OptionC...',
+      details: 'Has a very specific syntax! Be sure to adapt the example!',
       examples: [ 'strawpoll \'Best RWBY girl?\' \'Pyrrha Nikos\' \'Ruby Rose\'', 'strawpoll \'Best coding language?\' JavaScript C# C++' ],
       guildOnly: false,
       throttling: {
@@ -57,15 +57,15 @@ export default class StrawpollCommand extends Command {
       startTyping(msg);
       const pollEmbed = new MessageEmbed();
       const pollPost = await fetch('https://www.strawpoll.me/api/v2/polls', {
-          method: 'POST',
-          body: JSON.stringify({
-            title,
-            options,
-            multi: false,
-            dupcheck: 'normal',
-            captcha: true,
-          }),
-          headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          options,
+          title,
+          captcha: true,
+          dupcheck: 'normal',
+          multi: false,
+        }),
+        headers: { 'Content-Type': 'application/json' },
+        method: 'POST',
         });
       const strawpoll = await pollPost.json();
 

@@ -9,18 +9,17 @@
 
 import {GuildMember, MessageEmbed} from 'discord.js';
 import {Command, CommandMessage, CommandoClient} from 'discord.js-commando';
-import {deleteCommandMessages, startTyping, stopTyping} from '../../components/util.js';
+import {deleteCommandMessages, startTyping, stopTyping} from '../../components/util';
 
 export default class CookieCommand extends Command {
   constructor (client: CommandoClient) {
     super(client, {
       name: 'cookie',
-      memberName: 'cookie',
-      group: 'weeb',
       aliases: ['biscuit'],
+      group: 'weeb',
+      memberName: 'cookie',
       description: 'Steal someone\'s 🍪 gnanahahahaha',
       guildOnly: false,
-      patterns: [/^\.(?:biscuit)$/i],
       throttling: {
         usages: 2,
         duration: 3,
@@ -33,6 +32,7 @@ export default class CookieCommand extends Command {
           default: '',
         }
       ],
+      patterns: [/^\.(?:biscuit)$/i],
     });
   }
 

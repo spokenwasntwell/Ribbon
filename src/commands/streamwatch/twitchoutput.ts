@@ -12,19 +12,20 @@
 import {oneLine} from 'common-tags';
 import { TextChannel } from 'discord.js';
 import {Command, CommandMessage, CommandoClient} from 'discord.js-commando';
-import {deleteCommandMessages, startTyping, stopTyping} from '../../components/util.js';
+import {deleteCommandMessages, startTyping, stopTyping} from '../../components/util';
 
 export default class TwitchOutputCommand extends Command {
   constructor (client: CommandoClient) {
     super(client, {
       name: 'twitchoutput',
-      memberName: 'twitchoutput',
-      group: 'streamwatch',
       aliases: ['output', 'twitchout', 'twitchchannel'],
+      group: 'streamwatch',
+      memberName: 'twitchoutput',
       description: 'Configures where Twitch Notifications are send to',
       format: 'ChannelID|ChannelName(partial or full)',
       examples: ['twitchoutput twitch'],
       guildOnly: true,
+      userPermissions: ['ADMINISTRATOR'],
       throttling: {
         usages: 2,
         duration: 3,
@@ -36,7 +37,6 @@ export default class TwitchOutputCommand extends Command {
           type: 'channel',
         }
       ],
-      userPermissions: ['ADMINISTRATOR'],
     });
   }
 

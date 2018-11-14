@@ -21,9 +21,9 @@ export default class FortniteCommand extends Command {
   constructor (client: CommandoClient) {
     super(client, {
       name: 'fortnite',
-      memberName: 'fortnite',
-      group: 'leaderboards',
       aliases: ['fort', 'fortshite'],
+      group: 'leaderboards',
+      memberName: 'fortnite',
       description: 'Get Player Statistics from Fortnite',
       format: 'User Platform',
       examples: ['fortnite darkentz014 pc'],

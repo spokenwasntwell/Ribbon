@@ -19,9 +19,9 @@ export default class IamCommand extends Command {
   constructor (client: CommandoClient) {
     super(client, {
       name: 'iam',
-      memberName: 'iam',
-      group: 'info',
       aliases: [ 'self' ],
+      group: 'info',
+      memberName: 'iam',
       description: 'Self Assign roles',
       examples: [ 'iam uploader' ],
       guildOnly: true,

@@ -21,12 +21,12 @@ export default class ShipCommand extends Command {
   constructor (client: CommandoClient) {
     super(client, {
       name: 'ship',
-      memberName: 'ship',
-      group: 'games',
       aliases: [ 'love', 'marry', 'engage' ],
+      group: 'games',
+      memberName: 'ship',
       description: 'Ship 2 members',
-      details: 'Leaving 1 or both parameters out will have Ribbon randomly pick 1 or 2 members',
       format: 'ShipMemberOne ShipMemberTwo',
+      details: 'Leaving 1 or both parameters out will have Ribbon randomly pick 1 or 2 members',
       examples: [ 'ship Biscuit Rei' ],
       guildOnly: false,
       throttling: {

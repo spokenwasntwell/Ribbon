@@ -11,14 +11,14 @@
 import { GuildMember } from 'discord.js';
 import {Command, CommandMessage, CommandoClient} from 'discord.js-commando';
 import fetch from 'node-fetch';
-import {deleteCommandMessages, startTyping, stopTyping} from '../../components/util.js';
+import {deleteCommandMessages, startTyping, stopTyping} from '../../components/util';
 
 export default class PatCommand extends Command {
   constructor (client: CommandoClient) {
     super(client, {
       name: 'pat',
-      memberName: 'pat',
       group: 'weeb',
+      memberName: 'pat',
       description: 'Pat a good person 🐇!',
       format: 'MemberToPat',
       examples: ['pat Favna'],
@@ -49,11 +49,11 @@ export default class PatCommand extends Command {
       stopTyping(msg);
 
       return msg.embed({
+        color: msg.guild ? msg.guild.me.displayColor : 10610610,
         description: member
           ? `${member.displayName}! You got patted by ${msg.member.displayName} 🐇!`
           : `${msg.member.displayName} you must feel alone... Have a 🐈`,
         image: {url: member ? petImg.url : 'http://gifimage.net/wp-content/uploads/2017/06/anime-cat-gif-17.gif'},
-        color: msg.guild ? msg.guild.me.displayColor : 10610610,
       }, `<@${member ? member.id : msg.author.id}>`);
     } catch (err) {
       stopTyping(msg);

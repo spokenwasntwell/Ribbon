@@ -20,14 +20,14 @@ export default class PornVidsCommand extends Command {
   constructor (client: CommandoClient) {
     super(client, {
       name: 'pornvids',
-      memberName: 'pornvids',
-      group: 'nsfw',
       aliases: [ 'porn', 'nsfwvids' ],
+      group: 'nsfw',
+      memberName: 'pornvids',
       description: 'Search porn videos',
       format: 'NSFWToLookUp',
       examples: [ 'pornvids babe' ],
-      guildOnly: false,
       nsfw: true,
+      guildOnly: false,
       throttling: {
         usages: 2,
         duration: 3,

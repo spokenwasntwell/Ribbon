@@ -20,14 +20,14 @@ export default class GelbooruCommand extends Command {
   constructor (client: CommandoClient) {
     super(client, {
       name: 'gelbooru',
-      memberName: 'gelbooru',
-      group: 'nsfw',
       aliases: [ 'gel', 'booru' ],
+      group: 'nsfw',
+      memberName: 'gelbooru',
       description: 'Find NSFW Content on gelbooru',
       format: 'NSFWToLookUp',
       examples: [ 'gelbooru Pyrrha Nikos' ],
-      guildOnly: false,
       nsfw: true,
+      guildOnly: false,
       throttling: {
         usages: 2,
         duration: 3,

@@ -20,14 +20,14 @@ export default class Rule34Command extends Command {
   constructor (client: CommandoClient) {
     super(client, {
       name: 'rule34',
-      memberName: 'rule34',
-      group: 'nsfw',
       aliases: [ 'r34' ],
+      group: 'nsfw',
+      memberName: 'rule34',
       description: 'Find NSFW Content on Rule34',
       format: 'NSFWToLookUp',
       examples: [ 'rule34 Pyrrha Nikos' ],
-      guildOnly: false,
       nsfw: true,
+      guildOnly: false,
       throttling: {
         usages: 2,
         duration: 3,

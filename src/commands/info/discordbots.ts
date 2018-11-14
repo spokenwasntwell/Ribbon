@@ -19,9 +19,9 @@ export default class DiscordBotsCommand extends Command {
   constructor (client: CommandoClient) {
     super(client, {
       name: 'discordbots',
-      memberName: 'discordbots',
-      group: 'info',
       aliases: [ 'dbapi', 'db' ],
+      group: 'info',
+      memberName: 'discordbots',
       description: 'Gets the stats from a Discord Bot on DiscordBotList',
       format: 'DiscordBotID',
       examples: [ 'discordbots 376520643862331396' ],

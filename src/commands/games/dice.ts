@@ -18,9 +18,9 @@ export default class DiceCommand extends Command {
   constructor (client: CommandoClient) {
     super(client, {
       name: 'dice',
-      memberName: 'dice',
-      group: 'games',
       aliases: [ 'xdicey', 'roll', 'dicey', 'die' ],
+      group: 'games',
+      memberName: 'dice',
       description: 'Rolls some dice with some sides. Great for the DnD players!',
       format: 'SidesOfTheDice AmountOfRolls',
       examples: [ 'dice 6 5' ],
@@ -34,15 +34,15 @@ export default class DiceCommand extends Command {
           key: 'sides',
           prompt: 'How many sides does your die have?',
           type: 'integer',
-          min: 4,
           max: 20,
+          min: 4,
         },
         {
           key: 'rolls',
           prompt: 'How many times should the die be rolled?',
           type: 'integer',
-          min: 1,
           max: 40,
+          min: 1,
         }
       ],
     });

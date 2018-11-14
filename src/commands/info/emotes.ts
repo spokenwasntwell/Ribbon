@@ -15,9 +15,9 @@ export default class EmotesCommand extends Command {
   constructor (client: CommandoClient) {
     super(client, {
       name: 'emotes',
-      memberName: 'emotes',
-      group: 'info',
       aliases: [ 'listemo', 'emolist', 'listemoji', 'emote', 'emojis', 'emoji' ],
+      group: 'info',
+      memberName: 'emotes',
       description: 'Gets all available custom emotes from the server',
       examples: [ 'emotes' ],
       guildOnly: true,

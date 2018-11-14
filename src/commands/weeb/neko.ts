@@ -10,15 +10,15 @@
 
 import {Command, CommandMessage, CommandoClient} from 'discord.js-commando';
 import fetch from 'node-fetch';
-import {deleteCommandMessages, startTyping, stopTyping} from '../../components/util.js';
+import {deleteCommandMessages, startTyping, stopTyping} from '../../components/util';
 
 export default class NekoCommand extends Command {
   constructor (client: CommandoClient) {
     super(client, {
       name: 'neko',
-      memberName: 'neko',
-      group: 'weeb',
       aliases: ['catgirl'],
+      group: 'weeb',
+      memberName: 'neko',
       description: 'Get a random cute cat girl 😍',
       examples: ['neko'],
       guildOnly: true,
@@ -40,9 +40,9 @@ export default class NekoCommand extends Command {
       stopTyping(msg);
 
       return msg.embed({
+        color: msg.guild ? msg.guild.me.displayColor : 10610610,
         description: `Here is your cute cat girl ${msg.member.displayName} 😻!`,
         image: {url: nekoImg.url},
-        color: msg.guild ? msg.guild.me.displayColor : 10610610,
       }, `<:cat:498198858032218143> <@${msg.author.id}> <:cat:498198858032218143>`);
     } catch (err) {
       stopTyping(msg);

@@ -17,8 +17,8 @@ export default class TagMemberCommand extends Command {
   constructor (client: CommandoClient) {
     super(client, {
       name: 'tagmember',
-      memberName: 'tagmember',
       group: 'owner',
+      memberName: 'tagmember',
       description: 'Tag a member',
       format: 'MemberID|MemberName(partial or full)',
       examples: [ 'tagmember Favna' ],

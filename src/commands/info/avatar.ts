@@ -19,9 +19,9 @@ export default class AvatarCommand extends Command {
   constructor (client: CommandoClient) {
     super(client, {
       name: 'avatar',
-      memberName: 'avatar',
-      group: 'info',
       aliases: [ 'ava' ],
+      group: 'info',
+      memberName: 'avatar',
       description: 'Gets the avatar from a user',
       format: 'MemberID|MemberName(partial or full) [ImageSize]',
       examples: [ 'avatar Favna 2048' ],

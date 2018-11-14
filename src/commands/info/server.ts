@@ -16,9 +16,9 @@ export default class ServerInfoCommand extends Command {
   constructor (client: CommandoClient) {
     super(client, {
       name: 'server',
-      memberName: 'server',
-      group: 'info',
       aliases: [ 'serverinfo', 'sinfo' ],
+      group: 'info',
+      memberName: 'server',
       description: 'Gets information about the server.',
       examples: [ 'server' ],
       guildOnly: true,

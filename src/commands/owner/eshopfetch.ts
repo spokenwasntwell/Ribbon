@@ -18,9 +18,9 @@ export default class EShopFetchCommand extends Command {
   constructor (client: CommandoClient) {
     super(client, {
       name: 'eshopfetch',
-      memberName: 'eshopfetch',
-      group: 'owner',
       aliases: [ 'efetch' ],
+      group: 'owner',
+      memberName: 'eshopfetch',
       description: 'Fetches latest games list from the Nintendo Switch eShop',
       examples: [ 'eshopfetch' ],
       guildOnly: false,

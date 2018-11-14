@@ -51,6 +51,7 @@ export default class OverwatchCommand extends Command {
           key: 'platform',
           prompt: 'Respond with the platform that player plays on',
           type: 'string',
+          default: 'pc',
           validate: (plat: string) => {
             if ((/(?:pc|psn|xbl)/i).test(plat)) {
               return true;
@@ -59,12 +60,12 @@ export default class OverwatchCommand extends Command {
             return 'Has to be `pc`, `psn` or `xbl` for PC, Playstation or Xbox respectively';
           },
           parse: (plat: string) => plat.toLowerCase(),
-          default: 'pc',
         },
         {
           key: 'region',
           prompt: 'Respond with the region that player is playing in',
           type: 'string',
+          default: 'us',
           validate: (reg: string) => {
             if ((/(?:us|eu|asia)/).test(reg)) {
               return true;
@@ -73,7 +74,6 @@ export default class OverwatchCommand extends Command {
             return 'Has to be `us`, `eu` or `asia` for USA, Europe or Asia respectively';
           },
           parse: (reg: string) => reg.toLowerCase(),
-          default: 'us',
         }
       ],
     });

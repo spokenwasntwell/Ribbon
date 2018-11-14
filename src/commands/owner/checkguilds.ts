@@ -13,8 +13,8 @@ export default class CheckGuildsCommand extends Command {
   constructor (client: CommandoClient) {
     super(client, {
       name: 'checkguilds',
-      memberName: 'checkguilds',
       group: 'owner',
+      memberName: 'checkguilds',
       description: 'Check the current guild count and their names',
       guildOnly: false,
       ownerOnly: true,

@@ -22,9 +22,9 @@ export default class ActivityCommand extends Command {
   constructor (client: CommandoClient) {
     super(client, {
       name: 'activity',
-      memberName: 'activity',
-      group: 'info',
       aliases: [ 'act', 'presence', 'richpresence' ],
+      group: 'info',
+      memberName: 'activity',
       description: 'Gets the activity (presence) data from a member',
       format: 'MemberID|MemberName(partial or full)',
       examples: [ 'activity Favna' ],
@@ -65,22 +65,22 @@ export default class ActivityCommand extends Command {
       if (!activity) throw new Error('noActivity');
       if (activity.type === 'LISTENING' && activity.name === 'Spotify') {
         const tokenReq = await fetch('https://accounts.spotify.com/api/token', {
-          method: 'POST',
-          headers: {
-              'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8',
-              Authorization: `Basic ${Buffer.from(`${process.env.SPOTIFY_ID}:${process.env.SPOTIFY_SECRET}`).toString('base64')}`,
-          },
           body: qs.stringify({
-              grant_type: 'client_credentials',
+            grant_type: 'client_credentials',
           }),
+          headers: {
+            Authorization: `Basic ${Buffer.from(`${process.env.SPOTIFY_ID}:${process.env.SPOTIFY_SECRET}`).toString('base64')}`,
+            'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8',
+          },
+          method: 'POST',
         });
         const tokenRes = await tokenReq.json();
         const trackSearch = await fetch(`https://api.spotify.com/v1/search?${qs.stringify({
+          limit: '1',
           q: activity.details,
-          type: 'track',
-          limit: '1'})}`, {
-          method: 'GET',
-          headers: {Authorization: `Bearer ${tokenRes.access_token}`}});
+          type: 'track'})}`, {
+          headers: {Authorization: `Bearer ${tokenRes.access_token}`},
+          method: 'GET'});
         const songInfo = await trackSearch.json();
         spotifyData = songInfo.tracks.items[0];
       }
@@ -151,13 +151,12 @@ export default class ActivityCommand extends Command {
       stopTyping(msg);
       if ((/(noActivity|Cannot read property 'name' of null)/i).test(err.toString())) {
         return msg.embed({
-          color: msg.guild ? msg.guild.me.displayColor : 8190976,
           author: {
             name: member.user.tag,
             url: `${member.user.displayAvatarURL()}?size=2048`,
             iconURL: member.user.displayAvatarURL(),
           },
-          thumbnail: { url: member.user.displayAvatarURL() },
+          color: msg.guild ? msg.guild.me.displayColor : 8190976,
           fields: [
             {
               name: 'Activity',
@@ -165,6 +164,7 @@ export default class ActivityCommand extends Command {
               inline: true,
             }
           ],
+          thumbnail: { url: member.user.displayAvatarURL() },
         });
       }
       const channel = this.client.channels.get(process.env.ISSUE_LOG_CHANNEL_ID) as TextChannel;

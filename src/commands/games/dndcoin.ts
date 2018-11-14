@@ -15,9 +15,9 @@ export default class DndCCommand extends Command {
   constructor (client: CommandoClient) {
     super(client, {
       name: 'dndcoin',
-      memberName: 'dndcoin',
-      group: 'games',
       aliases: [ 'coinflip', 'dndc', 'dcoin' ],
+      group: 'games',
+      memberName: 'dndcoin',
       description: 'Flips a coin',
       examples: [ 'coin' ],
       guildOnly: false,

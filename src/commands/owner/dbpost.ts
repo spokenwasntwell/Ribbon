@@ -14,8 +14,8 @@ export default class DBPostCommand extends Command {
   constructor (client: CommandoClient) {
     super(client, {
       name: 'dbpost',
-      memberName: 'dbpost',
       group: 'owner',
+      memberName: 'dbpost',
       description: 'Post current server count to Discord Bots List',
       guildOnly: false,
       ownerOnly: true,
@@ -27,12 +27,12 @@ export default class DBPostCommand extends Command {
       startTyping(msg);
 
       await fetch(`https://discordbots.org/api/bots/${this.client.user.id}/stats`, {
-        method: 'POST',
         body: JSON.stringify({ server_count: this.client.guilds.size }),
         headers: {
           Authorization: process.env.DISCORD_BOTS_API_KEY,
           'Content-Type': 'application/json',
         },
+        method: 'POST',
       });
 
       deleteCommandMessages(msg, this.client);

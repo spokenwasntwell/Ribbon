@@ -21,9 +21,9 @@ export default class ShowdownCommand extends Command {
   constructor (client: CommandoClient) {
     super(client, {
       name: 'showdown',
-      memberName: 'showdown',
-      group: 'leaderboards',
       aliases: [ 'showdownlb', 'pokelb' ],
+      group: 'leaderboards',
+      memberName: 'showdown',
       description: 'Show the top ranking players in your tier of choice',
       format: 'TierName',
       examples: [ 'showdown ou' ],
@@ -48,24 +48,22 @@ export default class ShowdownCommand extends Command {
       startTyping(msg);
       const fsoptions: Fuse.FuseOptions<any> = {
           shouldSort: true,
-          threshold: 0.6,
+          keys: [{name: 'alias', getfn: t => t.alias, weight: 1}],
           location: 0,
           distance: 100,
+          threshold: 0.6,
           maxPatternLength: 32,
           minMatchCharLength: 1,
-          keys: [
-            {name: 'alias', getfn: t => t.alias, weight: 1}
-          ],
         };
       const fuseTable = new Fuse(TierAliases, fsoptions);
       const results = fuseTable.search(tier);
       const ladders = await fetch(`https://pokemonshowdown.com/ladder/${results[0].tier}.json`);
       const json = await ladders.json();
       const data = {
+          elo: json.toplist.map((e: any) => roundNumber(e.elo)).slice(0, 10),
+          losses: json.toplist.map((l: any) => l.l).slice(0, 10),
           usernames: json.toplist.map((u: any) => u.username).slice(0, 10),
           wins: json.toplist.map((w: any) => w.w).slice(0, 10),
-          losses: json.toplist.map((l: any) => l.l).slice(0, 10),
-          elo: json.toplist.map((e: any) => roundNumber(e.elo)).slice(0, 10),
         };
       const showdownEmbed = new MessageEmbed();
 

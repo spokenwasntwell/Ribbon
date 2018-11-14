@@ -40,9 +40,9 @@ export default class EightBallCommand extends Command {
   constructor (client: CommandoClient) {
     super(client, {
       name: '8ball',
-      memberName: '8ball',
-      group: 'games',
       aliases: [ 'eightball' ],
+      group: 'games',
+      memberName: '8ball',
       description: 'Roll a magic 8ball',
       format: 'YourQuestion',
       examples: [ '8ball is Favna a genius coder?' ],

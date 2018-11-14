@@ -22,9 +22,9 @@ export default class CustomTopUpCommand extends Command {
   constructor (client: CommandoClient) {
     super(client, {
       name: 'customtopup',
-      memberName: 'customtopup',
-      group: 'owner',
       aliases: [ 'ctu' ],
+      group: 'owner',
+      memberName: 'customtopup',
       description: 'Daniël Ocean doesn\'t give a crap about legality',
       format: 'AnyMember ChipsAmount',
       examples: [ 'ctu Biscuit 1000' ],

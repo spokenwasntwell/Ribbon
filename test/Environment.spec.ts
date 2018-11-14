@@ -1,10 +1,18 @@
-import { suite, test } from 'mocha-typescript';
+/* tslint:disable:no-unused-expression*/
+/* tslint:disable:no-implicit-dependencies*/
+
 import { expect } from 'chai';
-import * as dotenv from 'dotenv';
+import {load} from 'dotenv';
+import { suite, test } from 'mocha-typescript';
 import * as path from 'path';
 
 suite('Check dotenv', () => {
-  dotenv.config({ path: path.join(__dirname, '../src/.env') });
+  load({
+      path: path.join(__dirname, '../src/.env'),
+      encoding: 'utf8',
+      debug: false,
+  });
+
   test('ribbon token should be set', () => {
     const token = process.env.BOT_TOKEN;
 

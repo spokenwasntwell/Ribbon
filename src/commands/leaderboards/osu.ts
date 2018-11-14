@@ -21,9 +21,9 @@ export default class OsuCommand extends Command {
   constructor (client: CommandoClient) {
     super(client, {
       name: 'osu',
-      memberName: 'osu',
-      group: 'leaderboards',
       aliases: ['osustats'],
+      group: 'leaderboards',
+      memberName: 'osu',
       description: 'Shows Player Stats for a given OSU player',
       format: 'PlayerName',
       examples: ['osu WubWoofWolf'],
@@ -49,8 +49,8 @@ export default class OsuCommand extends Command {
 
       const res = await fetch(`https://osu.ppy.sh/api/get_user?${querystring.stringify({
           k: process.env.OSU_API_KEY,
-          u: player,
           type: 'string',
+          u: player,
         })}`, {headers: {'Content-Type': 'application/json'}});
       const osu = await res.json();
       const osuEmbed = new MessageEmbed();

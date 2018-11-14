@@ -19,9 +19,9 @@ export default class RibbonStatsCommand extends Command {
   constructor (client: CommandoClient) {
     super(client, {
       name: 'stats',
-      memberName: 'stats',
-      group: 'info',
       aliases: [ 'botinfo', 'info' ],
+      group: 'info',
+      memberName: 'stats',
       description: 'Gets statistics about Ribbon',
       examples: [ 'stats' ],
       guildOnly: false,

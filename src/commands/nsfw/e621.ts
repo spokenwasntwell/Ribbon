@@ -20,14 +20,14 @@ export default class E621Command extends Command {
   constructor (client: CommandoClient) {
     super(client, {
       name: 'e621',
-      memberName: 'e621',
-      group: 'nsfw',
       aliases: [ 'eee' ],
+      group: 'nsfw',
+      memberName: 'e621',
       description: 'Find NSFW Content on e621',
       format: 'NSFWToLookUp',
       examples: [ 'e621 Pyrrha Nikos' ],
-      guildOnly: false,
       nsfw: true,
+      guildOnly: false,
       throttling: {
         usages: 2,
         duration: 3,

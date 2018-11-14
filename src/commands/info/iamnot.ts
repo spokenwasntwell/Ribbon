@@ -19,9 +19,9 @@ export default class IamNotCommand extends Command {
   constructor (client: CommandoClient) {
     super(client, {
       name: 'iamnot',
-      memberName: 'iamnot',
-      group: 'info',
       aliases: [ 'notself', 'iamn' ],
+      group: 'info',
+      memberName: 'iamnot',
       description: 'Remove self assigned roles',
       examples: [ 'iamnot uploader' ],
       guildOnly: true,

@@ -24,9 +24,9 @@ export default class RedditCommand extends Command {
   constructor (client: CommandoClient) {
     super(client, {
       name: 'reddit',
-      memberName: 'reddit',
-      group: 'info',
       aliases: [ 'red', 'redditor' ],
+      group: 'info',
+      memberName: 'reddit',
       description: 'Gets statistics on a Reddit user',
       examples: [ 'reddit favna' ],
       guildOnly: false,
@@ -63,20 +63,20 @@ export default class RedditCommand extends Command {
 
       const bestComment = {
           content: this.comments[0].data.body,
+          permalink: `https://reddit.com${this.comments[0].data.permalink}`,
           score: this.comments[0].data.score,
           subreddit: this.comments[0].data.subreddit,
           when: moment.unix(this.comments[0].data.created).fromNow(),
-          permalink: `https://reddit.com${this.comments[0].data.permalink}`,
         };
       const complexity = roundNumber(this.calculateTextComplexity(), 2);
       const complexityLevels = [ 'very low', 'low', 'medium', 'high', 'very high', 'very high' ];
       const redditEmbed = new MessageEmbed();
       const worstComment = {
           content: this.comments[this.comments.length - 1].data.body,
+          permalink: `https://reddit.com${this.comments[this.comments.length - 1].data.permalink}`,
           score: this.comments[this.comments.length - 1].data.score,
           subreddit: this.comments[this.comments.length - 1].data.subreddit,
           when: moment.unix(this.comments[this.comments.length - 1].data.created).fromNow(),
-          permalink: `https://reddit.com${this.comments[this.comments.length - 1].data.permalink}`,
         };
 
       redditEmbed
@@ -148,8 +148,8 @@ export default class RedditCommand extends Command {
   private async fetchComments (user: any, after = ''): Promise<any> {
     try {
       const res = await fetch(`https://www.reddit.com/user/${user}/comments.json?${qs.stringify({
-          limit: 100,
           after,
+          limit: 100,
         })}`);
       const json = await res.json();
       const arr = json.data.children;
@@ -169,8 +169,8 @@ export default class RedditCommand extends Command {
   private async fetchSubmissions (user: any, after = ''): Promise<any> {
     try {
       const res = await fetch(`https://www.reddit.com/user/${user}/submitted.json?${qs.stringify({
-          limit: 100,
           after,
+          limit: 100,
         })}`);
       const json = await res.json();
       const arr = json.data.children;
@@ -235,8 +235,8 @@ export default class RedditCommand extends Command {
 
     for (const subreddit in subreddits) {
       subredditCounts.push({
-        name: subreddit,
         count: subreddits[subreddit],
+        name: subreddit,
       });
     }
 
@@ -260,8 +260,8 @@ export default class RedditCommand extends Command {
 
     for (const subreddit in subreddits) {
       subredditCounts.push({
-        name: subreddit,
         count: subreddits[subreddit],
+        name: subreddit,
       });
     }
 

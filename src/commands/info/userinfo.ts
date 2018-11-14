@@ -18,9 +18,9 @@ export default class UserInfoCommand extends Command {
   constructor (client: CommandoClient) {
     super(client, {
       name: 'userinfo',
-      memberName: 'userinfo',
-      group: 'info',
       aliases: [ 'user', 'uinfo' ],
+      group: 'info',
+      memberName: 'userinfo',
       description: 'Gets information about a user.',
       format: 'MemberID|MemberName(partial or full)',
       examples: [ 'uinfo Favna' ],
