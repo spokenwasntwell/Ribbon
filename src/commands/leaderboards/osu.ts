@@ -17,7 +17,7 @@ import fetch from 'node-fetch';
 import * as querystring from 'querystring';
 import {deleteCommandMessages, roundNumber, startTyping, stopTyping} from '../../components/util';
 
-module.exports = class OsuCommand extends Command {
+export default class OsuCommand extends Command {
   constructor (client: CommandoClient) {
     super(client, {
       name: 'osu',
@@ -94,4 +94,4 @@ module.exports = class OsuCommand extends Command {
       Want to know more about the error? Join the support server by getting an invite by using the \`${msg.guild.commandPrefix}invite\` command `);
     }
   }
-};
+}
