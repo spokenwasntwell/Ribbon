@@ -12,7 +12,7 @@
 import * as Database from 'better-sqlite3';
 import { oneLine, stripIndents } from 'common-tags';
 import { GuildMember, MessageEmbed, TextChannel } from 'discord.js';
-import { Command, CommandMessage, CommandoClient } from 'discord.js-commando';
+import { Command, CommandoClient, CommandoMessage } from 'discord.js-commando';
 import * as moment from 'moment';
 import * as path from 'path';
 import { deleteCommandMessages, startTyping, stopTyping } from '../../components/util';
@@ -42,7 +42,7 @@ export default class MemberBalanceCommand extends Command {
     });
   }
 
-  public run (msg: CommandMessage, { player }: {player: GuildMember}) {
+  public run (msg: CommandoMessage, { player }: {player: GuildMember}) {
     const conn = new Database(path.join(__dirname, '../../data/databases/casino.sqlite3'));
     const mbalEmbed = new MessageEmbed();
 

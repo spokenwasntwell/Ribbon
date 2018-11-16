@@ -12,7 +12,7 @@
 import * as Database from 'better-sqlite3';
 import { oneLine, stripIndents } from 'common-tags';
 import { MessageEmbed, TextChannel } from 'discord.js';
-import { Command, CommandMessage, CommandoClient } from 'discord.js-commando';
+import { Command, CommandoClient, CommandoMessage } from 'discord.js-commando';
 import * as moment from 'moment';
 import * as path from 'path';
 import { SlotMachine, SlotSymbol } from 'slot-machine';
@@ -50,7 +50,7 @@ export default class SlotsCommand extends Command {
     });
   }
 
-  public run (msg: CommandMessage, { chips }: {chips: number}) {
+  public run (msg: CommandoMessage, { chips }: {chips: number}) {
     const conn = new Database(path.join(__dirname, '../../data/databases/casino.sqlite3'));
     const slotEmbed = new MessageEmbed();
 

@@ -11,7 +11,7 @@
 
 import { oneLine, stripIndents } from 'common-tags';
 import { Message, MessageEmbed, TextChannel } from 'discord.js';
-import { Command, CommandMessage, CommandoClient } from 'discord.js-commando';
+import { Command, CommandoClient, CommandoMessage } from 'discord.js-commando';
 import * as moment from 'moment';
 import fetch from 'node-fetch';
 import * as qs from 'querystring';
@@ -53,7 +53,7 @@ export default class RedditCommand extends Command {
     this.submitted = [];
   }
 
-  public async run (msg: CommandMessage, { user }: {user: string}) {
+  public async run (msg: CommandoMessage, { user }: {user: string}) {
     try {
       startTyping(msg);
       const reply: Message | Array<Message> = await msg.say('`fetching and calculating statistics...`');

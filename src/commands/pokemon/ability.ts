@@ -11,7 +11,7 @@
 
 import { oneLine, stripIndents } from 'common-tags';
 import { MessageEmbed, TextChannel } from 'discord.js';
-import { Command, CommandMessage, CommandoClient } from 'discord.js-commando';
+import { Command, CommandoClient, CommandoMessage } from 'discord.js-commando';
 import * as Fuse from 'fuse.js';
 import * as moment from 'moment';
 import { capitalizeFirstLetter, deleteCommandMessages, startTyping, stopTyping } from '../../components/util';
@@ -44,7 +44,7 @@ export default class AbilityCommand extends Command {
     });
   }
 
-  public run (msg: CommandMessage, { ability }: {ability: string}) {
+  public run (msg: CommandoMessage, { ability }: {ability: string}) {
     try {
       startTyping(msg);
       const fsoptions: Fuse.FuseOptions<any> = {

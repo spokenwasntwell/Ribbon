@@ -10,7 +10,7 @@
  */
 
 import { oneLine } from 'common-tags';
-import { Command, CommandMessage, CommandoClient } from 'discord.js-commando';
+import { Command, CommandoClient, CommandoMessage } from 'discord.js-commando';
 import { startTyping, stopTyping } from '../../components/util';
 
 export default class FavnaCommand extends Command {
@@ -30,7 +30,7 @@ export default class FavnaCommand extends Command {
     });
   }
 
-  public verifyRmt (msg: CommandMessage) {
+  public verifyRmt (msg: CommandoMessage) {
     if (msg.guild.id === '373826006651240450') return true;
     if (msg.guild.commandPrefix === '.') return true;
     if (msg.guild.settings.get('regexmatches', false)) return true;
@@ -39,7 +39,7 @@ export default class FavnaCommand extends Command {
     return false;
   }
 
-  public run (msg: CommandMessage) {
+  public run (msg: CommandoMessage) {
     if (msg.patternMatches && !this.verifyRmt(msg)) return null;
 
     startTyping(msg);

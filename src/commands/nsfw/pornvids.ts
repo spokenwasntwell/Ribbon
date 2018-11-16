@@ -11,7 +11,7 @@
  */
 
 import { MessageEmbed } from 'discord.js';
-import { Command, CommandMessage, CommandoClient } from 'discord.js-commando';
+import { Command, CommandoClient, CommandoMessage } from 'discord.js-commando';
 import fetch from 'node-fetch';
 import * as qs from 'querystring';
 import { deleteCommandMessages, startTyping, stopTyping } from '../../components/util';
@@ -42,7 +42,7 @@ export default class PornVidsCommand extends Command {
     });
   }
 
-  public async run (msg: CommandMessage, { porn }: {porn: string}) {
+  public async run (msg: CommandoMessage, { porn }: {porn: string}) {
     try {
       startTyping(msg);
 

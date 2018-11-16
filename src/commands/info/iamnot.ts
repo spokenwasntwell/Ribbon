@@ -11,7 +11,7 @@
 
 import { oneLine, stripIndents } from 'common-tags';
 import { MessageEmbed, Role, TextChannel } from 'discord.js';
-import { Command, CommandMessage, CommandoClient } from 'discord.js-commando';
+import { Command, CommandoClient, CommandoMessage } from 'discord.js-commando';
 import * as moment from 'moment';
 import { deleteCommandMessages, modLogMessage, startTyping, stopTyping } from '../../components/util';
 
@@ -39,7 +39,7 @@ export default class IamNotCommand extends Command {
     });
   }
 
-  public async run (msg: CommandMessage, { role, roleNames = [] }: {role: Role, roleNames: Array<string>}) {
+  public async run (msg: CommandoMessage, { role, roleNames = [] }: {role: Role, roleNames: Array<string>}) {
     try {
       if (!msg.member.manageable) {
         return msg.reply('looks like I do not have permission to edit your roles. The staff will have to fix the server\'s role permissions if you want to use this command!');

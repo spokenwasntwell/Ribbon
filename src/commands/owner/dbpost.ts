@@ -6,7 +6,7 @@
  * @returns {Message} Confirmation the update was made
  */
 
-import { Command, CommandMessage, CommandoClient } from 'discord.js-commando';
+import { Command, CommandoClient, CommandoMessage } from 'discord.js-commando';
 import fetch from 'node-fetch';
 import { deleteCommandMessages, startTyping, stopTyping } from '../../components/util';
 
@@ -22,7 +22,7 @@ export default class DBPostCommand extends Command {
     });
   }
 
-  public async run (msg: CommandMessage) {
+  public async run (msg: CommandoMessage) {
     try {
       startTyping(msg);
 

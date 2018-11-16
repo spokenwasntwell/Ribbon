@@ -10,7 +10,7 @@
  */
 
 import { GuildMember, MessageEmbed } from 'discord.js';
-import { Command, CommandMessage, CommandoClient } from 'discord.js-commando';
+import { Command, CommandoClient, CommandoMessage } from 'discord.js-commando';
 import * as moment from 'moment';
 import { arrayClean, capitalizeFirstLetter, deleteCommandMessages, startTyping, stopTyping } from '../../components/util';
 
@@ -39,7 +39,7 @@ export default class UserInfoCommand extends Command {
     });
   }
 
-  public run (msg: CommandMessage, { member }: {member: GuildMember}) {
+  public run (msg: CommandoMessage, { member }: {member: GuildMember}) {
     startTyping(msg);
 
     const uinfoEmbed = new MessageEmbed();

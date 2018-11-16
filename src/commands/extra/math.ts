@@ -11,7 +11,7 @@
 
 import { oneLine, stripIndents } from 'common-tags';
 import { MessageEmbed, TextChannel } from 'discord.js';
-import { Command, CommandMessage, CommandoClient } from 'discord.js-commando';
+import { Command, CommandoClient, CommandoMessage } from 'discord.js-commando';
 import * as moment from 'moment';
 import fetch from 'node-fetch';
 import { deleteCommandMessages, startTyping, stopTyping } from '../../components/util';
@@ -42,7 +42,7 @@ export default class MathCommand extends Command {
     });
   }
 
-  public async run (msg: CommandMessage, { equation }: {equation: string}) {
+  public async run (msg: CommandoMessage, { equation }: {equation: string}) {
     try {
       startTyping(msg);
       const calculator = await fetch('http://api.mathjs.org/v4/', {

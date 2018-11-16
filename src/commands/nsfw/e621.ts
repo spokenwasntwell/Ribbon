@@ -13,7 +13,7 @@
 import * as booru from 'booru';
 import { stripIndents } from 'common-tags';
 import { MessageEmbed } from 'discord.js';
-import { Command, CommandMessage, CommandoClient } from 'discord.js-commando';
+import { Command, CommandoClient, CommandoMessage } from 'discord.js-commando';
 import { deleteCommandMessages, startTyping, stopTyping } from '../../components/util';
 
 export default class E621Command extends Command {
@@ -43,7 +43,7 @@ export default class E621Command extends Command {
     });
   }
 
-  public async run (msg: CommandMessage, { tags }: {tags: Array<string>}) {
+  public async run (msg: CommandoMessage, { tags }: {tags: Array<string>}) {
     try {
       startTyping(msg);
 

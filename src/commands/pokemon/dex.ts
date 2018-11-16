@@ -13,7 +13,7 @@
 
 import { oneLine, stripIndents } from 'common-tags';
 import { MessageEmbed, TextChannel } from 'discord.js';
-import { Command, CommandMessage, CommandoClient } from 'discord.js-commando';
+import { Command, CommandoClient, CommandoMessage } from 'discord.js-commando';
 import * as Fuse from 'fuse.js';
 import * as moment from 'moment';
 import { capitalizeFirstLetter, deleteCommandMessages, startTyping, stopTyping } from '../../components/util';
@@ -22,6 +22,15 @@ import { PokeAliases } from '../../data/dex/aliases';
 import * as dexEntries from '../../data/dex/flavorText.json';
 import * as smogonFormats from '../../data/dex/formats.json';
 import { BattlePokedex } from '../../data/dex/pokedex';
+
+interface IPokeData {
+  abilities: string;
+  evos: string;
+  flavors: string;
+  genders: string;
+  sprite: string;
+  tier: string;
+}
 
 export default class DexCommand extends Command {
   constructor (client: CommandoClient) {
@@ -51,7 +60,7 @@ export default class DexCommand extends Command {
 
   /* tslint:disable:cyclomatic-complexity*/
   /* tslint:disable:prefer-conditional-expression*/
-  public run (msg: CommandMessage, { pokemon, shines }: {pokemon: string, shines: boolean}) {
+  public run (msg: CommandoMessage, { pokemon, shines }: {pokemon: string, shines: boolean}) {
     try {
       startTyping(msg);
       if ((/(?:--shiny)/i).test(pokemon)) {
@@ -90,7 +99,7 @@ export default class DexCommand extends Command {
       const pokeSearch: any = !firstSearch.length && aliasSearch.length ? pokeFuse.search(aliasSearch[0].name) : firstSearch;
       const dexEmbed: any = new MessageEmbed();
       const poke: any = pokeSearch[0];
-      const pokeData: any = {
+      const pokeData: IPokeData = {
           abilities: '',
           evos: `**${capitalizeFirstLetter(poke.species)}**`,
           flavors: '*PokéDex data not found for this Pokémon*',

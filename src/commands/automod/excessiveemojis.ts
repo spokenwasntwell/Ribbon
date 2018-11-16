@@ -11,7 +11,7 @@
 
 import { stripIndents } from 'common-tags';
 import { MessageEmbed, TextChannel } from 'discord.js';
-import { Command, CommandMessage, CommandoClient } from 'discord.js-commando';
+import { Command, CommandoClient, CommandoMessage } from 'discord.js-commando';
 import { deleteCommandMessages, modLogMessage, startTyping, stopTyping, validateBool } from '../../components/util';
 
 export default class ExcessiveEmojisCommand extends Command {
@@ -55,7 +55,7 @@ export default class ExcessiveEmojisCommand extends Command {
     });
   }
 
-  public run (msg: CommandMessage, { option, threshold, minlength }: {option: boolean, threshold: number, minlength: number}) {
+  public run (msg: CommandoMessage, { option, threshold, minlength }: {option: boolean, threshold: number, minlength: number}) {
     startTyping(msg);
 
     const eeEmbed = new MessageEmbed();

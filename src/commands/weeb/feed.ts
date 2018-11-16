@@ -9,7 +9,7 @@
  */
 
 import { GuildMember } from 'discord.js';
-import {Command, CommandMessage, CommandoClient} from 'discord.js-commando';
+import {Command, CommandoClient, CommandoMessage} from 'discord.js-commando';
 import fetch from 'node-fetch';
 import {deleteCommandMessages, startTyping, stopTyping} from '../../components/util';
 
@@ -38,7 +38,7 @@ export default class FeedCommand extends Command {
     });
   }
 
-  public async run (msg: CommandMessage, {member}: {member: GuildMember}) {
+  public async run (msg: CommandoMessage, {member}: {member: GuildMember}) {
     try {
       startTyping(msg);
 

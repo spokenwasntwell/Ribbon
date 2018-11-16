@@ -14,7 +14,7 @@ import * as Database from 'better-sqlite3';
 import { oneLine, stripIndents } from 'common-tags';
 import dym from 'didyoumean2';
 import { MessageEmbed, TextChannel, Util } from 'discord.js';
-import { Command, CommandMessage, CommandoClient } from 'discord.js-commando';
+import { Command, CommandoClient, CommandoMessage } from 'discord.js-commando';
 import * as moment from 'moment';
 import * as path from 'path';
 import { deleteCommandMessages, startTyping, stopTyping } from '../../components/util';
@@ -45,7 +45,7 @@ export default class CopyPastaCommand extends Command {
     });
   }
 
-  public async run (msg: CommandMessage, { name }: {name: string}) {
+  public async run (msg: CommandoMessage, { name }: {name: string}) {
     const conn = new Database(path.join(__dirname, '../../data/databases/pastas.sqlite3'));
     const pastaEmbed = new MessageEmbed();
 

@@ -16,7 +16,7 @@
 
 import { stripIndents } from 'common-tags';
 import { MessageAttachment, MessageEmbed } from 'discord.js';
-import { Command, CommandMessage, CommandoClient } from 'discord.js-commando';
+import { Command, CommandoClient, CommandoMessage } from 'discord.js-commando';
 import Jimp = require('jimp');
 import { deleteCommandMessages, startTyping, stopTyping } from '../../components/util';
 
@@ -74,7 +74,7 @@ export default class RandomColCommand extends Command {
     };
   }
 
-  public async run (msg: CommandMessage, { colour }: {colour: string}) {
+  public async run (msg: CommandoMessage, { colour }: {colour: string}) {
     startTyping(msg);
     const embed = new MessageEmbed();
     const hex = colour !== 'random' ? colour : `#${Math.floor(Math.random() * 16777215).toString(16)}`;

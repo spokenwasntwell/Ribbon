@@ -13,7 +13,7 @@
 import * as Database from 'better-sqlite3';
 import { oneLine, stripIndents } from 'common-tags';
 import { GuildMember, MessageEmbed, TextChannel } from 'discord.js';
-import { Command, CommandMessage, CommandoClient } from 'discord.js-commando';
+import { Command, CommandoClient, CommandoMessage } from 'discord.js-commando';
 import * as moment from 'moment';
 import * as path from 'path';
 import { deleteCommandMessages, roundNumber, startTyping, stopTyping } from '../../components/util';
@@ -50,7 +50,7 @@ export default class GiveCommand extends Command {
     });
   }
 
-  public run (msg: CommandMessage, { player, chips }: {player: GuildMember, chips: number}) {
+  public run (msg: CommandoMessage, { player, chips }: {player: GuildMember, chips: number}) {
     const conn = new Database(path.join(__dirname, '../../data/databases/casino.sqlite3'));
     const giveEmbed = new MessageEmbed();
 

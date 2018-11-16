@@ -13,7 +13,7 @@
 
 import { oneLine, stripIndents } from 'common-tags';
 import { MessageEmbed } from 'discord.js';
-import { Command, CommandMessage, CommandoClient } from 'discord.js-commando';
+import { Command, CommandoClient, CommandoMessage } from 'discord.js-commando';
 import * as moment from 'moment';
 import fetch from 'node-fetch';
 import * as qs from 'querystring';
@@ -69,7 +69,7 @@ export default class WeatherCommand extends Command {
     return speed * 0.6214;
   }
 
-  public async run (msg: CommandMessage, { location }: {location: string}) {
+  public async run (msg: CommandoMessage, { location }: {location: string}) {
     try {
       startTyping(msg);
       const cords = await this.getCords(location);

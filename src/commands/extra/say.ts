@@ -9,7 +9,7 @@
  * @returns {Message} Your message said by Ribbon
  */
 
-import { Command, CommandMessage, CommandoClient } from 'discord.js-commando';
+import { Command, CommandoClient, CommandoMessage } from 'discord.js-commando';
 import { badwords, caps, duptext, emojis, invites, links, mentions } from '../../components/automod';
 import { startTyping, stopTyping } from '../../components/util';
 
@@ -33,7 +33,7 @@ export default class SayCommand extends Command {
           key: 'txt',
           prompt: 'What should I say?',
           type: 'string',
-          validate: (text: string, msg: CommandMessage) => {
+          validate: (text: string, msg: CommandoMessage) => {
             if (msg.content.toLowerCase().includes('@here') ||
             msg.content.toLowerCase().includes('@everyone') ||
             msg.cleanContent.toLowerCase().includes('@here') ||
@@ -52,7 +52,7 @@ export default class SayCommand extends Command {
     });
   }
 
-  public run (msg: CommandMessage, { txt }: {txt: string}) {
+  public run (msg: CommandoMessage, { txt }: {txt: string}) {
     if (msg.guild && msg.deletable && msg.guild.settings.get('automod', false)) {
 
       if (msg.guild.settings.get('caps', false).enabled) {

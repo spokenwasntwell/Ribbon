@@ -12,7 +12,7 @@
 
 import { stripIndents } from 'common-tags';
 import { MessageEmbed, TextChannel } from 'discord.js';
-import { Command, CommandMessage, CommandoClient } from 'discord.js-commando';
+import { Command, CommandoClient, CommandoMessage } from 'discord.js-commando';
 import { deleteCommandMessages, modLogMessage, startTyping, stopTyping, validateBool } from '../../components/util';
 
 export default class BadWordsCommand extends Command {
@@ -58,7 +58,7 @@ export default class BadWordsCommand extends Command {
     });
   }
 
-  public run (msg: CommandMessage, { option, words }: {option: boolean, words: Array<string>}) {
+  public run (msg: CommandoMessage, { option, words }: {option: boolean, words: Array<string>}) {
     startTyping(msg);
     const bwfEmbed = new MessageEmbed();
     const modlogChannel = msg.guild.settings.get('modlogchannel',

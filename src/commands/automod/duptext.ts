@@ -13,7 +13,7 @@
 
 import { stripIndents } from 'common-tags';
 import { MessageEmbed, TextChannel } from 'discord.js';
-import { Command, CommandMessage, CommandoClient } from 'discord.js-commando';
+import { Command, CommandoClient, CommandoMessage } from 'discord.js-commando';
 import { deleteCommandMessages, modLogMessage, startTyping, stopTyping, validateBool } from '../../components/util';
 
 export default class DuplicateTextCommand extends Command {
@@ -65,7 +65,7 @@ export default class DuplicateTextCommand extends Command {
     });
   }
 
-  public run (msg: CommandMessage, { option, within, equals, distance }: {option: boolean, within: number, equals: number, distance: number}) {
+  public run (msg: CommandoMessage, { option, within, equals, distance }: {option: boolean, within: number, equals: number, distance: number}) {
     startTyping(msg);
 
     const dtfEmbed = new MessageEmbed();

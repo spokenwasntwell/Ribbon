@@ -1,6 +1,6 @@
 import * as Database from 'better-sqlite3';
 import { GuildMember, RateLimitData } from 'discord.js';
-import { Client, CommandMessage, CommandoClient, CommandoGuild, SyncSQLiteProvider } from 'discord.js-commando';
+import { Client, CommandoClient, CommandoGuild, CommandoMessage, SyncSQLiteProvider } from 'discord.js-commando';
 import * as path from 'path';
 import { handleCmdErr, handleDebug, handleErr, handleGuildJoin, handleGuildLeave,
   handleMemberJoin, handleMemberLeave, handleMsg, handlePresenceUpdate, handleRateLimit,
@@ -37,11 +37,11 @@ export default class Ribbon {
       .on('guildDelete', (guild: CommandoGuild) => handleGuildLeave(this.client, guild))
       .on('guildMemberAdd', (member: GuildMember) => handleMemberJoin(this.client, member))
       .on('guildMemberRemove', (member: GuildMember) => handleMemberLeave(this.client, member))
-      .on('message', (message: CommandMessage) => handleMsg(this.client, message))
+      .on('message', (message: CommandoMessage) => handleMsg(this.client, message))
       .on('presenceUpdate', (oldMember: GuildMember, newMember: GuildMember) => handlePresenceUpdate(this.client, oldMember, newMember))
       .on('rateLimit', (info: RateLimitData) => handleRateLimit(this.client, info))
       .on('ready', () => handleReady(this.client))
-      .on('unknownCommand', (message: CommandMessage) => handleUnknownCmd(this.client, message))
+      .on('unknownCommand', (message: CommandoMessage) => handleUnknownCmd(this.client, message))
       .on('warn', (warn: string) => handleWarn(this.client, warn));
     process.on('unhandledRejection', (reason: Error | any, p: Promise<any>) => handleRejection(this.client, reason, p));
 

@@ -9,7 +9,7 @@
 
 import { stripIndents } from 'common-tags';
 import { MessageEmbed } from 'discord.js';
-import { Command, CommandMessage, CommandoClient } from 'discord.js-commando';
+import { Command, CommandoClient, CommandoMessage } from 'discord.js-commando';
 import { deleteCommandMessages, startTyping, stopTyping } from '../../components/util';
 
 export default class InviteCommand extends Command {
@@ -29,7 +29,7 @@ export default class InviteCommand extends Command {
     });
   }
 
-  public run (msg: CommandMessage) {
+  public run (msg: CommandoMessage) {
     startTyping(msg);
     const inviteEmbed = new MessageEmbed();
 

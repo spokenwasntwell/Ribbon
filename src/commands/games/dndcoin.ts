@@ -8,7 +8,7 @@
  */
 
 import { MessageEmbed } from 'discord.js';
-import { Command, CommandMessage, CommandoClient } from 'discord.js-commando';
+import { Command, CommandoClient, CommandoMessage } from 'discord.js-commando';
 import { deleteCommandMessages, roundNumber, startTyping, stopTyping } from '../../components/util';
 
 export default class DndCCommand extends Command {
@@ -28,7 +28,7 @@ export default class DndCCommand extends Command {
     });
   }
 
-  public run (msg: CommandMessage) {
+  public run (msg: CommandoMessage) {
     startTyping(msg);
     const coinEmbed = new MessageEmbed();
     const flip = roundNumber(Math.random());

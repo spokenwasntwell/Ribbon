@@ -1,4 +1,4 @@
-export const TierAliases = [
+export const TierAliases: any = [
   { alias: 'randbats', tier: 'gen7randombattle' },
   { alias: 'randoms', tier: 'gen7randombattle' },
   { alias: 'random battles', tier: 'gen7randombattle' },
@@ -55,7 +55,7 @@ export const TierAliases = [
   { alias: 'almost any ability', tier: 'gen7almostanyability' }
 ];
 
-export const PokeAliases = [
+export const PokeAliases: any = [
   { alias: 'maero', name: 'Aerodactyl-Mega' },
   { alias: 'megaaero', name: 'Aerodactyl-Mega' },
   { alias: 'megabee', name: 'Beedrill-Mega' },
@@ -703,12 +703,12 @@ export const PokeAliases = [
   { alias: 'borutorosu', name: 'Thundurus' }
 ];
 
-export const AbilityAliases = [
+export const AbilityAliases: any = [
   { alias: 'ph', ability: 'Poison Heal' },
   { alias: 'stag', ability: 'Shadow Tag' }
 ];
 
-export const ItemAliases = [
+export const ItemAliases: any = [
   { alias: 'assvest', item: 'Assault Vest' },
   { alias: 'av', item: 'Assault Vest' },
   { alias: 'band', item: 'Choice Band' },
@@ -736,7 +736,7 @@ export const ItemAliases = [
   { alias: 'yache', item: 'Yache Berry' }
 ];
 
-export const MoveAliases = [
+export const MoveAliases: any = [
   { alias: 'bb', move: 'Brave Bird' },
   { alias: 'bd', move: 'Belly Drum' },
   { alias: 'bpass', move: 'Baton Pass' },

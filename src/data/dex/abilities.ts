@@ -1,5 +1,5 @@
 /* tslint:disable */
-export const BattleAbilities = [{
+export const BattleAbilities: any = [{
     shortDesc: 'Does nothing.',
     id: 'noability',
     isNonstandard: 'gen2',

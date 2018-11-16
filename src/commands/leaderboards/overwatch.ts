@@ -11,7 +11,7 @@
 
 import {oneLine, stripIndents} from 'common-tags';
 import {MessageEmbed, TextChannel} from 'discord.js';
-import {Command, CommandMessage, CommandoClient} from 'discord.js-commando';
+import {Command, CommandoClient, CommandoMessage} from 'discord.js-commando';
 import * as moment from 'moment';
 import 'moment-duration-format';
 import fetch from 'node-fetch';
@@ -79,7 +79,7 @@ export default class OverwatchCommand extends Command {
     });
   }
 
-  public async run (msg: CommandMessage, {player, platform, region}: {player: string, platform: string, region: string}) {
+  public async run (msg: CommandoMessage, {player, platform, region}: {player: string, platform: string, region: string}) {
     try {
       startTyping(msg);
       const owData = await fetch(`https://ow-api.com/v1/stats/${platform}/${region}/${player}/complete`);

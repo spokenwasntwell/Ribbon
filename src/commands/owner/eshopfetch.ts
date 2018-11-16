@@ -7,9 +7,9 @@
  * @returns {Message} Confirmation the data was fetched 
  */
 
-import { Command, CommandMessage, CommandoClient } from 'discord.js-commando';
+import { Command, CommandoClient, CommandoMessage } from 'discord.js-commando';
 import * as fs from 'fs';
-import eshop from 'nintendo-switch-eshop';
+import * as eshop from 'nintendo-switch-eshop';
 import * as path from 'path';
 import { decache } from '../../components/decache';
 import { deleteCommandMessages, startTyping, stopTyping } from '../../components/util';
@@ -28,7 +28,7 @@ export default class EShopFetchCommand extends Command {
     });
   }
 
-  public async run (msg: CommandMessage) {
+  public async run (msg: CommandoMessage) {
     startTyping(msg);
     fs.writeFileSync(path.join(__dirname, '../../data/databases/eshop.json'), JSON.stringify(await eshop.getGamesAmerica({ shop: 'all' })), 'utf8');
     decache(path.join(__dirname, '../../data/databases/eshop.json'));

@@ -14,7 +14,7 @@
 
 import { oneLine, stripIndents } from 'common-tags';
 import { MessageEmbed, TextChannel } from 'discord.js';
-import { Command, CommandMessage, CommandoClient } from 'discord.js-commando';
+import { Command, CommandoClient, CommandoMessage } from 'discord.js-commando';
 import * as moment from 'moment';
 import fetch from 'node-fetch';
 import * as qs from 'querystring';
@@ -56,7 +56,7 @@ export default class TranslateCommand extends Command {
     });
   }
 
-  public async run (msg: CommandMessage, { fromlang, tolang, text }: {fromlang: string, tolang: string, text: string}) {
+  public async run (msg: CommandoMessage, { fromlang, tolang, text }: {fromlang: string, tolang: string, text: string}) {
     try {
       startTyping(msg);
 

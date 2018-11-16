@@ -1,4 +1,4 @@
-import { Command, CommandMessage, CommandoClient } from 'discord.js-commando';
+import { Command, CommandoClient, CommandoMessage } from 'discord.js-commando';
 
 export default class TestCommand extends Command {
   constructor (client: CommandoClient) {
@@ -12,7 +12,7 @@ export default class TestCommand extends Command {
     });
   }
 
-  public run (msg: CommandMessage) {
+  public run (msg: CommandoMessage) {
     return msg.say('derp');
   }
 }

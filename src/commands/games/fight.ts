@@ -11,7 +11,7 @@
  */
 
 import { MessageEmbed } from 'discord.js';
-import { Command, CommandMessage, CommandoClient } from 'discord.js-commando';
+import { Command, CommandoClient, CommandoMessage } from 'discord.js-commando';
 import { deleteCommandMessages, startTyping, stopTyping } from '../../components/util';
 
 export default class FightCommand extends Command {
@@ -45,7 +45,7 @@ export default class FightCommand extends Command {
     });
   }
 
-  public run (msg: CommandMessage, { fighterOne, fighterTwo }: {fighterOne: string, fighterTwo: string}) {
+  public run (msg: CommandoMessage, { fighterOne, fighterTwo }: {fighterOne: string, fighterTwo: string}) {
     try {
       startTyping(msg);
       const fighterEmbed = new MessageEmbed();

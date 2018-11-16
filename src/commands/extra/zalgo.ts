@@ -10,7 +10,7 @@
  * @returns {Message} Your text zalgo-fied
  */
 
-import { Command, CommandMessage, CommandoClient } from 'discord.js-commando';
+import { Command, CommandoClient, CommandoMessage } from 'discord.js-commando';
 import { deleteCommandMessages, startTyping, stopTyping } from '../../components/util';
 import { banish, zalgolize } from '../../components/zalgolize';
 
@@ -39,7 +39,7 @@ export default class ZalgoCommand extends Command {
     });
   }
 
-  public run (msg: CommandMessage, { txt }: {txt: string}) {
+  public run (msg: CommandoMessage, { txt }: {txt: string}) {
     startTyping(msg);
     deleteCommandMessages(msg, this.client);
     stopTyping(msg);

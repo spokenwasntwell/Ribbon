@@ -10,7 +10,7 @@
  */
 
 import {oneLine} from 'common-tags';
-import {Command, CommandMessage, CommandoClient} from 'discord.js-commando';
+import {Command, CommandoClient, CommandoMessage} from 'discord.js-commando';
 import {deleteCommandMessages, startTyping, stopTyping, validateBool} from '../../components/util';
 
 export default class TwitchToggleCommand extends Command {
@@ -41,7 +41,7 @@ export default class TwitchToggleCommand extends Command {
     });
   }
 
-  public run (msg: CommandMessage, {option}: {option: boolean}) {
+  public run (msg: CommandoMessage, {option}: {option: boolean}) {
     startTyping(msg);
     msg.guild.settings.set('twitchnotifiers', option);
 

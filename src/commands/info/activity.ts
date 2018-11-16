@@ -11,7 +11,7 @@
 
 import { oneLine, stripIndents } from 'common-tags';
 import { GuildMember, MessageEmbed, TextChannel } from 'discord.js';
-import { Command, CommandMessage, CommandoClient } from 'discord.js-commando';
+import { Command, CommandoClient, CommandoMessage } from 'discord.js-commando';
 import * as moment from 'moment';
 import 'moment-duration-format';
 import fetch from 'node-fetch';
@@ -44,7 +44,7 @@ export default class ActivityCommand extends Command {
   }
 
   /* tslint:disable: cyclomatic-complexity*/
-  public async run (msg: CommandMessage, { member }: {member: GuildMember}) {
+  public async run (msg: CommandoMessage, { member }: {member: GuildMember}) {
     try {
       startTyping(msg);
       const activity = member.presence.activity;
@@ -152,16 +152,16 @@ export default class ActivityCommand extends Command {
       if ((/(noActivity|Cannot read property 'name' of null)/i).test(err.toString())) {
         return msg.embed({
           author: {
+            iconURL: member.user.displayAvatarURL(),
             name: member.user.tag,
             url: `${member.user.displayAvatarURL()}?size=2048`,
-            iconURL: member.user.displayAvatarURL(),
           },
           color: msg.guild ? msg.guild.me.displayColor : 8190976,
           fields: [
             {
+              inline: true,
               name: 'Activity',
               value: 'Nothing',
-              inline: true,
             }
           ],
           thumbnail: { url: member.user.displayAvatarURL() },

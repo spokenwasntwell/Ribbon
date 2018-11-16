@@ -1,4 +1,4 @@
-export const BattleTypeChart = {
+export const BattleTypeChart: any = {
   Bug: {
     damageTaken: {
       Bug: 0,

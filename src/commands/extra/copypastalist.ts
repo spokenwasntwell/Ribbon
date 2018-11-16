@@ -10,7 +10,7 @@
 import * as Database from 'better-sqlite3';
 import { stripIndents } from 'common-tags';
 import { TextChannel, Util } from 'discord.js';
-import { Command, CommandMessage, CommandoClient } from 'discord.js-commando';
+import { Command, CommandoClient, CommandoMessage } from 'discord.js-commando';
 import * as moment from 'moment';
 import * as path from 'path';
 import { deleteCommandMessages, startTyping, stopTyping } from '../../components/util';
@@ -31,7 +31,7 @@ export default class CopyPastaListCommand extends Command {
     });
   }
 
-  public async run (msg: CommandMessage) {
+  public async run (msg: CommandoMessage) {
     const conn = new Database(path.join(__dirname, '../../data/databases/pastas.sqlite3'));
 
     try {

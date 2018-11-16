@@ -11,7 +11,7 @@
 
 import {stripIndents} from 'common-tags';
 import { GuildMember } from 'discord.js';
-import {Command, CommandMessage, CommandoClient} from 'discord.js-commando';
+import {Command, CommandoClient, CommandoMessage} from 'discord.js-commando';
 import {deleteCommandMessages, startTyping, stopTyping} from '../../components/util';
 
 export default class TwitchMonitorsCommand extends Command {
@@ -41,7 +41,7 @@ export default class TwitchMonitorsCommand extends Command {
     });
   }
 
-  public run (msg: CommandMessage, {members}: {members: Array<GuildMember>}) {
+  public run (msg: CommandoMessage, {members}: {members: Array<GuildMember>}) {
     startTyping(msg);
     const memberIDs = members.map(m => m.id);
     const memberNames = members.map(m => m.displayName);

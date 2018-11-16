@@ -8,7 +8,7 @@
  */
 
 import { MessageEmbed } from 'discord.js';
-import { Command, CommandMessage, CommandoClient } from 'discord.js-commando';
+import { Command, CommandoClient, CommandoMessage } from 'discord.js-commando';
 import * as moment from 'moment';
 import { deleteCommandMessages, startTyping, stopTyping } from '../../components/util';
 
@@ -29,7 +29,7 @@ export default class ServerInfoCommand extends Command {
     });
   }
 
-  public run (msg: CommandMessage) {
+  public run (msg: CommandoMessage) {
     startTyping(msg);
     const channels = msg.guild.channels.map(ty => ty.type);
     const presences = msg.guild.presences.map(st => st.status);

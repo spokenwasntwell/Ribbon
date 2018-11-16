@@ -11,7 +11,7 @@
 import * as Database from 'better-sqlite3';
 import { oneLine, stripIndents } from 'common-tags';
 import { MessageEmbed, TextChannel } from 'discord.js';
-import { Command, CommandMessage, CommandoClient } from 'discord.js-commando';
+import { Command, CommandoClient, CommandoMessage } from 'discord.js-commando';
 import * as moment from 'moment';
 import 'moment-duration-format';
 import * as path from 'path';
@@ -33,7 +33,7 @@ export default class ChipsCommand extends Command {
     });
   }
 
-  public run (msg: CommandMessage) {
+  public run (msg: CommandoMessage) {
     const balEmbed = new MessageEmbed();
     const conn = new Database(path.join(__dirname, '../../data/databases/casino.sqlite3'));
 

@@ -11,7 +11,7 @@
  */
 
 import { MessageEmbed } from 'discord.js';
-import { Command, CommandMessage, CommandoClient } from 'discord.js-commando';
+import { Command, CommandoClient, CommandoMessage } from 'discord.js-commando';
 import { deleteCommandMessages, startTyping, stopTyping } from '../../components/util';
 
 export default class DiceCommand extends Command {
@@ -48,7 +48,7 @@ export default class DiceCommand extends Command {
     });
   }
 
-  public run (msg: CommandMessage, { sides, rolls }: {sides: number, rolls: number}) {
+  public run (msg: CommandoMessage, { sides, rolls }: {sides: number, rolls: number}) {
     startTyping(msg);
     const diceEmbed = new MessageEmbed();
     const res = [];

@@ -13,7 +13,7 @@
 
 import { oneLine } from 'common-tags';
 import { MessageAttachment, MessageEmbed } from 'discord.js';
-import { Command, CommandMessage, CommandoClient } from 'discord.js-commando';
+import { Command, CommandoClient, CommandoMessage } from 'discord.js-commando';
 import Jimp = require('jimp');
 import { deleteCommandMessages, roundNumber, startTyping, stopTyping } from '../../components/util';
 
@@ -50,7 +50,7 @@ export default class ShipCommand extends Command {
     });
   }
 
-  public async run (msg: CommandMessage, { romeo, juliet }: {romeo: any, juliet: any}) {
+  public async run (msg: CommandoMessage, { romeo, juliet }: {romeo: any, juliet: any}) {
     startTyping(msg);
     romeo = romeo !== 'random' ? romeo.user : msg.guild.members.random().user;
     juliet = juliet !== 'random' ? juliet.user : msg.guild.members.random().user;

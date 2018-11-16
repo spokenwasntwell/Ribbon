@@ -1,4 +1,4 @@
-export const BattleLearnsets = {
+export const BattleLearnsets: any = {
   missingno: {
     learnset: {
       blizzard: [ '5L1' ],

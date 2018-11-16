@@ -10,7 +10,7 @@
  */
 
 import { GuildMember } from 'discord.js';
-import { Command, CommandMessage, CommandoClient } from 'discord.js-commando';
+import { Command, CommandoClient, CommandoMessage } from 'discord.js-commando';
 import { deleteCommandMessages, startTyping, stopTyping } from '../../components/util';
 
 export default class TagMemberCommand extends Command {
@@ -34,7 +34,7 @@ export default class TagMemberCommand extends Command {
     });
   }
 
-  public run (msg: CommandMessage, { member }: {member: GuildMember}) {
+  public run (msg: CommandoMessage, { member }: {member: GuildMember}) {
     startTyping(msg);
     deleteCommandMessages(msg, this.client);
     stopTyping(msg);

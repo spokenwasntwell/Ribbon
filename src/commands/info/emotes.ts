@@ -8,7 +8,7 @@
  */
 
 import { MessageEmbed } from 'discord.js';
-import { Command, CommandMessage, CommandoClient } from 'discord.js-commando';
+import { Command, CommandoClient, CommandoMessage } from 'discord.js-commando';
 import { deleteCommandMessages, startTyping, stopTyping } from '../../components/util';
 
 export default class EmotesCommand extends Command {
@@ -28,7 +28,7 @@ export default class EmotesCommand extends Command {
     });
   }
 
-  public run (msg: CommandMessage) {
+  public run (msg: CommandoMessage) {
     startTyping(msg);
     const embed = new MessageEmbed();
     const animEmotes: Array<string> = [];

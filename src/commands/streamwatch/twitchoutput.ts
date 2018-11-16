@@ -11,7 +11,7 @@
 
 import {oneLine} from 'common-tags';
 import { TextChannel } from 'discord.js';
-import {Command, CommandMessage, CommandoClient} from 'discord.js-commando';
+import {Command, CommandoClient, CommandoMessage} from 'discord.js-commando';
 import {deleteCommandMessages, startTyping, stopTyping} from '../../components/util';
 
 export default class TwitchOutputCommand extends Command {
@@ -40,7 +40,7 @@ export default class TwitchOutputCommand extends Command {
     });
   }
 
-  public run (msg: CommandMessage, {channel}: {channel: TextChannel}) {
+  public run (msg: CommandoMessage, {channel}: {channel: TextChannel}) {
     startTyping(msg);
     msg.guild.settings.set('twitchchannel', channel.id);
     deleteCommandMessages(msg, this.client);

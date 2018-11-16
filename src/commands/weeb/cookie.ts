@@ -8,7 +8,7 @@
  */
 
 import {GuildMember, MessageEmbed} from 'discord.js';
-import {Command, CommandMessage, CommandoClient} from 'discord.js-commando';
+import {Command, CommandoClient, CommandoMessage} from 'discord.js-commando';
 import {deleteCommandMessages, startTyping, stopTyping} from '../../components/util';
 
 export default class CookieCommand extends Command {
@@ -36,7 +36,7 @@ export default class CookieCommand extends Command {
     });
   }
 
-  public run (msg: CommandMessage, {member}: {member: GuildMember}) {
+  public run (msg: CommandoMessage, {member}: {member: GuildMember}) {
     if (msg.patternMatches && !this.verifyRmt(msg)) return null;
 
     startTyping(msg);
@@ -69,7 +69,7 @@ export default class CookieCommand extends Command {
     return images[curImage];
   }
 
-  private verifyRmt (msg: CommandMessage) {
+  private verifyRmt (msg: CommandoMessage) {
     if (msg.guild.id === '373826006651240450') return true;
     if (msg.guild.commandPrefix === '.') return true;
     if (msg.guild.settings.get('regexmatches', false)) return true;

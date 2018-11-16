@@ -7,7 +7,7 @@
  */
 
 import { stripIndents } from 'common-tags';
-import { Command, CommandMessage, CommandoClient } from 'discord.js-commando';
+import { Command, CommandoClient, CommandoMessage } from 'discord.js-commando';
 
 export default class CheckGuildsCommand extends Command {
   constructor (client: CommandoClient) {
@@ -21,7 +21,7 @@ export default class CheckGuildsCommand extends Command {
     });
   }
 
-  public run (msg: CommandMessage) {
+  public run (msg: CommandoMessage) {
     return msg.say(stripIndents`\`\`\`The current guild count: ${this.client.guilds.size}
 
         Guild list:

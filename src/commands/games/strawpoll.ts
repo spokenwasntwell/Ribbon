@@ -13,7 +13,7 @@
  */
 
 import { MessageEmbed } from 'discord.js';
-import { Command, CommandMessage, CommandoClient } from 'discord.js-commando';
+import { Command, CommandoClient, CommandoMessage } from 'discord.js-commando';
 import fetch from 'node-fetch';
 import { deleteCommandMessages, startTyping, stopTyping } from '../../components/util';
 
@@ -49,7 +49,7 @@ export default class StrawpollCommand extends Command {
     });
   }
 
-  public async run (msg: CommandMessage, { title, options }: {title: string, options: string}) {
+  public async run (msg: CommandoMessage, { title, options }: {title: string, options: string}) {
     if (options.length < 2) {
       return msg.reply('a poll needs to have at least 2 options to pick from');
     }

@@ -12,7 +12,7 @@
 
 import {oneLine, stripIndents} from 'common-tags';
 import {MessageEmbed, TextChannel} from 'discord.js';
-import {Command, CommandMessage, CommandoClient} from 'discord.js-commando';
+import {Command, CommandoClient, CommandoMessage} from 'discord.js-commando';
 import * as moment from 'moment';
 import fetch from 'node-fetch';
 import {deleteCommandMessages, startTyping, stopTyping} from '../../components/util';
@@ -48,7 +48,7 @@ export default class FortniteCommand extends Command {
     });
   }
 
-  public async run (msg: CommandMessage, {user, platform}: {user: string, platform: string}) {
+  public async run (msg: CommandoMessage, {user, platform}: {user: string, platform: string}) {
     try {
       startTyping(msg);
 

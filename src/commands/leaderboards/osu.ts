@@ -11,7 +11,7 @@
 
 import {oneLine, stripIndents} from 'common-tags';
 import {MessageEmbed, TextChannel} from 'discord.js';
-import {Command, CommandMessage, CommandoClient} from 'discord.js-commando';
+import {Command, CommandoClient, CommandoMessage} from 'discord.js-commando';
 import * as moment from 'moment';
 import fetch from 'node-fetch';
 import * as querystring from 'querystring';
@@ -43,7 +43,7 @@ export default class OsuCommand extends Command {
     });
   }
 
-  public async run (msg: CommandMessage, {player}: {player: string}) {
+  public async run (msg: CommandoMessage, {player}: {player: string}) {
     try {
       startTyping(msg);
 

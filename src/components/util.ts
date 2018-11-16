@@ -6,7 +6,7 @@
 
 import { oneLine, oneLineTrim, stripIndents } from 'common-tags';
 import { GuildMember, MessageEmbed, TextChannel, Util } from 'discord.js';
-import { CommandMessage, CommandoClient, CommandoGuild } from 'discord.js-commando';
+import { CommandoClient, CommandoGuild, CommandoMessage } from 'discord.js-commando';
 import emojis from 'emoji-regex';
 import { Video } from 'simple-youtube-api';
 
@@ -39,9 +39,9 @@ export const countMentions = (str: string) => {
   return counter;
 };
 
-export const deleteCommandMessages = (msg: CommandMessage, client: CommandoClient) => msg.deletable && client.provider.get(msg.guild, 'deletecommandmessages', false) ? msg.delete() : null;
+export const deleteCommandMessages = (msg: CommandoMessage, client: CommandoClient) => msg.deletable && client.provider.get(msg.guild, 'deletecommandmessages', false) ? msg.delete() : null;
 
-export const modLogMessage = (msg: CommandMessage, guild: CommandoGuild, outChannelID: string, outChannel: TextChannel, embed: MessageEmbed) => {
+export const modLogMessage = (msg: CommandoMessage, guild: CommandoGuild, outChannelID: string, outChannel: TextChannel, embed: MessageEmbed) => {
   if (!guild.settings.get('hasSentModLogMessage', false)) {
     msg.reply(oneLine`📃 I can keep a log of moderator actions if you create a channel named \'mod-logs\'
     (or some other name configured by the ${guild.commandPrefix}setmodlogs command) and give me access to it.
@@ -104,11 +104,11 @@ export const roundNumber = (num: number, scale = 0) => {
   return Number(`${Math.round(Number(`${Number(arr[0])}e${sig}${Number(arr[1]) + scale}`))}e-${scale}`);
 };
 
-export const stopTyping = (msg: CommandMessage) => {
+export const stopTyping = (msg: CommandoMessage) => {
   msg.channel.stopTyping(true);
 };
 
-export const startTyping = (msg: CommandMessage) => {
+export const startTyping = (msg: CommandoMessage) => {
   msg.channel.startTyping(1);
 };
 

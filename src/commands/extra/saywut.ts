@@ -9,7 +9,7 @@
 
 import { oneLine } from 'common-tags';
 import { MessageEmbed } from 'discord.js';
-import { Command, CommandMessage, CommandoClient } from 'discord.js-commando';
+import { Command, CommandoClient, CommandoMessage } from 'discord.js-commando';
 import * as moment from 'moment';
 import { deleteCommandMessages, startTyping, stopTyping } from '../../components/util';
 
@@ -30,7 +30,7 @@ export default class SayWutCommand extends Command {
     });
   }
 
-  public run (msg: CommandMessage) {
+  public run (msg: CommandoMessage) {
     startTyping(msg);
     const saydata = msg.guild.settings.get('saydata', null);
     const wutEmbed = new MessageEmbed();

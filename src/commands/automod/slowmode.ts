@@ -11,7 +11,7 @@
 
 import { stripIndents } from 'common-tags';
 import { MessageEmbed, TextChannel } from 'discord.js';
-import { Command, CommandMessage, CommandoClient } from 'discord.js-commando';
+import { Command, CommandoClient, CommandoMessage } from 'discord.js-commando';
 import { deleteCommandMessages, modLogMessage, startTyping, stopTyping, validateBool } from '../../components/util';
 
 export default class SlowmodeCommand extends Command {
@@ -48,7 +48,7 @@ export default class SlowmodeCommand extends Command {
     });
   }
 
-  public run (msg: CommandMessage, { option, within }: {option: boolean, within: number}) {
+  public run (msg: CommandoMessage, { option, within }: {option: boolean, within: number}) {
     startTyping(msg);
 
     const slEmbed = new MessageEmbed();

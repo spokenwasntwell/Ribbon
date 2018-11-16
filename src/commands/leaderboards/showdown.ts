@@ -11,7 +11,7 @@
 
 import { stripIndents } from 'common-tags';
 import { MessageEmbed } from 'discord.js';
-import { Command, CommandMessage, CommandoClient } from 'discord.js-commando';
+import { Command, CommandoClient, CommandoMessage } from 'discord.js-commando';
 import * as Fuse from 'fuse.js';
 import fetch from 'node-fetch';
 import { deleteCommandMessages, roundNumber, startTyping, stopTyping } from '../../components/util';
@@ -43,7 +43,7 @@ export default class ShowdownCommand extends Command {
     });
   }
 
-  public async run (msg: CommandMessage, { tier }: {tier: string}) {
+  public async run (msg: CommandoMessage, { tier }: {tier: string}) {
     try {
       startTyping(msg);
       const fsoptions: Fuse.FuseOptions<any> = {

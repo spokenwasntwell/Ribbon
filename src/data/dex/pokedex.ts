@@ -1,4 +1,4 @@
-export const BattlePokedex = [
+export const BattlePokedex: any = [
   {
     num: 1,
     species: 'Bulbasaur',

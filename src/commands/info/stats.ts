@@ -9,7 +9,7 @@
 
 import { oneLine } from 'common-tags';
 import { MessageEmbed } from 'discord.js';
-import { Command, CommandMessage, CommandoClient } from 'discord.js-commando';
+import { Command, CommandoClient, CommandoMessage } from 'discord.js-commando';
 import * as moment from 'moment';
 import 'moment-duration-format';
 import { deleteCommandMessages, roundNumber, startTyping, stopTyping } from '../../components/util';
@@ -33,7 +33,7 @@ export default class RibbonStatsCommand extends Command {
   }
 
 
-  public async run (msg: CommandMessage): Promise<any> {
+  public async run (msg: CommandoMessage): Promise<any> {
     startTyping(msg);
     const speed = speedTest({
         maxTime: 5000,

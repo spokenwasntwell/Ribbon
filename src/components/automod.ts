@@ -4,12 +4,12 @@
  * @copyright © 2017-2018 Favna
  */
 
-import { CommandMessage, CommandoClient } from 'discord.js-commando';
+import { CommandoClient, CommandoMessage } from 'discord.js-commando';
 import levenshtein from 'fast-levenshtein';
 import * as moment from 'moment';
 import { countCaps, countEmojis, countMentions, numberBetween } from './util';
 
-export const badwords = (msg: CommandMessage, words: Array<string>, client: CommandoClient) => {
+export const badwords = (msg: CommandoMessage, words: Array<string>, client: CommandoClient) => {
   if (msg.author.bot || client.isOwner(msg.author) || msg.member.hasPermission('MANAGE_MESSAGES')) {
     return false;
   }
@@ -20,7 +20,7 @@ export const badwords = (msg: CommandMessage, words: Array<string>, client: Comm
   return false;
 };
 
-export const duptext = (msg: CommandMessage, within: number, equals: number, distance: number, client: CommandoClient) => {
+export const duptext = (msg: CommandoMessage, within: number, equals: number, distance: number, client: CommandoClient) => {
   if (msg.author.bot || client.isOwner(msg.author) || msg.member.hasPermission('MANAGE_MESSAGES')) {
     return false;
   }
@@ -47,7 +47,7 @@ export const duptext = (msg: CommandMessage, within: number, equals: number, dis
   return false;
 };
 
-export const caps = (msg: CommandMessage, threshold: number, minlength: number, client: CommandoClient) => {
+export const caps = (msg: CommandoMessage, threshold: number, minlength: number, client: CommandoClient) => {
   if (msg.author.bot || client.isOwner(msg.author) || msg.member.hasPermission('MANAGE_MESSAGES')) {
     return false;
   }
@@ -60,7 +60,7 @@ export const caps = (msg: CommandMessage, threshold: number, minlength: number, 
   return false;
 };
 
-export const emojis = (msg: CommandMessage, threshold: number, minlength: number, client: CommandoClient) => {
+export const emojis = (msg: CommandoMessage, threshold: number, minlength: number, client: CommandoClient) => {
   if (msg.author.bot || client.isOwner(msg.author) || msg.member.hasPermission('MANAGE_MESSAGES')) {
     return false;
   }
@@ -73,7 +73,7 @@ export const emojis = (msg: CommandMessage, threshold: number, minlength: number
   return false;
 };
 
-export const mentions = (msg: CommandMessage, threshold: number, client: CommandoClient) => {
+export const mentions = (msg: CommandoMessage, threshold: number, client: CommandoClient) => {
   if (msg.author.bot || client.isOwner(msg.author) || msg.member.hasPermission('MANAGE_MESSAGES')) {
     return false;
   }
@@ -84,7 +84,7 @@ export const mentions = (msg: CommandMessage, threshold: number, client: Command
   return false;
 };
 
-export const links = (msg: CommandMessage, client: CommandoClient) => {
+export const links = (msg: CommandoMessage, client: CommandoClient) => {
   if (msg.author.bot || client.isOwner(msg.author) || msg.member.hasPermission('MANAGE_MESSAGES')) {
     return false;
   }
@@ -95,7 +95,7 @@ export const links = (msg: CommandMessage, client: CommandoClient) => {
   return false;
 };
 
-export const invites = (msg: CommandMessage, client: CommandoClient) => {
+export const invites = (msg: CommandoMessage, client: CommandoClient) => {
   if (msg.author.bot || client.isOwner(msg.author) || msg.member.hasPermission('MANAGE_MESSAGES')) {
     return false;
   }
@@ -106,7 +106,7 @@ export const invites = (msg: CommandMessage, client: CommandoClient) => {
   return false;
 };
 
-export const slowmode = (msg: CommandMessage, within: number, client: CommandoClient) => {
+export const slowmode = (msg: CommandoMessage, within: number, client: CommandoClient) => {
   if (msg.author.bot || client.isOwner(msg.author) || msg.member.hasPermission('MANAGE_MESSAGES')) {
     return false;
   }

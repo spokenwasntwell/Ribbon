@@ -10,7 +10,7 @@
  */
 
 import { MessageEmbed } from 'discord.js';
-import { Command, CommandMessage, CommandoClient } from 'discord.js-commando';
+import { Command, CommandoClient, CommandoMessage } from 'discord.js-commando';
 import { deleteCommandMessages, roundNumber, startTyping, stopTyping } from '../../components/util';
 
 export default class EightBallCommand extends Command {
@@ -61,7 +61,7 @@ export default class EightBallCommand extends Command {
     });
   }
 
-  public run (msg: CommandMessage, { question }: {question: string}) {
+  public run (msg: CommandoMessage, { question }: {question: string}) {
     startTyping(msg);
     const eightBallEmbed = new MessageEmbed();
 

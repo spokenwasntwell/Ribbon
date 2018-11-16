@@ -12,7 +12,7 @@
 import * as Database from 'better-sqlite3';
 import { oneLine, stripIndents } from 'common-tags';
 import { MessageEmbed, TextChannel } from 'discord.js';
-import { Command, CommandMessage, CommandoClient } from 'discord.js-commando';
+import { Command, CommandoClient, CommandoMessage } from 'discord.js-commando';
 import * as moment from 'moment';
 import * as path from 'path';
 import { deleteCommandMessages, roundNumber, startTyping, stopTyping } from '../../components/util';
@@ -44,7 +44,7 @@ export default class WheelOfFortuneCommand extends Command {
     });
   }
 
-  public run (msg: CommandMessage, { chips }: {chips: number}) {
+  public run (msg: CommandoMessage, { chips }: {chips: number}) {
     const arrowmojis = [ '⬆', '↖', '⬅', '↙', '⬇', '↘', '➡', '↗' ];
     const conn = new Database(path.join(__dirname, '../../data/databases/casino.sqlite3'));
     const multipliers = [ 0.1, 0.2, 0.3, 0.5, 1.2, 1.5, 1.7, 2.4 ] as Array<number>;

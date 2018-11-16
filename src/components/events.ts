@@ -7,7 +7,7 @@
 import * as Database from 'better-sqlite3';
 import { oneLine, stripIndents } from 'common-tags';
 import { GuildMember, MessageAttachment, MessageEmbed, RateLimitData, TextChannel } from 'discord.js';
-import { Command, CommandMessage, CommandoClient, CommandoGuild } from 'discord.js-commando';
+import { Command, CommandoClient, CommandoGuild, CommandoMessage } from 'discord.js-commando';
 import * as fs from 'fs';
 import Jimp = require('jimp');
 import * as moment from 'moment';
@@ -322,7 +322,7 @@ const forceStopTyping = (client: CommandoClient) => {
   }
 };
 
-export const handleCmdErr = (client: CommandoClient, cmd: Command, err: Error, msg: CommandMessage) => {
+export const handleCmdErr = (client: CommandoClient, cmd: Command, err: Error, msg: CommandoMessage) => {
   const channel = client.channels.get(process.env.ISSUE_LOG_CHANNEL_ID) as TextChannel;
 
   channel.send(stripIndents`
@@ -564,7 +564,7 @@ export const handleMemberLeave = (client: CommandoClient, leaveMember: GuildMemb
   }
 };
 
-export const handleMsg = (client: CommandoClient, msg: CommandMessage): void => {
+export const handleMsg = (client: CommandoClient, msg: CommandoMessage): void => {
   const guild = msg.guild as CommandoGuild;
 
   if (msg.guild && msg.deletable && guild.settings.get('automod', false).enabled) {
@@ -716,7 +716,7 @@ export const handleRejection = (client: CommandoClient, reason: Error | any, p: 
       `);
 };
 
-export const handleUnknownCmd = (client: CommandoClient, msg: CommandMessage) => {
+export const handleUnknownCmd = (client: CommandoClient, msg: CommandoMessage) => {
   const guild = msg.guild as CommandoGuild;
 
   if (guild && guild.settings.get('unknownmessages', true)) {

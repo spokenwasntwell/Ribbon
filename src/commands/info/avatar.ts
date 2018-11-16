@@ -12,7 +12,7 @@
 
 import { stripIndents } from 'common-tags';
 import { GuildMember, ImageSize, MessageEmbed } from 'discord.js';
-import { Command, CommandMessage, CommandoClient } from 'discord.js-commando';
+import { Command, CommandoClient, CommandoMessage } from 'discord.js-commando';
 import { deleteCommandMessages, startTyping, stopTyping } from '../../components/util';
 
 export default class AvatarCommand extends Command {
@@ -56,7 +56,7 @@ export default class AvatarCommand extends Command {
     });
   }
 
-  public run (msg: CommandMessage, { member, size }: {member: GuildMember, size: ImageSize}) {
+  public run (msg: CommandoMessage, { member, size }: {member: GuildMember, size: ImageSize}) {
     startTyping(msg);
     const ava = member.user.displayAvatarURL({ size });
     const embed = new MessageEmbed();

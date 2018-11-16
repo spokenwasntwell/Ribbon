@@ -14,7 +14,7 @@
 import * as Database from 'better-sqlite3';
 import { oneLine, stripIndents } from 'common-tags';
 import { MessageEmbed, TextChannel } from 'discord.js';
-import { Command, CommandMessage, CommandoClient } from 'discord.js-commando';
+import { Command, CommandoClient, CommandoMessage } from 'discord.js-commando';
 import * as moment from 'moment';
 import * as path from 'path';
 import { deleteCommandMessages, startTyping, stopTyping } from '../../components/util';
@@ -79,7 +79,7 @@ export default class RemindCommand extends Command {
     });
   }
 
-  public run (msg: CommandMessage, { time, reminder }: {time: string, reminder: string}) {
+  public run (msg: CommandoMessage, { time, reminder }: {time: string, reminder: string}) {
     const conn = new Database(path.join(__dirname, '../../data/databases/reminders.sqlite3'));
     const remindEmbed = new MessageEmbed();
 

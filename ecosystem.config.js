@@ -3,7 +3,7 @@ module.exports = {
     {
       args: "./src/app.ts",
       name: "ribbon",
-      script: "./node_modules/.bin/ts-node",
+      script: "./node_modules/ts-node/dist/bin.js",
     },
   ],
 };

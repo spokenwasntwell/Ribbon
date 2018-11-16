@@ -11,7 +11,7 @@
 
 import { oneLine, stripIndents } from 'common-tags';
 import { MessageEmbed, TextChannel } from 'discord.js';
-import { Command, CommandMessage, CommandoClient } from 'discord.js-commando';
+import { Command, CommandoClient, CommandoMessage } from 'discord.js-commando';
 import * as moment from 'moment';
 import fetch from 'node-fetch';
 import { deleteCommandMessages, startTyping, stopTyping } from '../../components/util';
@@ -85,7 +85,7 @@ export default class PubgCommand extends Command {
     });
   }
 
-  public async run (msg: CommandMessage, { user, shard }: {user: string, shard: string}) {
+  public async run (msg: CommandoMessage, { user, shard }: {user: string, shard: string}) {
     try {
       startTyping(msg);
 

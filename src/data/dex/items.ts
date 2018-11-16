@@ -1,4 +1,4 @@
-export const BattleItems = [
+export const BattleItems: any = [
   {
     id: 'abomasite',
     name: 'Abomasite',

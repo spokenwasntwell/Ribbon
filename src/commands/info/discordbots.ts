@@ -10,7 +10,7 @@
  */
 
 import { MessageEmbed } from 'discord.js';
-import { Command, CommandMessage, CommandoClient } from 'discord.js-commando';
+import { Command, CommandoClient, CommandoMessage } from 'discord.js-commando';
 import * as moment from 'moment';
 import fetch from 'node-fetch';
 import { deleteCommandMessages, startTyping, stopTyping } from '../../components/util';
@@ -41,7 +41,7 @@ export default class DiscordBotsCommand extends Command {
     });
   }
 
-  public async run (msg: CommandMessage, { bot }: {bot: string}) {
+  public async run (msg: CommandoMessage, { bot }: {bot: string}) {
     try {
       startTyping(msg);
       const res = await fetch(`https://discordbots.org/api/bots/${bot}`, { headers: { Authorization: process.env.DISCORD_BOTS_API_KEY } });
