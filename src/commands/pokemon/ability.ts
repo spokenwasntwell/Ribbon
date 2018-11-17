@@ -50,10 +50,10 @@ export default class AbilityCommand extends Command {
       const fsoptions: Fuse.FuseOptions<any> = {
           shouldSort: true,
           keys: [
-            {name: 'alias', getfn: t => t.ability, weight: 1},
+            {name: 'alias', getfn: t => t.alias, weight: 0.5},
             {name: 'ability', getfn: t => t.ability, weight: 1},
-            {name: 'id', getfn: t => t.ability, weight: 0.6},
-            {name: 'name', getfn: t => t.ability, weight: 1}
+            {name: 'id', getfn: t => t.id, weight: 0.6},
+            {name: 'name', getfn: t => t.name, weight: 1}
           ],
           location: 0,
           distance: 100,

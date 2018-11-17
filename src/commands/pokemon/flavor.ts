@@ -12,7 +12,6 @@
  * @returns {MessageEmbed} Flavor texts for the pokemon
  */
 
-/* eslint-disable max-statements */
 import { stripIndents } from 'common-tags';
 import { MessageEmbed, TextChannel } from 'discord.js';
 import { Command, CommandoClient, CommandoMessage } from 'discord.js-commando';

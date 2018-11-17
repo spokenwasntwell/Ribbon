@@ -13,7 +13,7 @@
 import { MessageEmbed } from 'discord.js';
 import { Command, CommandoClient, CommandoMessage } from 'discord.js-commando';
 import fetch from 'node-fetch';
-import * as qs from 'querystring';
+import { stringify } from '../../components/querystring';
 import { deleteCommandMessages, startTyping, stopTyping } from '../../components/util';
 
 export default class PornVidsCommand extends Command {
@@ -47,7 +47,7 @@ export default class PornVidsCommand extends Command {
       startTyping(msg);
 
       const pornEmbed = new MessageEmbed();
-      const res = await fetch(`https://www.pornhub.com/webmasters/search?${qs.stringify({ search: porn })}`);
+      const res = await fetch(`https://www.pornhub.com/webmasters/search?${stringify({ search: porn })}`);
       const vid = await res.json();
       const vidRandom = Math.floor(Math.random() * vid.videos.length);
 

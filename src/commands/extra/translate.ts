@@ -17,7 +17,7 @@ import { MessageEmbed, TextChannel } from 'discord.js';
 import { Command, CommandoClient, CommandoMessage } from 'discord.js-commando';
 import * as moment from 'moment';
 import fetch from 'node-fetch';
-import * as qs from 'querystring';
+import { stringify } from '../../components/querystring';
 import { deleteCommandMessages, startTyping, stopTyping } from '../../components/util';
 
 export default class TranslateCommand extends Command {
@@ -61,7 +61,7 @@ export default class TranslateCommand extends Command {
       startTyping(msg);
 
       const transEmbed = new MessageEmbed();
-      const request = await fetch(`https://translation.googleapis.com/language/translate/v2?${qs.stringify({
+      const request = await fetch(`https://translation.googleapis.com/language/translate/v2?${stringify({
         format: 'text',
         key: process.env.GOOGLE_API_KEY,
         q: text,

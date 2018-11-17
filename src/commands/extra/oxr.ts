@@ -18,8 +18,8 @@ import { MessageEmbed, TextChannel } from 'discord.js';
 import { Command, CommandoClient, CommandoMessage } from 'discord.js-commando';
 import * as moment from 'moment';
 import fetch from 'node-fetch';
-import * as qs from 'querystring';
 import { convert, currencymap } from '../../components/money';
+import { stringify } from '../../components/querystring';
 import { deleteCommandMessages, startTyping, stopTyping } from '../../components/util';
 
 export default class MoneyCommand extends Command {
@@ -100,7 +100,7 @@ export default class MoneyCommand extends Command {
       startTyping(msg);
 
       const oxrEmbed = new MessageEmbed();
-      const request = await fetch(`https://openexchangerates.org/api/latest.json?${qs.stringify({
+      const request = await fetch(`https://openexchangerates.org/api/latest.json?${stringify({
         app_id: process.env.OXR_API_KEY,
         prettyprint: false,
         show_alternative: true,

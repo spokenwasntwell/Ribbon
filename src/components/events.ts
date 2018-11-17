@@ -15,10 +15,10 @@ import 'moment-duration-format';
 import eshop from 'nintendo-switch-eshop';
 import fetch from 'node-fetch';
 import * as path from 'path';
-import querystring from 'querystring';
 import { badwords, caps, duptext, emojis, invites, links, mentions, slowmode } from './automod';
 import { decache } from './decache';
 import ms from './ms';
+import { stringify } from './querystring';
 import { ordinal } from './util';
 
 const renderReminderMessage = async (client: CommandoClient) => {
@@ -611,10 +611,10 @@ export const handlePresenceUpdate = async (client: CommandoClient, oldMember: Gu
           newActivity.url = 'placeholder';
         }
         if (!(/(twitch)/i).test(oldActivity.url) && (/(twitch)/i).test(newActivity.url)) {
-          const userFetch = await fetch(`https://api.twitch.tv/helix/users?${querystring.stringify({ login: newActivity.url.split('/')[3] })}`,
+          const userFetch = await fetch(`https://api.twitch.tv/helix/users?${stringify({ login: newActivity.url.split('/')[3] })}`,
               { headers: { 'Client-ID': process.env.TWITCH_CLIENT_ID } });
           const userData = await userFetch.json();
-          const streamFetch = await fetch(`https://api.twitch.tv/helix/streams?${querystring.stringify({ channel: userData.data[0].id })}`, { headers: { 'Client-ID': process.env.TWITCH_CLIENT_ID } });
+          const streamFetch = await fetch(`https://api.twitch.tv/helix/streams?${stringify({ channel: userData.data[0].id })}`, { headers: { 'Client-ID': process.env.TWITCH_CLIENT_ID } });
           const streamData = await streamFetch.json();
           const twitchChannelID = curGuild.settings.get('twitchchannelID', null);
           const twitchChannel = twitchChannelID ? curGuild.channels.get(twitchChannelID) as TextChannel : null;

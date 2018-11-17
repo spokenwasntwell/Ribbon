@@ -14,7 +14,7 @@ import { Message, MessageEmbed, TextChannel } from 'discord.js';
 import { Command, CommandoClient, CommandoMessage } from 'discord.js-commando';
 import * as moment from 'moment';
 import fetch from 'node-fetch';
-import * as qs from 'querystring';
+import { stringify } from '../../components/querystring';
 import { deleteCommandMessages, roundNumber, startTyping, stopTyping } from '../../components/util';
 
 export default class RedditCommand extends Command {
@@ -147,7 +147,7 @@ export default class RedditCommand extends Command {
 
   private async fetchComments (user: any, after = ''): Promise<any> {
     try {
-      const res = await fetch(`https://www.reddit.com/user/${user}/comments.json?${qs.stringify({
+      const res = await fetch(`https://www.reddit.com/user/${user}/comments.json?${stringify({
           after,
           limit: 100,
         })}`);
@@ -168,7 +168,7 @@ export default class RedditCommand extends Command {
 
   private async fetchSubmissions (user: any, after = ''): Promise<any> {
     try {
-      const res = await fetch(`https://www.reddit.com/user/${user}/submitted.json?${qs.stringify({
+      const res = await fetch(`https://www.reddit.com/user/${user}/submitted.json?${stringify({
           after,
           limit: 100,
         })}`);

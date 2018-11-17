@@ -22,7 +22,7 @@ import { MessageEmbed, TextChannel } from 'discord.js';
 import { ArgumentCollector, Command, CommandoClient, CommandoMessage } from 'discord.js-commando';
 import * as moment from 'moment';
 import fetch from 'node-fetch';
-import * as qs from 'querystring';
+import { stringify } from '../../components/querystring';
 import { startTyping, stopTyping } from '../../components/util';
 
 interface ICardProps {
@@ -190,7 +190,7 @@ export default class PokemonTCGCommand extends Command {
     }
 
     try {
-      const res = await fetch(`https://api.pokemontcg.io/v1/cards?${qs.stringify({
+      const res = await fetch(`https://api.pokemontcg.io/v1/cards?${stringify({
           hp: properties.hp ? properties.hp : '',
           name: properties.name,
           page: 1,

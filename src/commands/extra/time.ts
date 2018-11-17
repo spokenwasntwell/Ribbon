@@ -14,7 +14,7 @@ import { stripIndents } from 'common-tags';
 import { MessageEmbed } from 'discord.js';
 import { Command, CommandoClient, CommandoMessage } from 'discord.js-commando';
 import fetch from 'node-fetch';
-import * as qs from 'querystring';
+import { stringify } from '../../components/querystring';
 import { deleteCommandMessages, startTyping, stopTyping } from '../../components/util';
 
 export default class TimeCommand extends Command {
@@ -46,7 +46,7 @@ export default class TimeCommand extends Command {
     try {
       startTyping(msg);
       const cords = await this.getCords(location);
-      const res = await fetch(`http://api.timezonedb.com/v2/get-time-zone?${qs.stringify({
+      const res = await fetch(`http://api.timezonedb.com/v2/get-time-zone?${stringify({
         by: 'position',
         format: 'json',
         key: process.env.TIMEZONE_DB_API_KEY,
@@ -77,7 +77,7 @@ export default class TimeCommand extends Command {
   }
 
   private async getCords (location: string) {
-    const res = await fetch(`https://maps.googleapis.com/maps/api/geocode/json?${qs.stringify({
+    const res = await fetch(`https://maps.googleapis.com/maps/api/geocode/json?${stringify({
         address: location,
         key: process.env.GOOGLE_API_KEY,
       })}`);

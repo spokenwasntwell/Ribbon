@@ -14,7 +14,7 @@ import {MessageEmbed, TextChannel} from 'discord.js';
 import {Command, CommandoClient, CommandoMessage} from 'discord.js-commando';
 import * as moment from 'moment';
 import fetch from 'node-fetch';
-import * as querystring from 'querystring';
+import { stringify } from '../../components/querystring';
 import {deleteCommandMessages, roundNumber, startTyping, stopTyping} from '../../components/util';
 
 export default class OsuCommand extends Command {
@@ -47,7 +47,7 @@ export default class OsuCommand extends Command {
     try {
       startTyping(msg);
 
-      const res = await fetch(`https://osu.ppy.sh/api/get_user?${querystring.stringify({
+      const res = await fetch(`https://osu.ppy.sh/api/get_user?${stringify({
           k: process.env.OSU_API_KEY,
           type: 'string',
           u: player,

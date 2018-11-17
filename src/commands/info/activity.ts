@@ -15,7 +15,7 @@ import { Command, CommandoClient, CommandoMessage } from 'discord.js-commando';
 import * as moment from 'moment';
 import 'moment-duration-format';
 import fetch from 'node-fetch';
-import * as qs from 'querystring';
+import { stringify } from '../../components/querystring';
 import { deleteCommandMessages, startTyping, stopTyping } from '../../components/util';
 
 export default class ActivityCommand extends Command {
@@ -65,7 +65,7 @@ export default class ActivityCommand extends Command {
       if (!activity) throw new Error('noActivity');
       if (activity.type === 'LISTENING' && activity.name === 'Spotify') {
         const tokenReq = await fetch('https://accounts.spotify.com/api/token', {
-          body: qs.stringify({
+          body: stringify({
             grant_type: 'client_credentials',
           }),
           headers: {
@@ -75,7 +75,7 @@ export default class ActivityCommand extends Command {
           method: 'POST',
         });
         const tokenRes = await tokenReq.json();
-        const trackSearch = await fetch(`https://api.spotify.com/v1/search?${qs.stringify({
+        const trackSearch = await fetch(`https://api.spotify.com/v1/search?${stringify({
           limit: '1',
           q: activity.details,
           type: 'track'})}`, {
@@ -152,16 +152,16 @@ export default class ActivityCommand extends Command {
       if ((/(noActivity|Cannot read property 'name' of null)/i).test(err.toString())) {
         return msg.embed({
           author: {
-            iconURL: member.user.displayAvatarURL(),
             name: member.user.tag,
             url: `${member.user.displayAvatarURL()}?size=2048`,
+            iconURL: member.user.displayAvatarURL(),
           },
           color: msg.guild ? msg.guild.me.displayColor : 8190976,
           fields: [
             {
-              inline: true,
               name: 'Activity',
               value: 'Nothing',
+              inline: true,
             }
           ],
           thumbnail: { url: member.user.displayAvatarURL() },
